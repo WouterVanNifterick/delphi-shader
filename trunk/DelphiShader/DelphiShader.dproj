@@ -1,0 +1,316 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{0BEDC282-3CA7-4BF3-A298-7382F88352BC}</ProjectGuid>
+        <MainSource>DelphiShader.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <TargetedPlatforms>19</TargetedPlatforms>
+        <AppType>Application</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <ProjectVersion>15.1</ProjectVersion>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+        <Cfg_2_Win64>true</Cfg_2_Win64>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_N>false</DCC_N>
+        <DCC_F>false</DCC_F>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_S>false</DCC_S>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=;CFBundleDisplayName=;UIDeviceFamily=;CFBundleIdentifier=;CFBundleVersion=;CFBundlePackageType=;CFBundleSignature=;CFBundleAllowMixedLocalizations=;UISupportedInterfaceOrientations=;CFBundleExecutable=;CFBundleResourceSpecification=;LSRequiresIPhoneOS=;CFBundleInfoDictionaryVersion=;CFBundleDevelopmentRegion=;package=;label=;versionCode=;versionName=;persistent=;restoreAnyVersion=;installLocation=;largeHeap=;theme=</VerInfo_Keys>
+        <DCC_K>false</DCC_K>
+        <DCC_DebugInformation>true</DCC_DebugInformation>
+        <DCC_E>false</DCC_E>
+        <VerInfo_Locale>1043</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <Icon_MainIcon>DelphiShader_Icon.ico</Icon_MainIcon>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Icon_MainIcon>DelphiShader_Icon.ico</Icon_MainIcon>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_ExeOutput>..</DCC_ExeOutput>
+        <DCC_DcuOutput>dcu</DCC_DcuOutput>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_ExeOutput>..</DCC_ExeOutput>
+        <DCC_DcuOutput>dcu</DCC_DcuOutput>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Apollonian.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Circles.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.AttackOfTheFuz.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Auralights.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.BallsAreTouching.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Catacombs.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Chocolux.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.CirclePlasma.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Clod.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.CubesAndSpheres.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Deform.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Depths.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Displacement.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.DistanceField.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.DubStepMyAss.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FakeBalls.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FlagNL.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FlagUK.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Flame.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Flare.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Flower.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Fly.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FollowMouse.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.GearMachine.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Gears.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Julia.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.JuliaBonzaj.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.JuliaDistance.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Laser.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.LeadLight.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.LeadLight2.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.LensflareMusk.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.LightBalls.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Mandel.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MengerSponge.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MetaBlob.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MetaObjects.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MetaTorus.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Monjori.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MonteCarloPOV.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MultiLight.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Nautilus.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.NegColor.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Newton.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.NoiseBlur.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.PiersHakenRender.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Plasma.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.PlasmaGroovy.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Pulse.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.QuasiCrystal.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RadialBlur.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RayMarchCam.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RayMarching1.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RayWalker.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.ReliefTunnel.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Rhombille.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RibbonTunnel.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Riploid.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RoadOfRibbon.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.ShapeShifter.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.SinusLines.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.SphereTracer.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Star.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.StarFlock.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.SymetryDisco.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.TruchetTentacles.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.TunnelEffect.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Voronoi.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.WaterTurbulence.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Waves.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.ZInvert.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX._Empty.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Monster.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FracTraps2.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.StarNursery.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FractalBlub.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RaytraceSpheres.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Fractal3d.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Spikes.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.FastSmallPT.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MouseTrail.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.NanoTubes.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MetaBall2d.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.BokehBlur.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.InfiniteFractalRoads.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.fierySpiral.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Akiyoshi.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RayTraceColumns.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.TwoTweets.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Bubbles.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.CubeMap.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Sierpkinki.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.AngelicParticles2.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RandomSpheres.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.WeirdBalls.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RSOCP.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Clouds.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.GeneratorsRedux.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.PhongFloor.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.TinyStarField.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Turbulence.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.ReprojectionII.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.AlienTech.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Avatar.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.InputMouse.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Portal.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RollingHills.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.SimpleRayTracer.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.RetroParallax.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.EscherDepth.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.Nautilus2.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.CoolBlobs.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.PerlinBlob.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MotionBlur.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.MultiFX.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.FX.ColorTest.pas"/>
+        <DCCReference Include="..\WvN.DelphiShader.Shader.pas"/>
+        <DCCReference Include="DelphiShader.Forms.Main.pas">
+            <Form>frmMain</Form>
+        </DCCReference>
+        <DCCReference Include="DelphiShader.Forms.Progress.pas">
+            <Form>frmProgress</Form>
+        </DCCReference>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">DelphiShader.dpr</Source>
+                </Source>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+                    <VersionInfo Name="MajorVer">1</VersionInfo>
+                    <VersionInfo Name="MinorVer">0</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">0</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1043</VersionInfo>
+                    <VersionInfo Name="CodePage">1252</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName"/>
+                    <VersionInfoKeys Name="FileDescription"/>
+                    <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright"/>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename"/>
+                    <VersionInfoKeys Name="ProductName"/>
+                    <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                    <VersionInfoKeys Name="CFBundleName"/>
+                    <VersionInfoKeys Name="CFBundleDisplayName"/>
+                    <VersionInfoKeys Name="UIDeviceFamily"/>
+                    <VersionInfoKeys Name="CFBundleIdentifier"/>
+                    <VersionInfoKeys Name="CFBundleVersion"/>
+                    <VersionInfoKeys Name="CFBundlePackageType"/>
+                    <VersionInfoKeys Name="CFBundleSignature"/>
+                    <VersionInfoKeys Name="CFBundleAllowMixedLocalizations"/>
+                    <VersionInfoKeys Name="UISupportedInterfaceOrientations"/>
+                    <VersionInfoKeys Name="CFBundleExecutable"/>
+                    <VersionInfoKeys Name="CFBundleResourceSpecification"/>
+                    <VersionInfoKeys Name="LSRequiresIPhoneOS"/>
+                    <VersionInfoKeys Name="CFBundleInfoDictionaryVersion"/>
+                    <VersionInfoKeys Name="CFBundleDevelopmentRegion"/>
+                    <VersionInfoKeys Name="package"/>
+                    <VersionInfoKeys Name="label"/>
+                    <VersionInfoKeys Name="versionCode"/>
+                    <VersionInfoKeys Name="versionName"/>
+                    <VersionInfoKeys Name="persistent"/>
+                    <VersionInfoKeys Name="restoreAnyVersion"/>
+                    <VersionInfoKeys Name="installLocation"/>
+                    <VersionInfoKeys Name="largeHeap"/>
+                    <VersionInfoKeys Name="theme"/>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k190.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp190.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\12.0\Bpl\owlyExpert.bpl">File C:\Users\Public\Documents\RAD Studio\12.0\Bpl\owlyExpert.bpl not found</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Android" ActiveMobileDevice="rsxe5_android">True</Platform>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>
