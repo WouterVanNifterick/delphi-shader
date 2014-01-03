@@ -429,6 +429,7 @@ end;
 
 // var LastChange:TDateTime;
 procedure TfrmMain.UpdateShader;
+var Ratio:Double;
 begin
   StatusBar1.Panels[0].Text := format('%d x %d', [q, q]);
   if (DrawingBuffer.Width = q) and (DrawingBuffer.Height = q) then
@@ -436,6 +437,9 @@ begin
 
   // if MilliSecondsBetween(now,LastChange)>100 then
   // begin
+  Ratio := q / DrawingBuffer.Width;
+  Shader.iMouse := Shader.iMouse * Ratio;
+
   DrawingBuffer.SetSize(q, q);
   Shader.SetSize(DrawingBuffer.Width, DrawingBuffer.Height);
   // LastChange := now;
@@ -507,7 +511,7 @@ begin
   end;
   Shader.ResetFPS;
 
-  Shader.UpdateFrame;
+  Shader.SetTimeToSystemClock;
   Shader.RenderTo(DrawingBuffer);
   pb.Repaint;
 end;
