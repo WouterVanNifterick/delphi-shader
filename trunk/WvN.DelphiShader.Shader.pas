@@ -24,13 +24,16 @@ type
   end;
 
 type
-  TVecType = type double;
+  TVecType = type Double;
+
   int      = type Integer;
   bool     = type Boolean;
-  Float    = type double;
+  Float    = type Double;
   PVec2    = ^Vec2;
-  PVec3 = ^Vec3;
+  PVec3    = ^Vec3;
   PVec4    = ^Vec4;
+
+  Vec1     = TVecType;
 
   Vec2 = record
     x, y: TVecType;
@@ -103,36 +106,80 @@ type
 
     class operator Equal(const a,b:Vec3):Boolean;{$IFNDEF DEBUG} inline;{$ENDIF}
 
-    function GetXZ: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure SetXZ(const a:Vec2);{$IFNDEF DEBUG} inline;{$ENDIF}
-    property xz: Vec2 read GetXZ write setXZ;
+    function getxx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxx(const a:Vec2);property xx:Vec2 read getxx write setxx;
+    function getxy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxy(const a:Vec2);property xy:Vec2 read getxy write setxy;
+    function getxz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxz(const a:Vec2);property xz:Vec2 read getxz write setxz;
+    function getyx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyx(const a:Vec2);property yx:Vec2 read getyx write setyx;
+    function getyy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyy(const a:Vec2);property yy:Vec2 read getyy write setyy;
+    function getyz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyz(const a:Vec2);property yz:Vec2 read getyz write setyz;
+    function getzx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzx(const a:Vec2);property zx:Vec2 read getzx write setzx;
+    function getzy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzy(const a:Vec2);property zy:Vec2 read getzy write setzy;
+    function getzz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzz(const a:Vec2);property zz:Vec2 read getzz write setzz;
+    function getxxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxx(const a:Vec3);property xxx:Vec3 read getxxx write setxxx;
+    function getxxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxy(const a:Vec3);property xxy:Vec3 read getxxy write setxxy;
+    function getxxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxz(const a:Vec3);property xxz:Vec3 read getxxz write setxxz;
+    function getxyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyx(const a:Vec3);property xyx:Vec3 read getxyx write setxyx;
+    function getxyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyy(const a:Vec3);property xyy:Vec3 read getxyy write setxyy;
+    function getxyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyz(const a:Vec3);property xyz:Vec3 read getxyz write setxyz;
+    function getxzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzx(const a:Vec3);property xzx:Vec3 read getxzx write setxzx;
+    function getxzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzy(const a:Vec3);property xzy:Vec3 read getxzy write setxzy;
+    function getxzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzz(const a:Vec3);property xzz:Vec3 read getxzz write setxzz;
+    function getyxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxx(const a:Vec3);property yxx:Vec3 read getyxx write setyxx;
+    function getyxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxy(const a:Vec3);property yxy:Vec3 read getyxy write setyxy;
+    function getyxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxz(const a:Vec3);property yxz:Vec3 read getyxz write setyxz;
+    function getyyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyx(const a:Vec3);property yyx:Vec3 read getyyx write setyyx;
+    function getyyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyy(const a:Vec3);property yyy:Vec3 read getyyy write setyyy;
+    function getyyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyz(const a:Vec3);property yyz:Vec3 read getyyz write setyyz;
+    function getyzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzx(const a:Vec3);property yzx:Vec3 read getyzx write setyzx;
+    function getyzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzy(const a:Vec3);property yzy:Vec3 read getyzy write setyzy;
+    function getyzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzz(const a:Vec3);property yzz:Vec3 read getyzz write setyzz;
+    function getzxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxx(const a:Vec3);property zxx:Vec3 read getzxx write setzxx;
+    function getzxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxy(const a:Vec3);property zxy:Vec3 read getzxy write setzxy;
+    function getzxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxz(const a:Vec3);property zxz:Vec3 read getzxz write setzxz;
+    function getzyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyx(const a:Vec3);property zyx:Vec3 read getzyx write setzyx;
+    function getzyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyy(const a:Vec3);property zyy:Vec3 read getzyy write setzyy;
+    function getzyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyz(const a:Vec3);property zyz:Vec3 read getzyz write setzyz;
+    function getzzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzx(const a:Vec3);property zzx:Vec3 read getzzx write setzzx;
+    function getzzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzy(const a:Vec3);property zzy:Vec3 read getzzy write setzzy;
+    function getzzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzz(const a:Vec3);property zzz:Vec3 read getzzz write setzzz;
 
-    function GetXY: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure SetXY(const a:Vec2);{$IFNDEF DEBUG} inline;{$ENDIF}
-    property XY: Vec2 read GetXY write setXY;
 
-    function GetZX: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure SetZX(const Value: Vec2);
-    property ZX: Vec2 read GetZX write SetZX;
-
-    function getyz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure SetYZ(const Value: vec2);{$IFNDEF DEBUG} inline;{$ENDIF}
-    property yz:vec2 read getYZ write SetYZ;
-
-    function rg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function zy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function xyz:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function xyy:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function yxy:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function yyx:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function yzx:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function zxy:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function zzx:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function zyx:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function yxz:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function yxx:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function xyx:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    function xxy:vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
+    function getbb: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbb(const a:Vec2);property bb:Vec2 read getbb write setbb;
+    function getbg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbg(const a:Vec2);property bg:Vec2 read getbg write setbg;
+    function getbr: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbr(const a:Vec2);property br:Vec2 read getbr write setbr;
+    function getgb: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgb(const a:Vec2);property gb:Vec2 read getgb write setgb;
+    function getgg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgg(const a:Vec2);property gg:Vec2 read getgg write setgg;
+    function getgr: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgr(const a:Vec2);property gr:Vec2 read getgr write setgr;
+    function getrb: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrb(const a:Vec2);property rb:Vec2 read getrb write setrb;
+    function getrg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrg(const a:Vec2);property rg:Vec2 read getrg write setrg;
+    function getrr: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrr(const a:Vec2);property rr:Vec2 read getrr write setrr;
+    function getbbb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbbb(const a:Vec3);property bbb:Vec3 read getbbb write setbbb;
+    function getbbg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbbg(const a:Vec3);property bbg:Vec3 read getbbg write setbbg;
+    function getbbr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbbr(const a:Vec3);property bbr:Vec3 read getbbr write setbbr;
+    function getbgb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbgb(const a:Vec3);property bgb:Vec3 read getbgb write setbgb;
+    function getbgg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbgg(const a:Vec3);property bgg:Vec3 read getbgg write setbgg;
+    function getbgr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbgr(const a:Vec3);property bgr:Vec3 read getbgr write setbgr;
+    function getbrb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbrb(const a:Vec3);property brb:Vec3 read getbrb write setbrb;
+    function getbrg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbrg(const a:Vec3);property brg:Vec3 read getbrg write setbrg;
+    function getbrr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbrr(const a:Vec3);property brr:Vec3 read getbrr write setbrr;
+    function getgbb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgbb(const a:Vec3);property gbb:Vec3 read getgbb write setgbb;
+    function getgbg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgbg(const a:Vec3);property gbg:Vec3 read getgbg write setgbg;
+    function getgbr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgbr(const a:Vec3);property gbr:Vec3 read getgbr write setgbr;
+    function getggb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setggb(const a:Vec3);property ggb:Vec3 read getggb write setggb;
+    function getggg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setggg(const a:Vec3);property ggg:Vec3 read getggg write setggg;
+    function getggr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setggr(const a:Vec3);property ggr:Vec3 read getggr write setggr;
+    function getgrb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgrb(const a:Vec3);property grb:Vec3 read getgrb write setgrb;
+    function getgrg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgrg(const a:Vec3);property grg:Vec3 read getgrg write setgrg;
+    function getgrr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgrr(const a:Vec3);property grr:Vec3 read getgrr write setgrr;
+    function getrbb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrbb(const a:Vec3);property rbb:Vec3 read getrbb write setrbb;
+    function getrbg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrbg(const a:Vec3);property rbg:Vec3 read getrbg write setrbg;
+    function getrbr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrbr(const a:Vec3);property rbr:Vec3 read getrbr write setrbr;
+    function getrgb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrgb(const a:Vec3);property rgb:Vec3 read getrgb write setrgb;
+    function getrgg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrgg(const a:Vec3);property rgg:Vec3 read getrgg write setrgg;
+    function getrgr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrgr(const a:Vec3);property rgr:Vec3 read getrgr write setrgr;
+    function getrrb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrrb(const a:Vec3);property rrb:Vec3 read getrrb write setrrb;
+    function getrrg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrrg(const a:Vec3);property rrg:Vec3 read getrrg write setrrg;
+    function getrrr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrrr(const a:Vec3);property rrr:Vec3 read getrrr write setrrr;
 
     case RecType: Byte of
       0:(x, y, z: TVecType);
@@ -161,41 +208,169 @@ type
     class operator Subtract(const a,b: Vec4): Vec4;{$IFNDEF DEBUG} inline;{$ENDIF}
     class operator Negative(const a: Vec4): Vec4;{$IFNDEF DEBUG} inline;{$ENDIF}
 
-    function getxy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setxy(const a:Vec2);
-    property xy:Vec2 read getxy write setxy;
+    function getww: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setww(const a:Vec2);property ww:Vec2 read getww write setww;
+    function getwx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwx(const a:Vec2);property wx:Vec2 read getwx write setwx;
+    function getwy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwy(const a:Vec2);property wy:Vec2 read getwy write setwy;
+    function getwz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwz(const a:Vec2);property wz:Vec2 read getwz write setwz;
+    function getxw: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxw(const a:Vec2);property xw:Vec2 read getxw write setxw;
+    function getxx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxx(const a:Vec2);property xx:Vec2 read getxx write setxx;
+    function getxy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxy(const a:Vec2);property xy:Vec2 read getxy write setxy;
+    function getxz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxz(const a:Vec2);property xz:Vec2 read getxz write setxz;
+    function getyw: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyw(const a:Vec2);property yw:Vec2 read getyw write setyw;
+    function getyx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyx(const a:Vec2);property yx:Vec2 read getyx write setyx;
+    function getyy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyy(const a:Vec2);property yy:Vec2 read getyy write setyy;
+    function getyz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyz(const a:Vec2);property yz:Vec2 read getyz write setyz;
+    function getzw: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzw(const a:Vec2);property zw:Vec2 read getzw write setzw;
+    function getzx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzx(const a:Vec2);property zx:Vec2 read getzx write setzx;
+    function getzy: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzy(const a:Vec2);property zy:Vec2 read getzy write setzy;
+    function getzz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzz(const a:Vec2);property zz:Vec2 read getzz write setzz;
+    function getwww: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwww(const a:Vec3);property www:Vec3 read getwww write setwww;
+    function getwwx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwwx(const a:Vec3);property wwx:Vec3 read getwwx write setwwx;
+    function getwwy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwwy(const a:Vec3);property wwy:Vec3 read getwwy write setwwy;
+    function getwwz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwwz(const a:Vec3);property wwz:Vec3 read getwwz write setwwz;
+    function getwxw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwxw(const a:Vec3);property wxw:Vec3 read getwxw write setwxw;
+    function getwxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwxx(const a:Vec3);property wxx:Vec3 read getwxx write setwxx;
+    function getwxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwxy(const a:Vec3);property wxy:Vec3 read getwxy write setwxy;
+    function getwxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwxz(const a:Vec3);property wxz:Vec3 read getwxz write setwxz;
+    function getwyw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwyw(const a:Vec3);property wyw:Vec3 read getwyw write setwyw;
+    function getwyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwyx(const a:Vec3);property wyx:Vec3 read getwyx write setwyx;
+    function getwyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwyy(const a:Vec3);property wyy:Vec3 read getwyy write setwyy;
+    function getwyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwyz(const a:Vec3);property wyz:Vec3 read getwyz write setwyz;
+    function getwzw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwzw(const a:Vec3);property wzw:Vec3 read getwzw write setwzw;
+    function getwzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwzx(const a:Vec3);property wzx:Vec3 read getwzx write setwzx;
+    function getwzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwzy(const a:Vec3);property wzy:Vec3 read getwzy write setwzy;
+    function getwzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setwzz(const a:Vec3);property wzz:Vec3 read getwzz write setwzz;
+    function getxww: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxww(const a:Vec3);property xww:Vec3 read getxww write setxww;
+    function getxwx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxwx(const a:Vec3);property xwx:Vec3 read getxwx write setxwx;
+    function getxwy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxwy(const a:Vec3);property xwy:Vec3 read getxwy write setxwy;
+    function getxwz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxwz(const a:Vec3);property xwz:Vec3 read getxwz write setxwz;
+    function getxxw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxw(const a:Vec3);property xxw:Vec3 read getxxw write setxxw;
+    function getxxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxx(const a:Vec3);property xxx:Vec3 read getxxx write setxxx;
+    function getxxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxy(const a:Vec3);property xxy:Vec3 read getxxy write setxxy;
+    function getxxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxxz(const a:Vec3);property xxz:Vec3 read getxxz write setxxz;
+    function getxyw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyw(const a:Vec3);property xyw:Vec3 read getxyw write setxyw;
+    function getxyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyx(const a:Vec3);property xyx:Vec3 read getxyx write setxyx;
+    function getxyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyy(const a:Vec3);property xyy:Vec3 read getxyy write setxyy;
+    function getxyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxyz(const a:Vec3);property xyz:Vec3 read getxyz write setxyz;
+    function getxzw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzw(const a:Vec3);property xzw:Vec3 read getxzw write setxzw;
+    function getxzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzx(const a:Vec3);property xzx:Vec3 read getxzx write setxzx;
+    function getxzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzy(const a:Vec3);property xzy:Vec3 read getxzy write setxzy;
+    function getxzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setxzz(const a:Vec3);property xzz:Vec3 read getxzz write setxzz;
+    function getyww: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyww(const a:Vec3);property yww:Vec3 read getyww write setyww;
+    function getywx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setywx(const a:Vec3);property ywx:Vec3 read getywx write setywx;
+    function getywy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setywy(const a:Vec3);property ywy:Vec3 read getywy write setywy;
+    function getywz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setywz(const a:Vec3);property ywz:Vec3 read getywz write setywz;
+    function getyxw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxw(const a:Vec3);property yxw:Vec3 read getyxw write setyxw;
+    function getyxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxx(const a:Vec3);property yxx:Vec3 read getyxx write setyxx;
+    function getyxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxy(const a:Vec3);property yxy:Vec3 read getyxy write setyxy;
+    function getyxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyxz(const a:Vec3);property yxz:Vec3 read getyxz write setyxz;
+    function getyyw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyw(const a:Vec3);property yyw:Vec3 read getyyw write setyyw;
+    function getyyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyx(const a:Vec3);property yyx:Vec3 read getyyx write setyyx;
+    function getyyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyy(const a:Vec3);property yyy:Vec3 read getyyy write setyyy;
+    function getyyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyyz(const a:Vec3);property yyz:Vec3 read getyyz write setyyz;
+    function getyzw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzw(const a:Vec3);property yzw:Vec3 read getyzw write setyzw;
+    function getyzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzx(const a:Vec3);property yzx:Vec3 read getyzx write setyzx;
+    function getyzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzy(const a:Vec3);property yzy:Vec3 read getyzy write setyzy;
+    function getyzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setyzz(const a:Vec3);property yzz:Vec3 read getyzz write setyzz;
+    function getzww: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzww(const a:Vec3);property zww:Vec3 read getzww write setzww;
+    function getzwx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzwx(const a:Vec3);property zwx:Vec3 read getzwx write setzwx;
+    function getzwy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzwy(const a:Vec3);property zwy:Vec3 read getzwy write setzwy;
+    function getzwz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzwz(const a:Vec3);property zwz:Vec3 read getzwz write setzwz;
+    function getzxw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxw(const a:Vec3);property zxw:Vec3 read getzxw write setzxw;
+    function getzxx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxx(const a:Vec3);property zxx:Vec3 read getzxx write setzxx;
+    function getzxy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxy(const a:Vec3);property zxy:Vec3 read getzxy write setzxy;
+    function getzxz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzxz(const a:Vec3);property zxz:Vec3 read getzxz write setzxz;
+    function getzyw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyw(const a:Vec3);property zyw:Vec3 read getzyw write setzyw;
+    function getzyx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyx(const a:Vec3);property zyx:Vec3 read getzyx write setzyx;
+    function getzyy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyy(const a:Vec3);property zyy:Vec3 read getzyy write setzyy;
+    function getzyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzyz(const a:Vec3);property zyz:Vec3 read getzyz write setzyz;
+    function getzzw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzw(const a:Vec3);property zzw:Vec3 read getzzw write setzzw;
+    function getzzx: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzx(const a:Vec3);property zzx:Vec3 read getzzx write setzzx;
+    function getzzy: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzy(const a:Vec3);property zzy:Vec3 read getzzy write setzzy;
+    function getzzz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setzzz(const a:Vec3);property zzz:Vec3 read getzzz write setzzz;
 
-    function getxz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setxz(const a:Vec2);
-    property xz:Vec2 read getxz write setxz;
 
-    function getyw: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setyw(const a:Vec2);
-    property yw:Vec2 read getyw write setyw;
+    function getaa: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaa(const a:Vec2);property aa:Vec2 read getaa write setaa;
+    function getab: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setab(const a:Vec2);property ab:Vec2 read getab write setab;
+    function getag: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setag(const a:Vec2);property ag:Vec2 read getag write setag;
+    function getar: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setar(const a:Vec2);property ar:Vec2 read getar write setar;
+    function getba: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setba(const a:Vec2);property ba:Vec2 read getba write setba;
+    function getbb: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbb(const a:Vec2);property bb:Vec2 read getbb write setbb;
+    function getbg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbg(const a:Vec2);property bg:Vec2 read getbg write setbg;
+    function getbr: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbr(const a:Vec2);property br:Vec2 read getbr write setbr;
+    function getga: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setga(const a:Vec2);property ga:Vec2 read getga write setga;
+    function getgb: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgb(const a:Vec2);property gb:Vec2 read getgb write setgb;
+    function getgg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgg(const a:Vec2);property gg:Vec2 read getgg write setgg;
+    function getgr: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgr(const a:Vec2);property gr:Vec2 read getgr write setgr;
+    function getra: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setra(const a:Vec2);property ra:Vec2 read getra write setra;
+    function getrb: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrb(const a:Vec2);property rb:Vec2 read getrb write setrb;
+    function getrg: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrg(const a:Vec2);property rg:Vec2 read getrg write setrg;
+    function getrr: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrr(const a:Vec2);property rr:Vec2 read getrr write setrr;
+    function getaaa: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaaa(const a:Vec3);property aaa:Vec3 read getaaa write setaaa;
+    function getaab: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaab(const a:Vec3);property aab:Vec3 read getaab write setaab;
+    function getaag: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaag(const a:Vec3);property aag:Vec3 read getaag write setaag;
+    function getaar: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaar(const a:Vec3);property aar:Vec3 read getaar write setaar;
+    function getaba: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaba(const a:Vec3);property aba:Vec3 read getaba write setaba;
+    function getabb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setabb(const a:Vec3);property abb:Vec3 read getabb write setabb;
+    function getabg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setabg(const a:Vec3);property abg:Vec3 read getabg write setabg;
+    function getabr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setabr(const a:Vec3);property abr:Vec3 read getabr write setabr;
+    function getaga: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setaga(const a:Vec3);property aga:Vec3 read getaga write setaga;
+    function getagb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setagb(const a:Vec3);property agb:Vec3 read getagb write setagb;
+    function getagg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setagg(const a:Vec3);property agg:Vec3 read getagg write setagg;
+    function getagr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setagr(const a:Vec3);property agr:Vec3 read getagr write setagr;
+    function getara: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setara(const a:Vec3);property ara:Vec3 read getara write setara;
+    function getarb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setarb(const a:Vec3);property arb:Vec3 read getarb write setarb;
+    function getarg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setarg(const a:Vec3);property arg:Vec3 read getarg write setarg;
+    function getarr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setarr(const a:Vec3);property arr:Vec3 read getarr write setarr;
+    function getbaa: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbaa(const a:Vec3);property baa:Vec3 read getbaa write setbaa;
+    function getbab: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbab(const a:Vec3);property bab:Vec3 read getbab write setbab;
+    function getbag: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbag(const a:Vec3);property bag:Vec3 read getbag write setbag;
+    function getbar: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbar(const a:Vec3);property bar:Vec3 read getbar write setbar;
+    function getbba: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbba(const a:Vec3);property bba:Vec3 read getbba write setbba;
+    function getbbb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbbb(const a:Vec3);property bbb:Vec3 read getbbb write setbbb;
+    function getbbg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbbg(const a:Vec3);property bbg:Vec3 read getbbg write setbbg;
+    function getbbr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbbr(const a:Vec3);property bbr:Vec3 read getbbr write setbbr;
+    function getbga: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbga(const a:Vec3);property bga:Vec3 read getbga write setbga;
+    function getbgb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbgb(const a:Vec3);property bgb:Vec3 read getbgb write setbgb;
+    function getbgg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbgg(const a:Vec3);property bgg:Vec3 read getbgg write setbgg;
+    function getbgr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbgr(const a:Vec3);property bgr:Vec3 read getbgr write setbgr;
+    function getbra: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbra(const a:Vec3);property bra:Vec3 read getbra write setbra;
+    function getbrb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbrb(const a:Vec3);property brb:Vec3 read getbrb write setbrb;
+    function getbrg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbrg(const a:Vec3);property brg:Vec3 read getbrg write setbrg;
+    function getbrr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setbrr(const a:Vec3);property brr:Vec3 read getbrr write setbrr;
+    function getgaa: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgaa(const a:Vec3);property gaa:Vec3 read getgaa write setgaa;
+    function getgab: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgab(const a:Vec3);property gab:Vec3 read getgab write setgab;
+    function getgag: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgag(const a:Vec3);property gag:Vec3 read getgag write setgag;
+    function getgar: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgar(const a:Vec3);property gar:Vec3 read getgar write setgar;
+    function getgba: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgba(const a:Vec3);property gba:Vec3 read getgba write setgba;
+    function getgbb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgbb(const a:Vec3);property gbb:Vec3 read getgbb write setgbb;
+    function getgbg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgbg(const a:Vec3);property gbg:Vec3 read getgbg write setgbg;
+    function getgbr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgbr(const a:Vec3);property gbr:Vec3 read getgbr write setgbr;
+    function getgga: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgga(const a:Vec3);property gga:Vec3 read getgga write setgga;
+    function getggb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setggb(const a:Vec3);property ggb:Vec3 read getggb write setggb;
+    function getggg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setggg(const a:Vec3);property ggg:Vec3 read getggg write setggg;
+    function getggr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setggr(const a:Vec3);property ggr:Vec3 read getggr write setggr;
+    function getgra: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgra(const a:Vec3);property gra:Vec3 read getgra write setgra;
+    function getgrb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgrb(const a:Vec3);property grb:Vec3 read getgrb write setgrb;
+    function getgrg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgrg(const a:Vec3);property grg:Vec3 read getgrg write setgrg;
+    function getgrr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setgrr(const a:Vec3);property grr:Vec3 read getgrr write setgrr;
+    function getraa: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setraa(const a:Vec3);property raa:Vec3 read getraa write setraa;
+    function getrab: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrab(const a:Vec3);property rab:Vec3 read getrab write setrab;
+    function getrag: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrag(const a:Vec3);property rag:Vec3 read getrag write setrag;
+    function getrar: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrar(const a:Vec3);property rar:Vec3 read getrar write setrar;
+    function getrba: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrba(const a:Vec3);property rba:Vec3 read getrba write setrba;
+    function getrbb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrbb(const a:Vec3);property rbb:Vec3 read getrbb write setrbb;
+    function getrbg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrbg(const a:Vec3);property rbg:Vec3 read getrbg write setrbg;
+    function getrbr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrbr(const a:Vec3);property rbr:Vec3 read getrbr write setrbr;
+    function getrga: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrga(const a:Vec3);property rga:Vec3 read getrga write setrga;
+    function getrgb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrgb(const a:Vec3);property rgb:Vec3 read getrgb write setrgb;
+    function getrgg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrgg(const a:Vec3);property rgg:Vec3 read getrgg write setrgg;
+    function getrgr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrgr(const a:Vec3);property rgr:Vec3 read getrgr write setrgr;
+    function getrra: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrra(const a:Vec3);property rra:Vec3 read getrra write setrra;
+    function getrrb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrrb(const a:Vec3);property rrb:Vec3 read getrrb write setrrb;
+    function getrrg: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrrg(const a:Vec3);property rrg:Vec3 read getrrg write setrrg;
+    function getrrr: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}procedure setrrr(const a:Vec3);property rrr:Vec3 read getrrr write setrrr;
 
-    function getyz: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setyz(const a:Vec2);
-    property yz:Vec2 read getyz write setyz;
-
-    function getyx: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setyx(const a:Vec2);
-    property yx:Vec2 read getyx write setyx;
-
-    function getzw: Vec2;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setzw(const a:Vec2);
-    property zw:Vec2 read getzw write setzw;
-
-
-    function getrgb: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setrgb(const a:Vec3);
-    property rgb:Vec3 read getrgb write setrgb;
-
-    function getxyz: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
-    procedure setxyz(const a:Vec3);
-    property xyz:Vec3 read getxyz write setxyz;
-
-
-    function yzw: Vec3;{$IFNDEF DEBUG} inline;{$ENDIF}
 
     case RecType: byte of
       0:(x, y, z, w: TVecType);
@@ -456,7 +631,7 @@ type
     class destructor DestroyClass;
     class procedure LoadTexture(var bitmap:TBitmap32;const FileName:String);static;
 
-    procedure updateFrame;
+    procedure SetTimeToSystemClock;
     constructor Create;virtual;
     destructor Destroy; override;
     procedure RenderTo(bitmap:TBitmap32);overload;virtual;
@@ -851,7 +1026,7 @@ begin
 end;
 
 
-procedure TShader.updateFrame;
+procedure TShader.SetTimeToSystemClock;
 begin
   iGlobalTime := StopWatch.GetTimeStamp/2500000;
 
@@ -1657,6 +1832,158 @@ begin
   z := az;
 end;
 
+function Vec3.getxx: Vec2; begin   Result.x := x;   Result.y := x;  end;
+function Vec3.getxy: Vec2; begin   Result.x := x;   Result.y := y;  end;
+function Vec3.getxz: Vec2; begin   Result.x := x;   Result.y := z;  end;
+function Vec3.getyx: Vec2; begin   Result.x := y;   Result.y := x;  end;
+function Vec3.getyy: Vec2; begin   Result.x := y;   Result.y := y;  end;
+function Vec3.getyz: Vec2; begin   Result.x := y;   Result.y := z;  end;
+function Vec3.getzx: Vec2; begin   Result.x := z;   Result.y := x;  end;
+function Vec3.getzy: Vec2; begin   Result.x := z;   Result.y := y;  end;
+function Vec3.getzz: Vec2; begin   Result.x := z;   Result.y := z;  end;
+function Vec3.getxxx: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := x;  end;
+function Vec3.getxxy: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := y;  end;
+function Vec3.getxxz: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := z;  end;
+function Vec3.getxyx: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := x;  end;
+function Vec3.getxyy: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := y;  end;
+function Vec3.getxyz: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := z;  end;
+function Vec3.getxzx: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := x;  end;
+function Vec3.getxzy: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := y;  end;
+function Vec3.getxzz: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := z;  end;
+function Vec3.getyxx: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := x;  end;
+function Vec3.getyxy: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := y;  end;
+function Vec3.getyxz: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := z;  end;
+function Vec3.getyyx: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := x;  end;
+function Vec3.getyyy: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := y;  end;
+function Vec3.getyyz: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := z;  end;
+function Vec3.getyzx: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := x;  end;
+function Vec3.getyzy: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := y;  end;
+function Vec3.getyzz: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := z;  end;
+function Vec3.getzxx: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := x;  end;
+function Vec3.getzxy: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := y;  end;
+function Vec3.getzxz: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := z;  end;
+function Vec3.getzyx: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := x;  end;
+function Vec3.getzyy: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := y;  end;
+function Vec3.getzyz: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := z;  end;
+function Vec3.getzzx: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := x;  end;
+function Vec3.getzzy: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := y;  end;
+function Vec3.getzzz: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := z;  end;
+
+procedure Vec3.setxx (const a: Vec2); begin Self.x := x; Self.x := y; end;
+procedure Vec3.setxy (const a: Vec2); begin Self.x := x; Self.y := y; end;
+procedure Vec3.setxz (const a: Vec2); begin Self.x := x; Self.z := y; end;
+procedure Vec3.setyx (const a: Vec2); begin Self.y := x; Self.x := y; end;
+procedure Vec3.setyy (const a: Vec2); begin Self.y := x; Self.y := y; end;
+procedure Vec3.setyz (const a: Vec2); begin Self.y := x; Self.z := y; end;
+procedure Vec3.setzx (const a: Vec2); begin Self.z := x; Self.x := y; end;
+procedure Vec3.setzy (const a: Vec2); begin Self.z := x; Self.y := y; end;
+procedure Vec3.setzz (const a: Vec2); begin Self.z := x; Self.z := y; end;
+procedure Vec3.setxxx(const a: Vec3); begin Self.x := x; Self.x := y; Self.x := z;  end;
+procedure Vec3.setxxy(const a: Vec3); begin Self.x := x; Self.x := y; Self.y := z;  end;
+procedure Vec3.setxxz(const a: Vec3); begin Self.x := x; Self.x := y; Self.z := z;  end;
+procedure Vec3.setxyx(const a: Vec3); begin Self.x := x; Self.y := y; Self.x := z;  end;
+procedure Vec3.setxyy(const a: Vec3); begin Self.x := x; Self.y := y; Self.y := z;  end;
+procedure Vec3.setxyz(const a: Vec3); begin Self.x := x; Self.y := y; Self.z := z;  end;
+procedure Vec3.setxzx(const a: Vec3); begin Self.x := x; Self.z := y; Self.x := z;  end;
+procedure Vec3.setxzy(const a: Vec3); begin Self.x := x; Self.z := y; Self.y := z;  end;
+procedure Vec3.setxzz(const a: Vec3); begin Self.x := x; Self.z := y; Self.z := z;  end;
+procedure Vec3.setyxx(const a: Vec3); begin Self.y := x; Self.x := y; Self.x := z;  end;
+procedure Vec3.setyxy(const a: Vec3); begin Self.y := x; Self.x := y; Self.y := z;  end;
+procedure Vec3.setyxz(const a: Vec3); begin Self.y := x; Self.x := y; Self.z := z;  end;
+procedure Vec3.setyyx(const a: Vec3); begin Self.y := x; Self.y := y; Self.x := z;  end;
+procedure Vec3.setyyy(const a: Vec3); begin Self.y := x; Self.y := y; Self.y := z;  end;
+procedure Vec3.setyyz(const a: Vec3); begin Self.y := x; Self.y := y; Self.z := z;  end;
+procedure Vec3.setyzx(const a: Vec3); begin Self.y := x; Self.z := y; Self.x := z;  end;
+procedure Vec3.setyzy(const a: Vec3); begin Self.y := x; Self.z := y; Self.y := z;  end;
+procedure Vec3.setyzz(const a: Vec3); begin Self.y := x; Self.z := y; Self.z := z;  end;
+procedure Vec3.setzxx(const a: Vec3); begin Self.z := x; Self.x := y; Self.x := z;  end;
+procedure Vec3.setzxy(const a: Vec3); begin Self.z := x; Self.x := y; Self.y := z;  end;
+procedure Vec3.setzxz(const a: Vec3); begin Self.z := x; Self.x := y; Self.z := z;  end;
+procedure Vec3.setzyx(const a: Vec3); begin Self.z := x; Self.y := y; Self.x := z;  end;
+procedure Vec3.setzyy(const a: Vec3); begin Self.z := x; Self.y := y; Self.y := z;  end;
+procedure Vec3.setzyz(const a: Vec3); begin Self.z := x; Self.y := y; Self.z := z;  end;
+procedure Vec3.setzzx(const a: Vec3); begin Self.z := x; Self.z := y; Self.x := z;  end;
+procedure Vec3.setzzy(const a: Vec3); begin Self.z := x; Self.z := y; Self.y := z;  end;
+procedure Vec3.setzzz(const a: Vec3); begin Self.z := x; Self.z := y; Self.z := z;  end;
+
+
+function Vec3.getbb: Vec2; begin   Result.x:= b;   Result.y := b;  end;
+function Vec3.getbg: Vec2; begin   Result.x:= b;   Result.y := g;  end;
+function Vec3.getbr: Vec2; begin   Result.x:= b;   Result.y := r;  end;
+function Vec3.getgb: Vec2; begin   Result.x:= g;   Result.y := b;  end;
+function Vec3.getgg: Vec2; begin   Result.x:= g;   Result.y := g;  end;
+function Vec3.getgr: Vec2; begin   Result.x:= g;   Result.y := r;  end;
+function Vec3.getrb: Vec2; begin   Result.x:= r;   Result.y := b;  end;
+function Vec3.getrg: Vec2; begin   Result.x:= r;   Result.y := g;  end;
+function Vec3.getrr: Vec2; begin   Result.x:= r;   Result.y := r;  end;
+function Vec3.getbbb: Vec3; begin   Result.r := b;   Result.g := b;   Result.b := b;  end;
+function Vec3.getbbg: Vec3; begin   Result.r := b;   Result.g := b;   Result.b := g;  end;
+function Vec3.getbbr: Vec3; begin   Result.r := b;   Result.g := b;   Result.b := r;  end;
+function Vec3.getbgb: Vec3; begin   Result.r := b;   Result.g := g;   Result.b := b;  end;
+function Vec3.getbgg: Vec3; begin   Result.r := b;   Result.g := g;   Result.b := g;  end;
+function Vec3.getbgr: Vec3; begin   Result.r := b;   Result.g := g;   Result.b := r;  end;
+function Vec3.getbrb: Vec3; begin   Result.r := b;   Result.g := r;   Result.b := b;  end;
+function Vec3.getbrg: Vec3; begin   Result.r := b;   Result.g := r;   Result.b := g;  end;
+function Vec3.getbrr: Vec3; begin   Result.r := b;   Result.g := r;   Result.b := r;  end;
+function Vec3.getgbb: Vec3; begin   Result.r := g;   Result.g := b;   Result.b := b;  end;
+function Vec3.getgbg: Vec3; begin   Result.r := g;   Result.g := b;   Result.b := g;  end;
+function Vec3.getgbr: Vec3; begin   Result.r := g;   Result.g := b;   Result.b := r;  end;
+function Vec3.getggb: Vec3; begin   Result.r := g;   Result.g := g;   Result.b := b;  end;
+function Vec3.getggg: Vec3; begin   Result.r := g;   Result.g := g;   Result.b := g;  end;
+function Vec3.getggr: Vec3; begin   Result.r := g;   Result.g := g;   Result.b := r;  end;
+function Vec3.getgrb: Vec3; begin   Result.r := g;   Result.g := r;   Result.b := b;  end;
+function Vec3.getgrg: Vec3; begin   Result.r := g;   Result.g := r;   Result.b := g;  end;
+function Vec3.getgrr: Vec3; begin   Result.r := g;   Result.g := r;   Result.b := r;  end;
+function Vec3.getrbb: Vec3; begin   Result.r := r;   Result.g := b;   Result.b := b;  end;
+function Vec3.getrbg: Vec3; begin   Result.r := r;   Result.g := b;   Result.b := g;  end;
+function Vec3.getrbr: Vec3; begin   Result.r := r;   Result.g := b;   Result.b := r;  end;
+function Vec3.getrgb: Vec3; begin   Result.r := r;   Result.g := g;   Result.b := b;  end;
+function Vec3.getrgg: Vec3; begin   Result.r := r;   Result.g := g;   Result.b := g;  end;
+function Vec3.getrgr: Vec3; begin   Result.r := r;   Result.g := g;   Result.b := r;  end;
+function Vec3.getrrb: Vec3; begin   Result.r := r;   Result.g := r;   Result.b := b;  end;
+function Vec3.getrrg: Vec3; begin   Result.r := r;   Result.g := r;   Result.b := g;  end;
+function Vec3.getrrr: Vec3; begin   Result.r := r;   Result.g := r;   Result.b := r;  end;
+
+procedure Vec3.setbb(const a: Vec2); begin   Self.b := r;   Self.b := g;  end;
+procedure Vec3.setbg(const a: Vec2); begin   Self.b := r;   Self.g := g;  end;
+procedure Vec3.setbr(const a: Vec2); begin   Self.b := r;   Self.r := g;  end;
+procedure Vec3.setgb(const a: Vec2); begin   Self.g := r;   Self.b := g;  end;
+procedure Vec3.setgg(const a: Vec2); begin   Self.g := r;   Self.g := g;  end;
+procedure Vec3.setgr(const a: Vec2); begin   Self.g := r;   Self.r := g;  end;
+procedure Vec3.setrb(const a: Vec2); begin   Self.r := r;   Self.b := g;  end;
+procedure Vec3.setrg(const a: Vec2); begin   Self.r := r;   Self.g := g;  end;
+procedure Vec3.setrr(const a: Vec2); begin   Self.r := r;   Self.r := g;  end;
+procedure Vec3.setbbb(const a: Vec3); begin   Self.b := r;   Self.b := g;   Self.b := b;  end;
+procedure Vec3.setbbg(const a: Vec3); begin   Self.b := r;   Self.b := g;   Self.g := b;  end;
+procedure Vec3.setbbr(const a: Vec3); begin   Self.b := r;   Self.b := g;   Self.r := b;  end;
+procedure Vec3.setbgb(const a: Vec3); begin   Self.b := r;   Self.g := g;   Self.b := b;  end;
+procedure Vec3.setbgg(const a: Vec3); begin   Self.b := r;   Self.g := g;   Self.g := b;  end;
+procedure Vec3.setbgr(const a: Vec3); begin   Self.b := r;   Self.g := g;   Self.r := b;  end;
+procedure Vec3.setbrb(const a: Vec3); begin   Self.b := r;   Self.r := g;   Self.b := b;  end;
+procedure Vec3.setbrg(const a: Vec3); begin   Self.b := r;   Self.r := g;   Self.g := b;  end;
+procedure Vec3.setbrr(const a: Vec3); begin   Self.b := r;   Self.r := g;   Self.r := b;  end;
+procedure Vec3.setgbb(const a: Vec3); begin   Self.g := r;   Self.b := g;   Self.b := b;  end;
+procedure Vec3.setgbg(const a: Vec3); begin   Self.g := r;   Self.b := g;   Self.g := b;  end;
+procedure Vec3.setgbr(const a: Vec3); begin   Self.g := r;   Self.b := g;   Self.r := b;  end;
+procedure Vec3.setggb(const a: Vec3); begin   Self.g := r;   Self.g := g;   Self.b := b;  end;
+procedure Vec3.setggg(const a: Vec3); begin   Self.g := r;   Self.g := g;   Self.g := b;  end;
+procedure Vec3.setggr(const a: Vec3); begin   Self.g := r;   Self.g := g;   Self.r := b;  end;
+procedure Vec3.setgrb(const a: Vec3); begin   Self.g := r;   Self.r := g;   Self.b := b;  end;
+procedure Vec3.setgrg(const a: Vec3); begin   Self.g := r;   Self.r := g;   Self.g := b;  end;
+procedure Vec3.setgrr(const a: Vec3); begin   Self.g := r;   Self.r := g;   Self.r := b;  end;
+procedure Vec3.setrbb(const a: Vec3); begin   Self.r := r;   Self.b := g;   Self.b := b;  end;
+procedure Vec3.setrbg(const a: Vec3); begin   Self.r := r;   Self.b := g;   Self.g := b;  end;
+procedure Vec3.setrbr(const a: Vec3); begin   Self.r := r;   Self.b := g;   Self.r := b;  end;
+procedure Vec3.setrgb(const a: Vec3); begin   Self.r := r;   Self.g := g;   Self.b := b;  end;
+procedure Vec3.setrgg(const a: Vec3); begin   Self.r := r;   Self.g := g;   Self.g := b;  end;
+procedure Vec3.setrgr(const a: Vec3); begin   Self.r := r;   Self.g := g;   Self.r := b;  end;
+procedure Vec3.setrrb(const a: Vec3); begin   Self.r := r;   Self.r := g;   Self.b := b;  end;
+procedure Vec3.setrrg(const a: Vec3); begin   Self.r := r;   Self.r := g;   Self.g := b;  end;
+procedure Vec3.setrrr(const a: Vec3); begin   Self.r := r;   Self.r := g;   Self.r := b;  end;
+
+
+
+
 function Vec3.Cross(const b: Vec3): Vec3;
 begin
   Result := Vec3.create(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
@@ -1831,11 +2158,6 @@ begin
   z := z * l;
 end;
 
-function Vec3.rg: Vec2;
-begin
-  Result.x := r;
-  Result.y := g;
-end;
 
 class operator Vec3.Subtract(const a: Vec2; const b: Vec3): Vec3;
 begin
@@ -1851,145 +2173,6 @@ begin
   Result.z := a.z;
 end;
 
-function Vec3.getxy: Vec2;
-begin
-  Result.x := x;
-  Result.y := y;
-end;
-
-procedure Vec3.SetXy(const a:Vec2);
-begin
-  x := a.x;
-  y := a.y;
-end;
-
-
-function Vec3.xxy: vec3;
-begin
-  Result.x := x;
-  Result.y := x;
-  Result.z := y;
-end;
-
-function Vec3.xyx: vec3;
-begin
-  Result.x := x;
-  Result.y := y;
-  Result.z := x;
-end;
-
-function Vec3.xyy: vec3;
-begin
-  Result.x := x;
-  Result.y := y;
-  Result.z := y;
-end;
-
-function Vec3.xyz: vec3;
-begin
-  Result := self;
-end;
-
-function Vec3.GetXZ: Vec2;
-begin
-  Result.x := x;
-  Result.y := z;
-end;
-
-function Vec3.getyz: Vec2;
-begin
-  Result.x := y;
-  Result.y := z;
-end;
-
-function Vec3.GetZX: Vec2;
-begin
-  Result.x := z;
-  Result.y := x;
-end;
-
-procedure Vec3.SetXZ(const a:Vec2);
-begin
-  x := a.x;
-  z := a.y;
-end;
-
-procedure Vec3.SetYZ(const Value: vec2);
-begin
-  y := Value.x;
-  z := Value.y;
-end;
-
-procedure Vec3.SetZX(const Value: Vec2);
-begin
-  z := Value.x;
-  x := Value.y;
-end;
-
-function Vec3.yxx: vec3;
-begin
-  Result.x := y;
-  Result.y := x;
-  Result.z := x;
-end;
-
-function Vec3.yxy: vec3;
-begin
-  Result.x := y;
-  Result.y := x;
-  Result.z := y;
-end;
-
-function Vec3.yxz: vec3;
-begin
-  Result.x := y;
-  Result.y := x;
-  Result.z := z;
-end;
-
-function Vec3.yyx: vec3;
-begin
-  Result.x := y;
-  Result.y := y;
-  Result.z := x;
-end;
-
-
-function Vec3.yzx: vec3;
-begin
-  Result.x := y;
-  Result.y := z;
-  Result.z := x;
-end;
-
-function Vec3.zxy: vec3;
-begin
-  Result.x := z;
-  Result.y := x;
-  Result.z := y;
-
-end;
-
-function Vec3.zy: Vec2;
-begin
-  Result.x := z;
-  Result.y := y;
-end;
-
-function Vec3.zyx: vec3;
-begin
-  Result.x := z;
-  Result.y := y;
-  Result.z := x;
-end;
-
-function Vec3.zzx: vec3;
-begin
-  Result.x := z;
-  Result.y := z;
-  Result.z := x;
-
-end;
 
 class operator Vec3.Subtract(const a, b: Vec3): Vec3;
 begin
@@ -2850,57 +3033,6 @@ begin
   Result.w := a.w * b;
 end;
 
-function Vec4.getxy: Vec2;
-begin
-  Result.x := x;
-  Result.y := y;
-end;
-
-function Vec4.getxyz: Vec3;
-begin
-  Result.x := x;
-  Result.y := y;
-  Result.z := z;
-end;
-
-function Vec4.getxz: Vec2;
-begin
-  Result.x := x;
-  Result.y := z;
-end;
-
-function Vec4.getyw: Vec2;
-begin
-  Result.x := y;
-  Result.y := w;
-end;
-
-function Vec4.getyx: Vec2;
-begin
-  Result.x := y;
-  Result.y := x;
-
-end;
-
-function Vec4.getyz: Vec2;
-begin
-  Result.x := y;
-  Result.y := z;
-end;
-
-function Vec4.getzw: Vec2;
-begin
-  Result.x := z;
-  Result.y := w;
-end;
-
-function Vec4.yzw: Vec3;
-begin
-  Result.x := y;
-  Result.y := z;
-  Result.z := w;
-end;
-
 class operator Vec4.Multiply(const a: vec4; const b: Vec3): Vec4;
 begin
   Result.x := a.x*b.x;
@@ -2917,62 +3049,6 @@ begin
   Result.w := -a.w;
 end;
 
-function Vec4.getrgb: Vec3;
-begin
-  Result.r := r;
-  Result.g := g;
-  Result.b := b;
-end;
-
-procedure Vec4.setrgb(const a: Vec3);
-begin
-  r := a.r;
-  g := a.g;
-  b := a.b;
-end;
-
-procedure Vec4.setxy(const a: Vec2);
-begin
-  x := a.x;
-  y := a.y;
-end;
-
-procedure Vec4.setxyz(const a: Vec3);
-begin
-  x := a.x;
-  y := a.y;
-  z := a.z;
-end;
-
-procedure Vec4.setxz(const a: Vec2);
-begin
-  x := a.x;
-  z := a.y;
-end;
-
-procedure Vec4.setyw(const a: Vec2);
-begin
-  y := a.x;
-  w := a.y;
-end;
-
-procedure Vec4.setyx(const a: Vec2);
-begin
-  y := a.x;
-  x := a.y;
-end;
-
-procedure Vec4.setyz(const a: Vec2);
-begin
-  y := a.x;
-  z := a.y;
-end;
-
-procedure Vec4.setzw(const a: Vec2);
-begin
-  z := a.x;
-  w := a.y;
-end;
 
 class operator Vec4.Multiply(const a: TVecType; const b: Vec4): Vec4;
 begin
@@ -2982,6 +3058,331 @@ begin
   Result.w := a*b.w;
 
 end;
+
+function Vec4.getww: Vec2; begin   Result.x := w;   Result.y := w;  end;
+function Vec4.getwx: Vec2; begin   Result.x := w;   Result.y := x;  end;
+function Vec4.getwy: Vec2; begin   Result.x := w;   Result.y := y;  end;
+function Vec4.getwz: Vec2; begin   Result.x := w;   Result.y := z;  end;
+function Vec4.getxw: Vec2; begin   Result.x := x;   Result.y := w;  end;
+function Vec4.getxx: Vec2; begin   Result.x := x;   Result.y := x;  end;
+function Vec4.getxy: Vec2; begin   Result.x := x;   Result.y := y;  end;
+function Vec4.getxz: Vec2; begin   Result.x := x;   Result.y := z;  end;
+function Vec4.getyw: Vec2; begin   Result.x := y;   Result.y := w;  end;
+function Vec4.getyx: Vec2; begin   Result.x := y;   Result.y := x;  end;
+function Vec4.getyy: Vec2; begin   Result.x := y;   Result.y := y;  end;
+function Vec4.getyz: Vec2; begin   Result.x := y;   Result.y := z;  end;
+function Vec4.getzw: Vec2; begin   Result.x := z;   Result.y := w;  end;
+function Vec4.getzx: Vec2; begin   Result.x := z;   Result.y := x;  end;
+function Vec4.getzy: Vec2; begin   Result.x := z;   Result.y := y;  end;
+function Vec4.getzz: Vec2; begin   Result.x := z;   Result.y := z;  end;
+function Vec4.getwww: Vec3; begin   Result.x := w;   Result.y := w;   Result.z := w;  end;
+function Vec4.getwwx: Vec3; begin   Result.x := w;   Result.y := w;   Result.z := x;  end;
+function Vec4.getwwy: Vec3; begin   Result.x := w;   Result.y := w;   Result.z := y;  end;
+function Vec4.getwwz: Vec3; begin   Result.x := w;   Result.y := w;   Result.z := z;  end;
+function Vec4.getwxw: Vec3; begin   Result.x := w;   Result.y := x;   Result.z := w;  end;
+function Vec4.getwxx: Vec3; begin   Result.x := w;   Result.y := x;   Result.z := x;  end;
+function Vec4.getwxy: Vec3; begin   Result.x := w;   Result.y := x;   Result.z := y;  end;
+function Vec4.getwxz: Vec3; begin   Result.x := w;   Result.y := x;   Result.z := z;  end;
+function Vec4.getwyw: Vec3; begin   Result.x := w;   Result.y := y;   Result.z := w;  end;
+function Vec4.getwyx: Vec3; begin   Result.x := w;   Result.y := y;   Result.z := x;  end;
+function Vec4.getwyy: Vec3; begin   Result.x := w;   Result.y := y;   Result.z := y;  end;
+function Vec4.getwyz: Vec3; begin   Result.x := w;   Result.y := y;   Result.z := z;  end;
+function Vec4.getwzw: Vec3; begin   Result.x := w;   Result.y := z;   Result.z := w;  end;
+function Vec4.getwzx: Vec3; begin   Result.x := w;   Result.y := z;   Result.z := x;  end;
+function Vec4.getwzy: Vec3; begin   Result.x := w;   Result.y := z;   Result.z := y;  end;
+function Vec4.getwzz: Vec3; begin   Result.x := w;   Result.y := z;   Result.z := z;  end;
+function Vec4.getxww: Vec3; begin   Result.x := x;   Result.y := w;   Result.z := w;  end;
+function Vec4.getxwx: Vec3; begin   Result.x := x;   Result.y := w;   Result.z := x;  end;
+function Vec4.getxwy: Vec3; begin   Result.x := x;   Result.y := w;   Result.z := y;  end;
+function Vec4.getxwz: Vec3; begin   Result.x := x;   Result.y := w;   Result.z := z;  end;
+function Vec4.getxxw: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := w;  end;
+function Vec4.getxxx: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := x;  end;
+function Vec4.getxxy: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := y;  end;
+function Vec4.getxxz: Vec3; begin   Result.x := x;   Result.y := x;   Result.z := z;  end;
+function Vec4.getxyw: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := w;  end;
+function Vec4.getxyx: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := x;  end;
+function Vec4.getxyy: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := y;  end;
+function Vec4.getxyz: Vec3; begin   Result.x := x;   Result.y := y;   Result.z := z;  end;
+function Vec4.getxzw: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := w;  end;
+function Vec4.getxzx: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := x;  end;
+function Vec4.getxzy: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := y;  end;
+function Vec4.getxzz: Vec3; begin   Result.x := x;   Result.y := z;   Result.z := z;  end;
+function Vec4.getyww: Vec3; begin   Result.x := y;   Result.y := w;   Result.z := w;  end;
+function Vec4.getywx: Vec3; begin   Result.x := y;   Result.y := w;   Result.z := x;  end;
+function Vec4.getywy: Vec3; begin   Result.x := y;   Result.y := w;   Result.z := y;  end;
+function Vec4.getywz: Vec3; begin   Result.x := y;   Result.y := w;   Result.z := z;  end;
+function Vec4.getyxw: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := w;  end;
+function Vec4.getyxx: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := x;  end;
+function Vec4.getyxy: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := y;  end;
+function Vec4.getyxz: Vec3; begin   Result.x := y;   Result.y := x;   Result.z := z;  end;
+function Vec4.getyyw: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := w;  end;
+function Vec4.getyyx: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := x;  end;
+function Vec4.getyyy: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := y;  end;
+function Vec4.getyyz: Vec3; begin   Result.x := y;   Result.y := y;   Result.z := z;  end;
+function Vec4.getyzw: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := w;  end;
+function Vec4.getyzx: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := x;  end;
+function Vec4.getyzy: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := y;  end;
+function Vec4.getyzz: Vec3; begin   Result.x := y;   Result.y := z;   Result.z := z;  end;
+function Vec4.getzww: Vec3; begin   Result.x := z;   Result.y := w;   Result.z := w;  end;
+function Vec4.getzwx: Vec3; begin   Result.x := z;   Result.y := w;   Result.z := x;  end;
+function Vec4.getzwy: Vec3; begin   Result.x := z;   Result.y := w;   Result.z := y;  end;
+function Vec4.getzwz: Vec3; begin   Result.x := z;   Result.y := w;   Result.z := z;  end;
+function Vec4.getzxw: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := w;  end;
+function Vec4.getzxx: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := x;  end;
+function Vec4.getzxy: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := y;  end;
+function Vec4.getzxz: Vec3; begin   Result.x := z;   Result.y := x;   Result.z := z;  end;
+function Vec4.getzyw: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := w;  end;
+function Vec4.getzyx: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := x;  end;
+function Vec4.getzyy: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := y;  end;
+function Vec4.getzyz: Vec3; begin   Result.x := z;   Result.y := y;   Result.z := z;  end;
+function Vec4.getzzw: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := w;  end;
+function Vec4.getzzx: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := x;  end;
+function Vec4.getzzy: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := y;  end;
+function Vec4.getzzz: Vec3; begin   Result.x := z;   Result.y := z;   Result.z := z;  end;
+
+procedure Vec4.setww(const a: Vec2); begin   Self.w := x;   Self.w := y;  end;
+procedure Vec4.setwx(const a: Vec2); begin   Self.w := x;   Self.x := y;  end;
+procedure Vec4.setwy(const a: Vec2); begin   Self.w := x;   Self.y := y;  end;
+procedure Vec4.setwz(const a: Vec2); begin   Self.w := x;   Self.z := y;  end;
+procedure Vec4.setxw(const a: Vec2); begin   Self.x := x;   Self.w := y;  end;
+procedure Vec4.setxx(const a: Vec2); begin   Self.x := x;   Self.x := y;  end;
+procedure Vec4.setxy(const a: Vec2); begin   Self.x := x;   Self.y := y;  end;
+procedure Vec4.setxz(const a: Vec2); begin   Self.x := x;   Self.z := y;  end;
+procedure Vec4.setyw(const a: Vec2); begin   Self.y := x;   Self.w := y;  end;
+procedure Vec4.setyx(const a: Vec2); begin   Self.y := x;   Self.x := y;  end;
+procedure Vec4.setyy(const a: Vec2); begin   Self.y := x;   Self.y := y;  end;
+procedure Vec4.setyz(const a: Vec2); begin   Self.y := x;   Self.z := y;  end;
+procedure Vec4.setzw(const a: Vec2); begin   Self.z := x;   Self.w := y;  end;
+procedure Vec4.setzx(const a: Vec2); begin   Self.z := x;   Self.x := y;  end;
+procedure Vec4.setzy(const a: Vec2); begin   Self.z := x;   Self.y := y;  end;
+procedure Vec4.setzz(const a: Vec2); begin   Self.z := x;   Self.z := y;  end;
+procedure Vec4.setwww(const a: Vec3); begin   Self.w := x;   Self.w := y;   Self.w := z;  end;
+procedure Vec4.setwwx(const a: Vec3); begin   Self.w := x;   Self.w := y;   Self.x := z;  end;
+procedure Vec4.setwwy(const a: Vec3); begin   Self.w := x;   Self.w := y;   Self.y := z;  end;
+procedure Vec4.setwwz(const a: Vec3); begin   Self.w := x;   Self.w := y;   Self.z := z;  end;
+procedure Vec4.setwxw(const a: Vec3); begin   Self.w := x;   Self.x := y;   Self.w := z;  end;
+procedure Vec4.setwxx(const a: Vec3); begin   Self.w := x;   Self.x := y;   Self.x := z;  end;
+procedure Vec4.setwxy(const a: Vec3); begin   Self.w := x;   Self.x := y;   Self.y := z;  end;
+procedure Vec4.setwxz(const a: Vec3); begin   Self.w := x;   Self.x := y;   Self.z := z;  end;
+procedure Vec4.setwyw(const a: Vec3); begin   Self.w := x;   Self.y := y;   Self.w := z;  end;
+procedure Vec4.setwyx(const a: Vec3); begin   Self.w := x;   Self.y := y;   Self.x := z;  end;
+procedure Vec4.setwyy(const a: Vec3); begin   Self.w := x;   Self.y := y;   Self.y := z;  end;
+procedure Vec4.setwyz(const a: Vec3); begin   Self.w := x;   Self.y := y;   Self.z := z;  end;
+procedure Vec4.setwzw(const a: Vec3); begin   Self.w := x;   Self.z := y;   Self.w := z;  end;
+procedure Vec4.setwzx(const a: Vec3); begin   Self.w := x;   Self.z := y;   Self.x := z;  end;
+procedure Vec4.setwzy(const a: Vec3); begin   Self.w := x;   Self.z := y;   Self.y := z;  end;
+procedure Vec4.setwzz(const a: Vec3); begin   Self.w := x;   Self.z := y;   Self.z := z;  end;
+procedure Vec4.setxww(const a: Vec3); begin   Self.x := x;   Self.w := y;   Self.w := z;  end;
+procedure Vec4.setxwx(const a: Vec3); begin   Self.x := x;   Self.w := y;   Self.x := z;  end;
+procedure Vec4.setxwy(const a: Vec3); begin   Self.x := x;   Self.w := y;   Self.y := z;  end;
+procedure Vec4.setxwz(const a: Vec3); begin   Self.x := x;   Self.w := y;   Self.z := z;  end;
+procedure Vec4.setxxw(const a: Vec3); begin   Self.x := x;   Self.x := y;   Self.w := z;  end;
+procedure Vec4.setxxx(const a: Vec3); begin   Self.x := x;   Self.x := y;   Self.x := z;  end;
+procedure Vec4.setxxy(const a: Vec3); begin   Self.x := x;   Self.x := y;   Self.y := z;  end;
+procedure Vec4.setxxz(const a: Vec3); begin   Self.x := x;   Self.x := y;   Self.z := z;  end;
+procedure Vec4.setxyw(const a: Vec3); begin   Self.x := x;   Self.y := y;   Self.w := z;  end;
+procedure Vec4.setxyx(const a: Vec3); begin   Self.x := x;   Self.y := y;   Self.x := z;  end;
+procedure Vec4.setxyy(const a: Vec3); begin   Self.x := x;   Self.y := y;   Self.y := z;  end;
+procedure Vec4.setxyz(const a: Vec3); begin   Self.x := x;   Self.y := y;   Self.z := z;  end;
+procedure Vec4.setxzw(const a: Vec3); begin   Self.x := x;   Self.z := y;   Self.w := z;  end;
+procedure Vec4.setxzx(const a: Vec3); begin   Self.x := x;   Self.z := y;   Self.x := z;  end;
+procedure Vec4.setxzy(const a: Vec3); begin   Self.x := x;   Self.z := y;   Self.y := z;  end;
+procedure Vec4.setxzz(const a: Vec3); begin   Self.x := x;   Self.z := y;   Self.z := z;  end;
+procedure Vec4.setyww(const a: Vec3); begin   Self.y := x;   Self.w := y;   Self.w := z;  end;
+procedure Vec4.setywx(const a: Vec3); begin   Self.y := x;   Self.w := y;   Self.x := z;  end;
+procedure Vec4.setywy(const a: Vec3); begin   Self.y := x;   Self.w := y;   Self.y := z;  end;
+procedure Vec4.setywz(const a: Vec3); begin   Self.y := x;   Self.w := y;   Self.z := z;  end;
+procedure Vec4.setyxw(const a: Vec3); begin   Self.y := x;   Self.x := y;   Self.w := z;  end;
+procedure Vec4.setyxx(const a: Vec3); begin   Self.y := x;   Self.x := y;   Self.x := z;  end;
+procedure Vec4.setyxy(const a: Vec3); begin   Self.y := x;   Self.x := y;   Self.y := z;  end;
+procedure Vec4.setyxz(const a: Vec3); begin   Self.y := x;   Self.x := y;   Self.z := z;  end;
+procedure Vec4.setyyw(const a: Vec3); begin   Self.y := x;   Self.y := y;   Self.w := z;  end;
+procedure Vec4.setyyx(const a: Vec3); begin   Self.y := x;   Self.y := y;   Self.x := z;  end;
+procedure Vec4.setyyy(const a: Vec3); begin   Self.y := x;   Self.y := y;   Self.y := z;  end;
+procedure Vec4.setyyz(const a: Vec3); begin   Self.y := x;   Self.y := y;   Self.z := z;  end;
+procedure Vec4.setyzw(const a: Vec3); begin   Self.y := x;   Self.z := y;   Self.w := z;  end;
+procedure Vec4.setyzx(const a: Vec3); begin   Self.y := x;   Self.z := y;   Self.x := z;  end;
+procedure Vec4.setyzy(const a: Vec3); begin   Self.y := x;   Self.z := y;   Self.y := z;  end;
+procedure Vec4.setyzz(const a: Vec3); begin   Self.y := x;   Self.z := y;   Self.z := z;  end;
+procedure Vec4.setzww(const a: Vec3); begin   Self.z := x;   Self.w := y;   Self.w := z;  end;
+procedure Vec4.setzwx(const a: Vec3); begin   Self.z := x;   Self.w := y;   Self.x := z;  end;
+procedure Vec4.setzwy(const a: Vec3); begin   Self.z := x;   Self.w := y;   Self.y := z;  end;
+procedure Vec4.setzwz(const a: Vec3); begin   Self.z := x;   Self.w := y;   Self.z := z;  end;
+procedure Vec4.setzxw(const a: Vec3); begin   Self.z := x;   Self.x := y;   Self.w := z;  end;
+procedure Vec4.setzxx(const a: Vec3); begin   Self.z := x;   Self.x := y;   Self.x := z;  end;
+procedure Vec4.setzxy(const a: Vec3); begin   Self.z := x;   Self.x := y;   Self.y := z;  end;
+procedure Vec4.setzxz(const a: Vec3); begin   Self.z := x;   Self.x := y;   Self.z := z;  end;
+procedure Vec4.setzyw(const a: Vec3); begin   Self.z := x;   Self.y := y;   Self.w := z;  end;
+procedure Vec4.setzyx(const a: Vec3); begin   Self.z := x;   Self.y := y;   Self.x := z;  end;
+procedure Vec4.setzyy(const a: Vec3); begin   Self.z := x;   Self.y := y;   Self.y := z;  end;
+procedure Vec4.setzyz(const a: Vec3); begin   Self.z := x;   Self.y := y;   Self.z := z;  end;
+procedure Vec4.setzzw(const a: Vec3); begin   Self.z := x;   Self.z := y;   Self.w := z;  end;
+procedure Vec4.setzzx(const a: Vec3); begin   Self.z := x;   Self.z := y;   Self.x := z;  end;
+procedure Vec4.setzzy(const a: Vec3); begin   Self.z := x;   Self.z := y;   Self.y := z;  end;
+procedure Vec4.setzzz(const a: Vec3); begin   Self.z := x;   Self.z := y;   Self.z := z;  end;
+
+
+function Vec4.getaa : Vec2; begin Result.x := a; Result.y := a; end;
+function Vec4.getab : Vec2; begin Result.x := a; Result.y := b; end;
+function Vec4.getag : Vec2; begin Result.x := a; Result.y := g; end;
+function Vec4.getar : Vec2; begin Result.x := a; Result.y := r; end;
+function Vec4.getba : Vec2; begin Result.x := b; Result.y := a; end;
+function Vec4.getbb : Vec2; begin Result.x := b; Result.y := b; end;
+function Vec4.getbg : Vec2; begin Result.x := b; Result.y := g; end;
+function Vec4.getbr : Vec2; begin Result.x := b; Result.y := r; end;
+function Vec4.getga : Vec2; begin Result.x := g; Result.y := a; end;
+function Vec4.getgb : Vec2; begin Result.x := g; Result.y := b; end;
+function Vec4.getgg : Vec2; begin Result.x := g; Result.y := g; end;
+function Vec4.getgr : Vec2; begin Result.x := g; Result.y := r; end;
+function Vec4.getra : Vec2; begin Result.x := r; Result.y := a; end;
+function Vec4.getrb : Vec2; begin Result.x := r; Result.y := b; end;
+function Vec4.getrg : Vec2; begin Result.x := r; Result.y := g; end;
+function Vec4.getrr : Vec2; begin Result.x := r; Result.y := r; end;
+function Vec4.getaaa: Vec3; begin Result.r := a; Result.g := a; Result.b := a; end;
+function Vec4.getaab: Vec3; begin Result.r := a; Result.g := a; Result.b := b; end;
+function Vec4.getaag: Vec3; begin Result.r := a; Result.g := a; Result.b := g; end;
+function Vec4.getaar: Vec3; begin Result.r := a; Result.g := a; Result.b := r; end;
+function Vec4.getaba: Vec3; begin Result.r := a; Result.g := b; Result.b := a; end;
+function Vec4.getabb: Vec3; begin Result.r := a; Result.g := b; Result.b := b; end;
+function Vec4.getabg: Vec3; begin Result.r := a; Result.g := b; Result.b := g; end;
+function Vec4.getabr: Vec3; begin Result.r := a; Result.g := b; Result.b := r; end;
+function Vec4.getaga: Vec3; begin Result.r := a; Result.g := g; Result.b := a; end;
+function Vec4.getagb: Vec3; begin Result.r := a; Result.g := g; Result.b := b; end;
+function Vec4.getagg: Vec3; begin Result.r := a; Result.g := g; Result.b := g; end;
+function Vec4.getagr: Vec3; begin Result.r := a; Result.g := g; Result.b := r; end;
+function Vec4.getara: Vec3; begin Result.r := a; Result.g := r; Result.b := a; end;
+function Vec4.getarb: Vec3; begin Result.r := a; Result.g := r; Result.b := b; end;
+function Vec4.getarg: Vec3; begin Result.r := a; Result.g := r; Result.b := g; end;
+function Vec4.getarr: Vec3; begin Result.r := a; Result.g := r; Result.b := r; end;
+function Vec4.getbaa: Vec3; begin Result.r := b; Result.g := a; Result.b := a; end;
+function Vec4.getbab: Vec3; begin Result.r := b; Result.g := a; Result.b := b; end;
+function Vec4.getbag: Vec3; begin Result.r := b; Result.g := a; Result.b := g; end;
+function Vec4.getbar: Vec3; begin Result.r := b; Result.g := a; Result.b := r; end;
+function Vec4.getbba: Vec3; begin Result.r := b; Result.g := b; Result.b := a; end;
+function Vec4.getbbb: Vec3; begin Result.r := b; Result.g := b; Result.b := b; end;
+function Vec4.getbbg: Vec3; begin Result.r := b; Result.g := b; Result.b := g; end;
+function Vec4.getbbr: Vec3; begin Result.r := b; Result.g := b; Result.b := r; end;
+function Vec4.getbga: Vec3; begin Result.r := b; Result.g := g; Result.b := a; end;
+function Vec4.getbgb: Vec3; begin Result.r := b; Result.g := g; Result.b := b; end;
+function Vec4.getbgg: Vec3; begin Result.r := b; Result.g := g; Result.b := g; end;
+function Vec4.getbgr: Vec3; begin Result.r := b; Result.g := g; Result.b := r; end;
+function Vec4.getbra: Vec3; begin Result.r := b; Result.g := r; Result.b := a; end;
+function Vec4.getbrb: Vec3; begin Result.r := b; Result.g := r; Result.b := b; end;
+function Vec4.getbrg: Vec3; begin Result.r := b; Result.g := r; Result.b := g; end;
+function Vec4.getbrr: Vec3; begin Result.r := b; Result.g := r; Result.b := r; end;
+function Vec4.getgaa: Vec3; begin Result.r := g; Result.g := a; Result.b := a; end;
+function Vec4.getgab: Vec3; begin Result.r := g; Result.g := a; Result.b := b; end;
+function Vec4.getgag: Vec3; begin Result.r := g; Result.g := a; Result.b := g; end;
+function Vec4.getgar: Vec3; begin Result.r := g; Result.g := a; Result.b := r; end;
+function Vec4.getgba: Vec3; begin Result.r := g; Result.g := b; Result.b := a; end;
+function Vec4.getgbb: Vec3; begin Result.r := g; Result.g := b; Result.b := b; end;
+function Vec4.getgbg: Vec3; begin Result.r := g; Result.g := b; Result.b := g; end;
+function Vec4.getgbr: Vec3; begin Result.r := g; Result.g := b; Result.b := r; end;
+function Vec4.getgga: Vec3; begin Result.r := g; Result.g := g; Result.b := a; end;
+function Vec4.getggb: Vec3; begin Result.r := g; Result.g := g; Result.b := b; end;
+function Vec4.getggg: Vec3; begin Result.r := g; Result.g := g; Result.b := g; end;
+function Vec4.getggr: Vec3; begin Result.r := g; Result.g := g; Result.b := r; end;
+function Vec4.getgra: Vec3; begin Result.r := g; Result.g := r; Result.b := a; end;
+function Vec4.getgrb: Vec3; begin Result.r := g; Result.g := r; Result.b := b; end;
+function Vec4.getgrg: Vec3; begin Result.r := g; Result.g := r; Result.b := g; end;
+function Vec4.getgrr: Vec3; begin Result.r := g; Result.g := r; Result.b := r; end;
+function Vec4.getraa: Vec3; begin Result.r := r; Result.g := a; Result.b := a; end;
+function Vec4.getrab: Vec3; begin Result.r := r; Result.g := a; Result.b := b; end;
+function Vec4.getrag: Vec3; begin Result.r := r; Result.g := a; Result.b := g; end;
+function Vec4.getrar: Vec3; begin Result.r := r; Result.g := a; Result.b := r; end;
+function Vec4.getrba: Vec3; begin Result.r := r; Result.g := b; Result.b := a; end;
+function Vec4.getrbb: Vec3; begin Result.r := r; Result.g := b; Result.b := b; end;
+function Vec4.getrbg: Vec3; begin Result.r := r; Result.g := b; Result.b := g; end;
+function Vec4.getrbr: Vec3; begin Result.r := r; Result.g := b; Result.b := r; end;
+function Vec4.getrga: Vec3; begin Result.r := r; Result.g := g; Result.b := a; end;
+function Vec4.getrgb: Vec3; begin Result.r := r; Result.g := g; Result.b := b; end;
+function Vec4.getrgg: Vec3; begin Result.r := r; Result.g := g; Result.b := g; end;
+function Vec4.getrgr: Vec3; begin Result.r := r; Result.g := g; Result.b := r; end;
+function Vec4.getrra: Vec3; begin Result.r := r; Result.g := r; Result.b := a; end;
+function Vec4.getrrb: Vec3; begin Result.r := r; Result.g := r; Result.b := b; end;
+function Vec4.getrrg: Vec3; begin Result.r := r; Result.g := r; Result.b := g; end;
+function Vec4.getrrr: Vec3; begin Result.r := r; Result.g := r; Result.b := r; end;
+
+procedure Vec4.setaa (const a: Vec2); begin Self.a := r; Self.a := g; end;
+procedure Vec4.setab (const a: Vec2); begin Self.a := r; Self.b := g; end;
+procedure Vec4.setag (const a: Vec2); begin Self.a := r; Self.g := g; end;
+procedure Vec4.setar (const a: Vec2); begin Self.a := r; Self.r := g; end;
+procedure Vec4.setba (const a: Vec2); begin Self.b := r; Self.a := g; end;
+procedure Vec4.setbb (const a: Vec2); begin Self.b := r; Self.b := g; end;
+procedure Vec4.setbg (const a: Vec2); begin Self.b := r; Self.g := g; end;
+procedure Vec4.setbr (const a: Vec2); begin Self.b := r; Self.r := g; end;
+procedure Vec4.setga (const a: Vec2); begin Self.g := r; Self.a := g; end;
+procedure Vec4.setgb (const a: Vec2); begin Self.g := r; Self.b := g; end;
+procedure Vec4.setgg (const a: Vec2); begin Self.g := r; Self.g := g; end;
+procedure Vec4.setgr (const a: Vec2); begin Self.g := r; Self.r := g; end;
+procedure Vec4.setra (const a: Vec2); begin Self.r := r; Self.a := g; end;
+procedure Vec4.setrb (const a: Vec2); begin Self.r := r; Self.b := g; end;
+procedure Vec4.setrg (const a: Vec2); begin Self.r := r; Self.g := g; end;
+procedure Vec4.setrr (const a: Vec2); begin Self.r := r; Self.r := g; end;
+procedure Vec4.setaaa(const a: Vec3); begin Self.a := r; Self.a := g; Self.a := b;  end;
+procedure Vec4.setaab(const a: Vec3); begin Self.a := r; Self.a := g; Self.b := b;  end;
+procedure Vec4.setaag(const a: Vec3); begin Self.a := r; Self.a := g; Self.g := b;  end;
+procedure Vec4.setaar(const a: Vec3); begin Self.a := r; Self.a := g; Self.r := b;  end;
+procedure Vec4.setaba(const a: Vec3); begin Self.a := r; Self.b := g; Self.a := b;  end;
+procedure Vec4.setabb(const a: Vec3); begin Self.a := r; Self.b := g; Self.b := b;  end;
+procedure Vec4.setabg(const a: Vec3); begin Self.a := r; Self.b := g; Self.g := b;  end;
+procedure Vec4.setabr(const a: Vec3); begin Self.a := r; Self.b := g; Self.r := b;  end;
+procedure Vec4.setaga(const a: Vec3); begin Self.a := r; Self.g := g; Self.a := b;  end;
+procedure Vec4.setagb(const a: Vec3); begin Self.a := r; Self.g := g; Self.b := b;  end;
+procedure Vec4.setagg(const a: Vec3); begin Self.a := r; Self.g := g; Self.g := b;  end;
+procedure Vec4.setagr(const a: Vec3); begin Self.a := r; Self.g := g; Self.r := b;  end;
+procedure Vec4.setara(const a: Vec3); begin Self.a := r; Self.r := g; Self.a := b;  end;
+procedure Vec4.setarb(const a: Vec3); begin Self.a := r; Self.r := g; Self.b := b;  end;
+procedure Vec4.setarg(const a: Vec3); begin Self.a := r; Self.r := g; Self.g := b;  end;
+procedure Vec4.setarr(const a: Vec3); begin Self.a := r; Self.r := g; Self.r := b;  end;
+procedure Vec4.setbaa(const a: Vec3); begin Self.b := r; Self.a := g; Self.a := b;  end;
+procedure Vec4.setbab(const a: Vec3); begin Self.b := r; Self.a := g; Self.b := b;  end;
+procedure Vec4.setbag(const a: Vec3); begin Self.b := r; Self.a := g; Self.g := b;  end;
+procedure Vec4.setbar(const a: Vec3); begin Self.b := r; Self.a := g; Self.r := b;  end;
+procedure Vec4.setbba(const a: Vec3); begin Self.b := r; Self.b := g; Self.a := b;  end;
+procedure Vec4.setbbb(const a: Vec3); begin Self.b := r; Self.b := g; Self.b := b;  end;
+procedure Vec4.setbbg(const a: Vec3); begin Self.b := r; Self.b := g; Self.g := b;  end;
+procedure Vec4.setbbr(const a: Vec3); begin Self.b := r; Self.b := g; Self.r := b;  end;
+procedure Vec4.setbga(const a: Vec3); begin Self.b := r; Self.g := g; Self.a := b;  end;
+procedure Vec4.setbgb(const a: Vec3); begin Self.b := r; Self.g := g; Self.b := b;  end;
+procedure Vec4.setbgg(const a: Vec3); begin Self.b := r; Self.g := g; Self.g := b;  end;
+procedure Vec4.setbgr(const a: Vec3); begin Self.b := r; Self.g := g; Self.r := b;  end;
+procedure Vec4.setbra(const a: Vec3); begin Self.b := r; Self.r := g; Self.a := b;  end;
+procedure Vec4.setbrb(const a: Vec3); begin Self.b := r; Self.r := g; Self.b := b;  end;
+procedure Vec4.setbrg(const a: Vec3); begin Self.b := r; Self.r := g; Self.g := b;  end;
+procedure Vec4.setbrr(const a: Vec3); begin Self.b := r; Self.r := g; Self.r := b;  end;
+procedure Vec4.setgaa(const a: Vec3); begin Self.g := r; Self.a := g; Self.a := b;  end;
+procedure Vec4.setgab(const a: Vec3); begin Self.g := r; Self.a := g; Self.b := b;  end;
+procedure Vec4.setgag(const a: Vec3); begin Self.g := r; Self.a := g; Self.g := b;  end;
+procedure Vec4.setgar(const a: Vec3); begin Self.g := r; Self.a := g; Self.r := b;  end;
+procedure Vec4.setgba(const a: Vec3); begin Self.g := r; Self.b := g; Self.a := b;  end;
+procedure Vec4.setgbb(const a: Vec3); begin Self.g := r; Self.b := g; Self.b := b;  end;
+procedure Vec4.setgbg(const a: Vec3); begin Self.g := r; Self.b := g; Self.g := b;  end;
+procedure Vec4.setgbr(const a: Vec3); begin Self.g := r; Self.b := g; Self.r := b;  end;
+procedure Vec4.setgga(const a: Vec3); begin Self.g := r; Self.g := g; Self.a := b;  end;
+procedure Vec4.setggb(const a: Vec3); begin Self.g := r; Self.g := g; Self.b := b;  end;
+procedure Vec4.setggg(const a: Vec3); begin Self.g := r; Self.g := g; Self.g := b;  end;
+procedure Vec4.setggr(const a: Vec3); begin Self.g := r; Self.g := g; Self.r := b;  end;
+procedure Vec4.setgra(const a: Vec3); begin Self.g := r; Self.r := g; Self.a := b;  end;
+procedure Vec4.setgrb(const a: Vec3); begin Self.g := r; Self.r := g; Self.b := b;  end;
+procedure Vec4.setgrg(const a: Vec3); begin Self.g := r; Self.r := g; Self.g := b;  end;
+procedure Vec4.setgrr(const a: Vec3); begin Self.g := r; Self.r := g; Self.r := b;  end;
+procedure Vec4.setraa(const a: Vec3); begin Self.r := r; Self.a := g; Self.a := b;  end;
+procedure Vec4.setrab(const a: Vec3); begin Self.r := r; Self.a := g; Self.b := b;  end;
+procedure Vec4.setrag(const a: Vec3); begin Self.r := r; Self.a := g; Self.g := b;  end;
+procedure Vec4.setrar(const a: Vec3); begin Self.r := r; Self.a := g; Self.r := b;  end;
+procedure Vec4.setrba(const a: Vec3); begin Self.r := r; Self.b := g; Self.a := b;  end;
+procedure Vec4.setrbb(const a: Vec3); begin Self.r := r; Self.b := g; Self.b := b;  end;
+procedure Vec4.setrbg(const a: Vec3); begin Self.r := r; Self.b := g; Self.g := b;  end;
+procedure Vec4.setrbr(const a: Vec3); begin Self.r := r; Self.b := g; Self.r := b;  end;
+procedure Vec4.setrga(const a: Vec3); begin Self.r := r; Self.g := g; Self.a := b;  end;
+procedure Vec4.setrgb(const a: Vec3); begin Self.r := r; Self.g := g; Self.b := b;  end;
+procedure Vec4.setrgg(const a: Vec3); begin Self.r := r; Self.g := g; Self.g := b;  end;
+procedure Vec4.setrgr(const a: Vec3); begin Self.r := r; Self.g := g; Self.r := b;  end;
+procedure Vec4.setrra(const a: Vec3); begin Self.r := r; Self.r := g; Self.a := b;  end;
+procedure Vec4.setrrb(const a: Vec3); begin Self.r := r; Self.r := g; Self.b := b;  end;
+procedure Vec4.setrrg(const a: Vec3); begin Self.r := r; Self.r := g; Self.g := b;  end;
+procedure Vec4.setrrr(const a: Vec3); begin Self.r := r; Self.r := g; Self.r := b;  end;
 
 
 { TFrames }
