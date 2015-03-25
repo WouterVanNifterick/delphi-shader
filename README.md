@@ -6,6 +6,7 @@ This project produces an executable with more than a hundred real-time graphical
 All that is a 100% pascal implementation, without the use of exernal libraries or hardware acceleration.
 
 The project consists of 4 parts:
+
 1. A unit that implements most of the GLSL constructs.
 
 2. An application to run effects in.
