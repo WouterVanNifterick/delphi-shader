@@ -14,3 +14,6 @@ The project consists of 4 parts:
 3. More than a hundred graphical effects; most of them converted from http://www.shadertoy.com and http://glsl.heroku.com
  
 4. A program that converts GLSL code to Delphi code.
+
+####Example
+![Example](https://github.com/WouterVanNifterick/delphi-shader/raw/master/Examples/Catacombs.gif)
