@@ -81,7 +81,7 @@ begin
       I    := Vec2.Create(dot(I, Vec2.Create(I.x, -I.y)) - st, 2 * I.x * I.y - ct);
       v1.x := surfacePos.x - csty;
       v1.y := -surfacePos.y - cstx[x];
-      c    := c + system.sqrt(abs(dot(v1, I)));
+      c    := c + system.sqrt(System.abs(dot(v1, I)));
     end;
     Inc(ni);
     if c > MAX_ITER - n then

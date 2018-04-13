@@ -13,7 +13,7 @@ type
     function reflection(dir: vec3; const normal: vec3): vec3;
     function intersectSphere(const o: vec3; const d: vec3; const sphere: vec4; const color: vec3; const thres: float): float;
     function intersectScene(const p: vec3; const d: vec3): float;
-    function rayBlocked(const src: vec3; const dst: vec3): bool;
+    function rayBlocked(const src: vec3; const dst: vec3): boolean;
     function calcLight(const lpos: vec3; const lcol: vec3; const pos: vec3; const normal: vec3; const col: vec3): vec3;
     function calcLights(const pos: vec3; const normal: vec3; const col: vec3): vec3;
     function traceRay(p: vec3; d: vec3): vec3;
@@ -28,6 +28,7 @@ type
     hitposition: vec3;  // if a sphere is hit remember the position, normal and sphere
     hitnormal  : vec3;
     hitcolor   : vec3;
+    Aspect     : Float;
 
     constructor Create; override;
     procedure PrepareFrame;
@@ -72,6 +73,7 @@ end;
 
 procedure TSphereTracer.PrepareFrame;
 begin
+  aspect := resolution.x / resolution.y;
   sphere[0] := vec4.Create(system.sin(time * 1.1), system.cos(time * 0.9), -3.0 + system.sin(time * 0.8), 0.7);
   sphere[1] := vec4.Create(system.cos(time * 0.8), -system.sin(time * 1.2), -3.0 + system.cos(time * 0.9), 0.8);
   sphere[2] := vec4.Create(-system.cos(time * 1.3), system.sin(time * 0.7), -3.0 - system.cos(time * 1.0), 0.9);
@@ -137,7 +139,7 @@ begin
 end;
 
 // is anything between the points "src" (point on surface) and "dst" (light source) ?
-function TSphereTracer.rayBlocked(const src: vec3; const dst: vec3): bool;
+function TSphereTracer.rayBlocked(const src: vec3; const dst: vec3): boolean;
 var
   dir   : vec3;
   length: float;
@@ -147,10 +149,7 @@ begin
   length := system.sqrt(dot(dir, dir));
   dir    := dir / length;
   t      := intersectScene(src + dir * 0.001, -dir);
-  if (t > 0.0) and (t < length) then
-    Exit(true)
-  else
-    Exit(false);
+  Result := (t > 0.0) and (t < length);
 end;
 
 function TSphereTracer.calcLight(const lpos: vec3; const lcol: vec3; const pos: vec3; const normal: vec3; const col: vec3): vec3;
@@ -163,7 +162,7 @@ var
   specular: float;
   s       : float;
 begin
-  color := vecBlack;
+  color := vec3Black;
 
   // no lighting if point is shadowed
   if not rayBlocked(pos, lpos) then
@@ -176,9 +175,7 @@ begin
     // diffuse: light -> surface
     diffuse := dot(dir, normal);
     if diffuse > 0.0 then
-    begin
       color := color + (col * diffuse * lcol * invDist * 15.0);
-    end;
 
     // specular: reflection -> light
     refl     := reflection(pos, normal);
@@ -196,16 +193,10 @@ end;
 
 // calculate lighting for point "pos" with "normal" and color
 function TSphereTracer.calcLights(const pos: vec3; const normal: vec3; const col: vec3): vec3;
-var
-  color: vec3;
 begin
-  color := vecBlack;
-
   // iterate through all lights
-  color := color + (calcLight(lightpos[0], lightcol[0], pos, normal, col));
-  color := color + (calcLight(lightpos[1], lightcol[1], pos, normal, col));
-
-  Exit(color);
+  Result := (calcLight(lightpos[0], lightcol[0], pos, normal, col))
+          + (calcLight(lightpos[1], lightcol[1], pos, normal, col));
 end;
 
 //
@@ -220,13 +211,16 @@ var
   i     : integer;
 begin
   it     := 0;
-  color  := vecBlack;
-  origin := vecBlack;
+  color  := vec3Black;
+  origin := vec3Black;
 
   scale := 1.0;
 
-  // two iterations of reflection
-  for i := 0 to 1 do
+  // two iterations of reflection:
+//  for i := 0 to 1 do
+
+  // one iteration of reflection:
+  for i := 0 to 0 do
   begin
     t := intersectScene(p, d);
     if t < thres then
@@ -304,12 +298,10 @@ end;
 
 function TSphereTracer.RenderPixel(var gl_FragCoord: Vec2): TColor32;
 var
-  aspect: float;
   d     : vec3;
   color : vec3;
   p     : vec3;
 begin
-  aspect := resolution.x / resolution.y;
   p      := vec3.Create((gl_FragCoord.x * 2.0 / resolution.x - 1.0) * aspect, (gl_FragCoord.y * 2.0 / resolution.y - 1.0), -1.0);
   d      := normalize(p);
 

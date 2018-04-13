@@ -72,7 +72,7 @@ begin
 			g  := Vec2.Create(i,j);
 			o  := hash(n + g);
 			r  := g + o - f;
-			d  := math.max(abs(r.x), abs(r.y));
+			d  := math.max(System.abs(r.x), System.abs(r.y));
 
 			if d < md then
 			begin
@@ -109,8 +109,6 @@ begin
 	p  := p  - (at);
 	p  := p  * (3.0);
 
-	v  := 0.0;
-
 	le  := length(p);
 
 	v  := le - 1.0;
@@ -134,7 +132,6 @@ function gear( p:vec2;const at:vec2;const teeth:float;const size:float;const ang
 var v,w,le :float;
 begin
 	p  := p  - (at);
-	v  := 0.0;
 	le  := length(p);
 
 	w  := le - 0.3 * size;
@@ -155,7 +152,6 @@ function car( p:vec2;const at:vec2 ):float;
 var v,w :float; box :vec2;
 begin
 	p  := p  - (at);
-	v  := 0.0;
 	w  := length(p + Vec2.Create(-0.05,-0.32)) - 0.03;
 	v  := w;
 	w  := length(p + Vec2.Create(0.05,-0.32)) - 0.03;
@@ -169,21 +165,17 @@ end;
 
 
 function TGearMachine.layerA( const p:vec2;const seed:float ):float;
-var v,w,a :float; si :float; sr :float; sp :vec2; strut :float; st :float; ct :float;
+var v,w,a :float; si :float; sr :float; sp :vec2;
+//strut :float;
+st :float;
 begin
-	v  := 0.0;
-
 	si  := Math.floor(p.y);
 	sr  := hash(si + seed * 149.91);
 	sp  := Vec2.Create(p.x, &mod(p.y,4.0));
-	strut  := 0.0;
-	strut  := strut  + (step(abs(sp.y), 0.3));
-	strut  := strut  + (step(abs(sp.y - 0.2), 0.1));
 
 	st  := time + sr;
-	ct  := &mod(st * 3.0, 5.0 + sr) - 2.5;
 
-	v  := step(2.0, abs(voronoi(p + Vec2.Create(0.35,seed * 194.9)).x));
+	v  := step(2.0, System.Abs(voronoi(p + Vec2.Create(0.35,seed * 194.9)).x));
 
 	w  := length(sp - Vec2.Create(-2.0,0.0)) - 0.8;
 	v  := min(v, 1.0 - step(w, 0.0));
@@ -201,16 +193,14 @@ end;
 function TGearMachine.layerB( const p:vec2;const seed:float ):float;
 var v,w,a :float; si :float; sp :vec2; sr :float; strut :float; st :float; cs :float; ct :float;
 begin
-	v  := 0.0;
-
 	si  := floor(p.y / 3.0) * 3.0;
 	sp  := Vec2.Create(p.x, &mod(p.y,3.0));
 	sr  := hash(si + seed * 149.91);
 	sp.y  := sp.y  - (sr * 2.0);
 
 	strut  := 0.0;
-	strut  := strut  + (step(abs(sp.y), 0.3));
-	strut  := strut  + (step(abs(sp.y - 0.2), 0.1));
+	strut  := strut  + (step(System.Abs(sp.y), 0.3));
+	strut  := strut  + (step(System.Abs(sp.y - 0.2), 0.1));
 
 	st  := time + sr;
 
@@ -220,7 +210,7 @@ begin
 	ct  := &mod(st * cs, 5.0 + sr) - 2.5;
 
 
-	v  := step(2.0, abs(voronoi(p + Vec2.Create(0.35,seed * 194.9)).x) + strut);
+	v  := step(2.0, System.Abs(voronoi(p + Vec2.Create(0.35,seed * 194.9)).x) + strut);
 
 	w  := length(sp - Vec2.Create(-2.3,0.6)) - 0.15;
 	v  := min(v, 1.0 - step(w, 0.0));
@@ -282,8 +272,6 @@ begin
 	z  := 3.0 - system.sin(t * 0.7) * 0.1;
 	for i  :=  0 to  5-1 do
 	begin
-		f  := 1.0;
-
 		zz  := 0.3 + z;
 
 		f  := zz * 2.0 * 0.9;
@@ -293,7 +281,7 @@ begin
 			w  := layerA(Vec2.Create(p.x, p.y) * f + cam,i)
 		else
 			w  := layerB(Vec2.Create(p.x, p.y) * f + cam,i);
-		v  := mix(v, exp(-abs(zz) * 0.3 + 0.1), w);
+		v  := mix(v, exp(-System.Abs(zz) * 0.3 + 0.1), w);
 
 
 		z  := z  - (0.6);
@@ -303,7 +291,7 @@ begin
 
 
 
-	v  := 1.0 - v;// * pow(1.0 - abs(uv.x), 0.1);
+	v  := 1.0 - v;// * pow(1.0 - System.Abs(uv.x), 0.1);
 
 	Result := Tcolor32(vec3.Create(v));
 end;

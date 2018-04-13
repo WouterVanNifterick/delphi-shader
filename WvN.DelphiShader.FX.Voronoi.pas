@@ -88,7 +88,7 @@ begin
       end;
     end;
 
-  Exit(vec2.Create(sqrt(m.x), m.y));
+  Exit(vec2.Create(system.sqrt(m.x), m.y));
 end;
 
 function TVoronoi.Main(var gl_FragCoord: vec2): TColor32;

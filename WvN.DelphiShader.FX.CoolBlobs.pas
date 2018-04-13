@@ -5,12 +5,12 @@ interface
 uses GR32, Types, WvN.DelphiShader.Shader;
 
 
-//{$define ENABLE_MONTE_CARLO}
+// {$define ENABLE_MONTE_CARLO}
 {$DEFINE ENABLE_REFLECTIONS}
-//{$DEFINE ENABLE_FOG}
+// {$DEFINE ENABLE_FOG}
 {$DEFINE ENABLE_SPECULAR}
 {$DEFINE ENABLE_POINT_LIGHT}
-{$define ENABLE_POINT_LIGHT_FLARE}
+{$DEFINE ENABLE_POINT_LIGHT_FLARE}
 
 type
   C_Ray = record
@@ -108,13 +108,12 @@ uses SysUtils, Math;
 constructor TCoolBlobs.Create;
 begin
   inherited;
-  FrameProc     := PrepareFrame;
-  PixelProc     := Main;
+  FrameProc := PrepareFrame;
+  PixelProc := Main;
 {$IFDEF ENABLE_MONTE_CARLO        }
   UseBackBuffer := True;
-  gPixelRandom := default (vec4);
+  gPixelRandom  := default (vec4);
 {$ENDIF}
-
   kPI     := acos(0.0);
   kHalfPi := arcsin(1.0);
   kTwoPI  := kPI * 2.0;
@@ -320,17 +319,17 @@ begin
   vSphereDomain.x := system.sin(vSphereDomain.x) + system.sin(tt);
   vSphereDomain.z := system.sin(vSphereDomain.z) + system.cos(tt);
 
-  vDistSphere.x   := length(length(vSphereDomain)) - 1.5 - system.sin(oP - tt * 4);
-  vDistSphere.y   := 2;
-  vDistSphere.z   := vSphereDomain.x;
-  vDistSphere.w   := vSphereDomain.y;
-  Result          := DistCombineUnion(Result, vDistSphere);
+  vDistSphere.x := length(length(vSphereDomain)) - 1.5 - system.sin(oP - tt * 4);
+  vDistSphere.y := 2;
+  vDistSphere.z := vSphereDomain.x;
+  vDistSphere.w := vSphereDomain.y;
+  result        := DistCombineUnion(result, vDistSphere);
 
-  vDistFloor.x    := vPos.y + 1;
-  vDistFloor.y    := 1;
-  vDistFloor.z    := vPos.x;
-  vDistFloor.w    := vPos.y;
-  result          := DistCombineUnion(Result, vDistFloor);
+  vDistFloor.x := vPos.y + 1;
+  vDistFloor.y := 1;
+  vDistFloor.z := vPos.x;
+  vDistFloor.w := vPos.y;
+  result       := DistCombineUnion(result, vDistFloor);
 end;
 
 function TCoolBlobs.GetObjectMaterial(const vObjId, vPos: vec3): C_Material;
@@ -363,10 +362,7 @@ begin
     mat.fSmoothness := 0.9;
     tt              := time * 0.05 + 10;
     d               := length(vPos);
-    mat.cAlbedo     := vec3.Create(
-                           (system.sin(d * 0.25 - tt * 4) + 1) / 2,
-                           (system.sin(tt) + 1) / 2,
-                           (system.sin(d - tt * 4) + 1) / 2);
+    mat.cAlbedo     := vec3.Create((system.sin(d * 0.25 - tt * 4) + 1) / 2, (system.sin(tt) + 1) / 2, (system.sin(d - tt * 4) + 1) / 2);
   end;
 
   Exit(mat);
@@ -495,7 +491,10 @@ begin
     result.vObjectId := vSceneDist.yzw;
 
     // abs allows backward stepping - should only be necessary for non uniform distance functions
-    if (abs(vSceneDist.x) <= kRaymarchEpsilon) or (result.fDistance >= fMaxDist) or (i > maxIter) then
+    if vSceneDist.x < -1000 then
+      Break;
+
+    if (System.Abs(vSceneDist.x) <= kRaymarchEpsilon) or (result.fDistance >= fMaxDist) or (i > maxIter) then
     begin
       break;
     end;
@@ -574,18 +573,18 @@ var
 
 begin
   vPos := intersection.vPos;
-
   fAmbientOcclusion := 1;
-
   fDist := 0;
   for i := 0 to 6 do
   begin
-    fDist := fDist + (0.1);
+    fDist := fDist + 0.1;
 
     vSceneDist := GetDistanceScene(vPos + vNormal * fDist);
-    if abs(vSceneDist.x) > 1e6 then
-      break;
 
+    if System.Abs(vSceneDist.x) > 1000 then
+      break;
+    if System.Abs(vSceneDist.x) < -1000 then
+      break;
 
     fAmbientOcclusion := fAmbientOcclusion * (1 - max(0, (fDist - vSceneDist.x) * 0.2 / fDist));
   end;
@@ -695,14 +694,12 @@ begin
 
   Raymarch(ray, intersection, 60, 256);
 
-  if abs(intersection.vPos.x)>1e10 then
+  if System.Abs(intersection.vPos.x) > 1E10 then
     Exit;
-  if abs(intersection.vPos.y)>1e10 then
+  if System.Abs(intersection.vPos.y) > 1E10 then
     Exit;
-  if abs(intersection.vPos.z)>1e10 then
+  if System.Abs(intersection.vPos.z) > 1E10 then
     Exit;
-
-
 
   if intersection.vObjectId.x < 0.5 then
   begin
@@ -741,10 +738,7 @@ end;
 
 function TCoolBlobs.OrbitPoint(const fHeading, fElevation: float): vec3;
 begin
-  result := vec3.Create(
-              system.sin(fHeading) * system.cos(fElevation),
-              system.sin(fElevation),
-              system.cos(fHeading) * system.cos(fElevation));
+  result := vec3.Create(system.sin(fHeading) * system.cos(fElevation), system.sin(fElevation), system.cos(fHeading) * system.cos(fElevation));
 end;
 
 function TCoolBlobs.Gamma(const cCol: vec3): vec3;
@@ -797,7 +791,6 @@ var
   cScene   : vec3;
   fExposure: float;
   cFinal   : vec3;
-  fAlpha   : float;
 {$IFDEF ENABLE_MONTE_CARLO}
   procedure CalcPixelRandom;
   var
@@ -891,8 +884,6 @@ begin
   cFinal := cScene;
 {$ENDIF }
   cFinal := Tonemap(cFinal);
-
-  fAlpha := 1;
 
   result := TColor32(cFinal);
 end;

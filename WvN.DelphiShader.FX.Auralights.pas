@@ -27,8 +27,8 @@ uses SysUtils, Math;
 constructor TAuralights.Create;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := RenderPixel;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := RenderPixel;
 end;
 
 function TAuralights.blob( const x:float;const y:float;i:integer ):float;

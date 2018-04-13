@@ -61,7 +61,7 @@ begin
 
 	spikeFactor  := System.sin(iGlobalTime) * 0.1;
 
-	fogColor  := vecBlack;
+	fogColor  := vec3Black;
 	fogPower  := 5;
 
 	// camera angles
@@ -89,7 +89,7 @@ begin
 	coord.x  := coord.x  * (aspectRatio);
 	coord  := coord  * (zoomFactor);
 
-	coord  := Vec2.Create(Math.sign(coord.x) * pow(abs(coord.x), cameraPinch), Math.sign(coord.y) * pow(abs(coord.y),cameraPinch));
+	coord  := Vec2.Create(Math.sign(coord.x) * pow(System.abs(coord.x), cameraPinch), Math.sign(coord.y) * pow(System.abs(coord.y),cameraPinch));
 
 	cameraDir  := normalize(Vec3.Create(
                             System.sin(coord.x),
@@ -99,9 +99,9 @@ begin
 
 	angle  := atan(cameraDir.x, cameraDir.y);
 	cameraDir.z  := cameraDir.z  * (1 + System.sin(angle * spikeCount) * spikeFactor);
-  cameraDir.z  := cameraZFactor * Math.sign(cameraDir.z) * pow(abs(cameraDir.z), cameraZPinch);
+  cameraDir.z  := cameraZFactor * Math.sign(cameraDir.z) * pow(System.abs(cameraDir.z), cameraZPinch);
 
-	cameraOrigin  := vecBlack;
+	cameraOrigin  := vec3Black;
 
 
 	l  := System.sqrt(pow(cameraDir.x * cameraDir.x, tunnelPinch) + pow(cameraDir.y * cameraDir.y, tunnelPinch));
@@ -115,9 +115,9 @@ begin
 	uv.y  := uv.y * texCoordVScale + iGlobalTime * texCoordVMoveSpeed;
 
 //	color  := texture2D(tex1, uv).xyz;
-  color := texture[round(Abs(uv.x)) mod 8,(8+round(Abs(uv.y))) mod 8];
+  color := texture[round(System.Abs(uv.x)) mod 8,(8+round(System.Abs(uv.y))) mod 8];
 
-	alpha  := 1 - pow(math.min(1, abs(cameraDir.z)), fogPower);
+	alpha  := 1 - pow(math.min(1, System.abs(cameraDir.z)), fogPower);
 
 	color  := fogColor * (1 - alpha) + color * alpha;
 	Result  := TColor32(color);

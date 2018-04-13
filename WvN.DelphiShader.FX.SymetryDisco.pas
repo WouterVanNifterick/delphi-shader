@@ -9,8 +9,9 @@ type
     ax: array [0 .. 26] of double;
     ay: array [0 .. 26] of double;
     n, t: float;
+    const z=1/64;
     function makeSymmetry(const p: vec2): vec2;
-    function makePoint(x, y: float; i: Integer): float;
+    procedure makePoint(x, y: float; i: Integer; var result:double);
     function sim(const p: vec3; s: float): vec3;
     function rot(const p: vec2; r: float): vec2;
     function rotsim(const p: vec2; s: float): vec2;
@@ -104,16 +105,16 @@ function TSymetryDisco.makeSymmetry(const p: vec2): vec2;
 begin
   Result   := p;
   Result   := rotsim(Result, n);
-  Result.x := abs(Result.x);
+  Result.x := System.abs(Result.x);
 end;
 
-function TSymetryDisco.makePoint(x, y: float; i: Integer): float;
+procedure TSymetryDisco.makePoint(x, y: float; i: Integer; var result:double);
 var
   xx, yy: float;
 begin
   xx     := x + ax[i]; // tan(t*fx)*sx
   yy     := y - ay[i]; // tan(t*fy)*sy
-  Result := 0.8 / system.sqrt(abs(x * xx + yy * yy));
+  Result := Result + (z*0.8 / system.sqrt(System.abs(x * xx + yy * yy)));
 end;
 
 function TSymetryDisco.sim(const p: vec3; s: float): vec3;
@@ -146,9 +147,9 @@ var
   p: vec2;
   x: float;
   y: float;
-  a: float;
-  b: float;
-  c: float;
+  a,
+  b,
+  c: double;
   d: vec3;
 
 begin
@@ -158,38 +159,42 @@ begin
   p := makeSymmetry(p);
   x := p.x;
   y := p.y;
+  a := 0;
+  makePoint(x, y, 0, a);
+  makePoint(x, y, 1, a);
+  makePoint(x, y, 2, a);
+  makePoint(x, y, 3, a);
+  makePoint(x, y, 4, a);
+  makePoint(x, y, 5, a);
+  makePoint(x, y, 6, a);
+  makePoint(x, y, 7, a);
+  makePoint(x, y, 8, a);
 
-  a :=     makePoint(x, y, 0);
-  a := a + makePoint(x, y, 1);
-  a := a + makePoint(x, y, 2);
-  a := a + makePoint(x, y, 3);
-  a := a + makePoint(x, y, 4);
-  a := a + makePoint(x, y, 5);
-  a := a + makePoint(x, y, 6);
-  a := a + makePoint(x, y, 7);
-  a := a + makePoint(x, y, 8);
+  b := -a;
+  makePoint(x, y,  9, b);
+  makePoint(x, y, 10, b);
+  makePoint(x, y, 11, b);
+  makePoint(x, y, 12, b);
+  makePoint(x, y, 13, b);
+  makePoint(x, y, 14, b);
+  makePoint(x, y, 15, b);
+  makePoint(x, y, 16, b);
+  makePoint(x, y, 17, b);
 
-  b := {-a +} makePoint(x, y, 9);
-  b := b + makePoint(x, y, 10);
-  b := b + makePoint(x, y, 11);
-  b := b + makePoint(x, y, 12);
-  b := b + makePoint(x, y, 13);
-  b := b + makePoint(x, y, 14);
-  b := b + makePoint(x, y, 15);
-  b := b + makePoint(x, y, 16);
-  b := b + makePoint(x, y, 17);
+  c := -b;
+  makePoint(x, y, 18, c);
+  makePoint(x, y, 19, c);
+  makePoint(x, y, 20, c);
+  makePoint(x, y, 21, c);
+  makePoint(x, y, 22, c);
+  makePoint(x, y, 23, c);
+  makePoint(x, y, 24, c);
+  makePoint(x, y, 25, c);
+  makePoint(x, y, 26, c);
 
-  c := {-b +} makePoint(x, y, 18);
-  c := c + makePoint(x, y, 19);
-  c := c + makePoint(x, y, 20);
-  c := c + makePoint(x, y, 21);
-  c := c + makePoint(x, y, 22);
-  c := c + makePoint(x, y, 23);
-  c := c + makePoint(x, y, 24);
-  c := c + makePoint(x, y, 25);
-  c := c + makePoint(x, y, 26);
-
-  d := vec3.Create(a, b, c)/64;
+  d.x := a;
+  d.y := b;
+  d.z := c;;
 
   Result := TColor32(d);
 end;

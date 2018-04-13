@@ -5,6 +5,15 @@ interface
 uses GR32, Types, WvN.DelphiShader.Shader;
 
 type
+  // Rolling hills. By David Hoskins, November 2013.
+  // https://www.shadertoy.com/view/Xsf3zX
+
+  // v.2.00 Uses eiffie's 'Circle of Confusion' function
+  // for blurred ray marching into the grass.
+  // v.1.02 Camera aberrations.
+  // v.1.01 Added better grass, with wind movement.
+
+
   TRollingHills = class(TShader)
   public const
     vec3_1: vec3  = (x: 1; y: 0.75; z: 0.6);
@@ -72,17 +81,6 @@ end;
 
 procedure TRollingHills.PrepareFrame;
 begin
-  // Rolling hills. By David Hoskins, November 2013.
-  // https://www.shadertoy.com/view/Xsf3zX
-
-  // v.2.00 Uses eiffie's 'Circle of Confusion' function
-  // for blurred ray marching into the grass.
-  // v.1.02 Camera aberrations.
-  // v.1.01 Added better grass, with wind movement.
-
-  // For red/cyan 3D...
-  // #define STEREO
-
   PI := 4 * atan(1);
 
   sunLight  := normalize(vec3.Create(0.35, 0.2, 0.3));
@@ -133,7 +131,6 @@ var
   d, id, res: float;
   i, j      : integer;
 begin
-  d  := 0;
   id := 0;
   if x.x<10000 then
    Exit(vec2Black)
@@ -219,8 +216,7 @@ begin
     w  := w * 0.6;
     xy := 2 * xy;
   end;
-
-  Exit(f);
+  Result := f;
 end;
 
 // --------------------------------------------------------------------------
@@ -294,7 +290,6 @@ end;
 function TRollingHills.GrassBlades(const rO, rd, mat: vec3; const dist: float): vec3;
 var
   d    : float;
-  f    : float;
   rCoC : float;
   alpha: float;
   col  : vec4;
@@ -308,7 +303,6 @@ begin
 
   // Only calculate cCoC once is enough here...
   rCoC  := CircleOfConfusion(dist * 0.3);
-  alpha := 0;
 
   col := vec4_5;
 
@@ -324,7 +318,6 @@ begin
     if ret.x < rCoC then
     begin
       alpha := (1 - col.y) * Linstep(-rCoC, rCoC, -ret.x); // calculate the mix like cloud density
-      f     := clamp(ret.y, 0, 1);
       // Mix material with white tips for grass...
       gra := mix(mat, vec3.Create(0.35, 0.35, min(pow(ret.z, 4) * 35, 0.35)), pow(ret.y, 9) * 0.7) * ret.y;
       col := col + vec4.Create(gra * alpha, alpha);
@@ -378,23 +371,15 @@ function TRollingHills.BinarySubdivision(const rO, rd: vec3; t, oldT: float): fl
 var
   halfwayT: float;
   n       : integer;
-
 begin
-  halfwayT := 0;
   for n    := 0 to 4 do
   begin
     halfwayT := (oldT + t) * 0.5;
     if Map(rO + halfwayT * rd).x < 0.05 then
-    begin
-      t := halfwayT;
-    end
+      t := halfwayT
     else
-    begin
       oldT := halfwayT;
-    end;
-
   end;
-
   Exit(t);
 end;
 
@@ -413,7 +398,6 @@ var
 begin
   t     := 5;
   oldT  := 0;
-  delta := 0;
   for j := 0 to 79 do
   begin
     p := rO + t * rd;
@@ -433,9 +417,9 @@ begin
     // Delta ray advance - a fudge between the height returned
     // and the distance already travelled.
     // Compromise between speed and accuracy...
-    delta := max(0.04, 0.35 * h.x) + (t * 0.04);
+    delta := Math.max(0.04, 0.35 * h.x) + (t * 0.04);
     oldT  := t;
-    t     := t + (delta);
+    t     := t + delta;
   end;
 
   Exit(false);
@@ -447,7 +431,6 @@ end;
 function TRollingHills.CameraPath(t: float): vec3;
 var
   p: vec2;
-
 begin
   // t  := time + t;
   p := vec2.Create(200 * system.sin(3.54 * t), 200 * system.cos(2 * t));
@@ -457,12 +440,11 @@ end;
 
 // --------------------------------------------------------------------------
 
+
 function TRollingHills.PostEffects(rgb: vec3; const xy: vec2): vec3;
 const
   CONTRAST = 1.1;
-const
   SATURATION = 1.3;
-const
   BRIGHTNESS = 1.3;
 begin
   // Gamma first...
@@ -489,10 +471,7 @@ var
   isCyan: float;
 {$ENDIF}
   roll    : float;
-  cw      : vec3;
-  cp      : vec3;
-  cu      : vec3;
-  cv      : vec3;
+  cw, cp, cu, cv : vec3;
   dir     : vec3;
   camMat  : mat3;
   col     : vec3;
@@ -505,10 +484,7 @@ var
   v3      : vec3;
   bri     : float;
   sunPos  : vec2;
-  glare   : float;
-  glare2  : float;
-  glare3  : float;
-  glare4  : float;
+  glare , glare2, glare3, glare4  : float;
 
 begin
   m     := (mouse.x) * 300;
@@ -585,10 +561,10 @@ begin
     // glare4 is the small white circle past centre point...
     glare4 := Math.max(system.sin(smoothstep(-0.05, 0.4, length(sunPos + uv * 2.5)) * PI), 0);
 
-    col := col + (bri * vec3_13 * pow(glare, 12.5) * 0.07);
-    col := col + (bri * vec3_14 * pow(glare2, 3));
-    col := col + (bri * vec3_15 * pow(glare3, 3) * 4);
-    col := col + (bri * vec3_16 * pow(glare4, 33.9) * 0.7);
+    col := col + (bri * vec3_13 * pow(glare, 12.5) * 0.07)
+               + (bri * vec3_14 * pow(glare2, 3))
+               + (bri * vec3_15 * pow(glare3, 3) * 4)
+               + (bri * vec3_16 * pow(glare4, 33.9) * 0.7);
     // col  := //col  + (bri * pow(bri, 2.0)*30.0);
   end;
 

@@ -37,8 +37,8 @@ constructor TBubbles.Create;
 var i,b:integer;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := Main;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := Main;
 
   for b := 0 to 19 do
   begin

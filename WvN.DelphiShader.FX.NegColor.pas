@@ -52,15 +52,18 @@ const
 function map( const p:vec3 ):float;
 var k :float;
 begin
-	k  := 5.0 - dot(abs(p), vec3_010) + (system.cos(p.z) + system.cos(p.x)) * 0.4;
+	k  := 5 - dot(abs(p), vec3_010) + (cosLarge(p.z) + cosLarge(p.x)) * 0.4;
 	Result := max(max(k, -bf(p.xz, 4.0)), -bf(p.zy, 3.5));
 end;
 
 procedure TNegColor.PrepareFrame;
 begin
 	a  := -iGlobalTime * 0.1;
-  b := system.sin(a * 4.0);
-	pos  := Vec3.Create(iGlobalTime * 4.0,0,iGlobalTime * 7.0);
+  b := sinLarge(a * 4.0);
+	pos  := Vec3.Create(
+            iGlobalTime * 4.0,
+            0,
+            iGlobalTime * 7.0);
   res := Resolution.x / Resolution.y;
 
 end;
@@ -68,7 +71,11 @@ end;
 function TNegColor.RenderPixel(var gl_FragCoord: Vec2): TColor32;
 var dir :vec3; npos :vec3; t  :float; col :vec3; i:integer;
 begin
-	dir  := normalize(Vec3.Create( Vec2.Create(res,1.0) * (-1.0 + 2.0 * (gl_FragCoord.xy / Resolution.xy )),1.0));
+	dir  := Vec3.Create(
+             Vec2.Create(res,1) * (-1 + 2 * (gl_FragCoord.xy / Resolution.xy )),
+             1.0);
+  dir.NormalizeSelf;
+
 	dir.xz  := rot(dir.xz, b);
 	dir.xy  := rot(dir.xy, -a);
 	npos  := pos;

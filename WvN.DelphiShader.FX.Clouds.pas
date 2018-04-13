@@ -124,10 +124,10 @@ begin
 
     sum := sum + col * (1 - sum.w);
 
-    t := t + max(0.1, 0.025 * t);
+    t := t + max(0.01, 0.025 * t);
 
   end;
-  sum.xyz := sum.xyz / (0.001 + sum.w);
+  sum.xyz := sum.xyz / (0.1 + sum.w);
   Result  := clamp(sum, 0, 1);
 end;
 

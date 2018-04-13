@@ -54,12 +54,12 @@ begin
 	kRed  := vec3.Create( 204.0 / 255.0,0,0 );
 	kBlue  := vec3.Create( 0.0,0.0,102.0 / 255.0 );
 
-	if (abs(p.x) < (6.0/60.0))  or  (abs(p.y) < (6.0/30.0)) then
+	if (System.Abs(p.x) < (6.0/60.0))  or  (System.Abs(p.y) < (6.0/30.0)) then
 	begin
 		Result := TColor32(kRed);
 	end
 	else
-	if (abs(p.x) < (10.0/60.0))  or  (abs(p.y) < (10.0/30.0)) then
+	if (System.Abs(p.x) < (10.0/60.0))  or  (System.Abs(p.y) < (10.0/30.0)) then
 	begin
 		Result  := clWhite32;
 	end

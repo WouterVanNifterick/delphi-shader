@@ -173,7 +173,7 @@ begin
   p.z     := tpos.z;
   p.w     := 1;
 
-  y       := max(0, 0.35 - abs(pos.y - 3.35)) / 0.35;
+  y       := max(0, 0.35 - System.abs(pos.y - 3.35)) / 0.35;
   for i   := 0 to 6 do
   begin // LOWERED THE ITERS
     p.xyz := abs(p.xyz) - vec3_9;
@@ -187,7 +187,7 @@ begin
   // fr := length(p.xyz) / p.w;
   d  := Math.min(fl, fr);
   d  := Math.min(d, -pos.y + 3.95);
-  if abs(d - fl) < 0.001 then
+  if System.abs(d - fl) < 0.001 then
     hid := 1;
   Result.x := d;
   Result.y := hid;
@@ -299,7 +299,7 @@ begin
     begin
       pl := l;
       l  := length(p);
-      es := es + (exp(-1 / abs(l - pl)));
+      es := es + (exp(-1 / System.abs(l - pl)));
     end;
   end;
   Result := es;
@@ -348,7 +348,7 @@ begin // PASSING IN THE NORMAL
     k   := texture(p) * 0.23 + 0.2;
     k   := min(k, 1.5 - energysource);
     col := mix(vec3.Create(k, k * k, k * k * k), vec3(k), 0.3);
-    if abs(hid - 1) < 0.001 then
+    if System.abs(hid - 1) < 0.001 then
       col := col * (FLOOR_COLOR * 1.3);
   end;
 
@@ -425,8 +425,8 @@ begin
       if (d.y < 0.5) and (d.x < 0.03) then
       begin
         // ONLY DOING THE GLOW WHEN IT IS CLOSE ENOUGH
-        glw   := Math.min(abs(3.35 - p.y - ey), abs(3.35 - p.y + ey));
-        eglow := eglow + (max(0, 0.03 - d.x) / 0.03 * (pow(max(0, 0.05 - glw) / 0.05, 5) + pow(max(0, 0.15 - abs(3.35 - p.y)) / 0.15, 8)) * 1.5);
+        glw   := Math.min(System.abs(3.35 - p.y - ey), System.abs(3.35 - p.y + ey));
+        eglow := eglow + (max(0, 0.03 - d.x) / 0.03 * (pow(max(0, 0.05 - glw) / 0.05, 5) + pow(max(0, 0.15 - System.abs(3.35 - p.y)) / 0.15, 8)) * 1.5);
       end;
 
     end;

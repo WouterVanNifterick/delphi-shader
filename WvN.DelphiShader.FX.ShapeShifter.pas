@@ -197,7 +197,7 @@ var
 begin
 	pm  := &mod(p,1);
 	pd  := p-pm;
-	Exit( hashmix(pd,(pd+vec3_6), pm) );
+	Exit( hashmix(pd,pd+vec3_6, pm) );
 end;
 
 
@@ -339,8 +339,8 @@ begin
 	bp  := rotate_x(bp,time*0.5);
 
 	//now we have the distance function for 4 shapes
-	diamond  := abs(bp.x)+abs(bp.y)+abs(bp.z)-0.6;//length(p+vec3_10)-0.5;
-	box  := math.max(abs(bp.x),math.max(abs(bp.y),abs(bp.z)))-0.35;//length(p+vec3_11)-0.5;
+	diamond  := System.abs(bp.x)+System.abs(bp.y)+System.abs(bp.z)-0.6;//length(p+vec3_10)-0.5;
+	box  := math.max(System.abs(bp.x),math.max(System.abs(bp.y),System.abs(bp.z)))-0.35;//length(p+vec3_11)-0.5;
 	torus  := pow((0.4-length(bp.xy)),2)+pow(bp.z,2)-0.02;
 	sphere  := length(bp)-0.5;
 
@@ -403,7 +403,15 @@ var
   d : vec3;
 begin
   d.x := _d.x;
-	d.y := abs(d.y);
+	d.y := System.abs(_d.y);
+  if IsNAN(d.z) then
+    exit(vec3Black);
+  if System.abs(d.x)>1e6 then exit(vec3Black);
+  if System.abs(d.y)>1e6 then exit(vec3Black);
+  if System.abs(d.z)>1e6 then exit(vec3Black);
+
+
+
 	s  := noise(d*364)*noise(d*699);
 	s := pow(s,13)*10;
 	Exit( s );
@@ -418,7 +426,6 @@ var
   diffuse :float;
   alpha :float;
   pp :vec3;
-  lpp:float;
   mat :vec2;
   c :vec3;
 
@@ -434,7 +441,6 @@ begin
     alpha:=0;  //to blend the plane with the sky
 
 	pp  := plane(p,d);
-	lpp := length(pp);
 	mat  := material0(pp.xz);
 	//mat.x = diffuse coefficient, mat.y = specular coefficient
 
@@ -508,7 +514,7 @@ begin
 	end
 	else
 	begin
-		c := c + (stars(d));
+		c := c + stars(d);
 	end;
 
 

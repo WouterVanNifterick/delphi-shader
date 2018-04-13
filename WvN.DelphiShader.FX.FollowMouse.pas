@@ -35,7 +35,7 @@ var dist :float; intensity :float; color :float;
 begin
 	dist  := length(pos - me);
   if dist=0 then
-    Exit(0);
+    Exit(1);
 
 	intensity  := pow(10.0/dist, 2.0);
 	color  := 0.0001;

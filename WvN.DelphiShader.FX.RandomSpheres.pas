@@ -55,7 +55,7 @@ end;
 
 function TRandomSpheres.rand(const co: vec2): float;
 begin
-  Exit(fract(system.sin(dot(co.xy, vec2_5)) * 43758.5453));
+  Exit(fract(sinLarge(dot(co.xy, vec2_5)) * 43758.5453));
 end;
 
 function TRandomSpheres.calc_light(const ray_origin, ray_dir, light_pos: vec3; out q: float): bool;
@@ -81,10 +81,10 @@ begin
   if discriminant > 0 then
   begin
     q     := -(B + system.sqrt(discriminant)) / (2 * A);
-    found := (q > 0);
+    found := q > 0;
   end;
 
-  Exit(found);
+  Result := found;
 end;
 
 function TRandomSpheres.calc_sphere(const pt, ray_origin, ray_dir, offset: vec3; out norm: vec3; out q: float): bool;
@@ -99,7 +99,7 @@ begin
   centre   := ixyz + 0.5;
   centre.x := centre.x + rand(ixyz.xy);
   centre.y := centre.y + rand(ixyz.xz);
-  // centre.z  := //centre.z  + (random3(ixyz.yz));
+//  centre.z := centre.z  +rand(ixyz.yz);
 
   d     := pt - centre;
   found := false;
@@ -128,21 +128,25 @@ begin
 end;
 
 procedure TRandomSpheres.PrepareFrame;
+var sgt01,cgt01:Double;
 begin
   res   := resolution.x / resolution.y;
-  mat   := Mat3.Create(
-             system.cos(0.1 * iGlobalTime),
-             system.sin(0.1 * iGlobalTime), 0,
-            -system.sin(0.1 * iGlobalTime),
-             system.cos(0.1 * iGlobalTime), 0, 0, 0, 1);
+  sgt01 := sinLarge(0.1 * iGlobalTime);
+  cgt01 := cosLarge(0.1 * iGlobalTime);
 
-  o.x   := 0.6 * system.sin(0.5 * iGlobalTime);
-  o.y   := 0.6 * system.cos(0.5 * iGlobalTime);
+  mat   := Mat3.Create(
+             cgt01,
+             sgt01, 0,
+            -sgt01,
+             cgt01, 0, 0, 0, 1);
+
+  o.x   := 0.6 * sinLarge(0.5 * iGlobalTime);
+  o.y   := 0.6 * cosLarge(0.5 * iGlobalTime);
   o.z   := iGlobalTime;
   light := o + vec3.Create(
-                 system.sin(iGlobalTime) + 0.3 * system.sin(3 * iGlobalTime),
-                 system.cos(iGlobalTime),
-                 system.cos(iGlobalTime) + 3);
+                 sinLarge(iGlobalTime) + 0.3 * sinLarge(3 * iGlobalTime),
+                 cosLarge(iGlobalTime),
+                 cosLarge(iGlobalTime) + 3);
 end;
 
 function TRandomSpheres.Main(var gl_FragCoord: vec2): TColor32;
@@ -163,7 +167,7 @@ var
 begin
   ray.x := (2 * gl_FragCoord.x / resolution.y - res);
   ray.y := (2 * gl_FragCoord.y / resolution.y - 1);
-  ray.z := (0.5 / tan_fov) + 0.5 * length(ray.xy) / (0.001 + tan(fov * length(ray.xy)));
+  ray.z := (0.5 / tan_fov) + 0.5 * length(ray.xy) / (0.001 + Tangent(fov * length(ray.xy)));
   ray.NormalizeSelf; // 20.0;
 
   ray           := mat * ray;

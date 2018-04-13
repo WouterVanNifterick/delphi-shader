@@ -42,8 +42,11 @@ begin
 end;
 
 procedure TNanoTubes.PrepareFrame;
+var t:double;
 begin
-  camPos    := vec3.Create(system.cos(iGlobalTime * 0.3), system.sin(iGlobalTime * 0.3), 3.5);
+  t := iGlobalTime * 0.3;
+  camPos    := vec3.Create(cosLarge(t),
+                           sinLarge(t), 3.5);
   camTarget := vec3_1;
 
   camDir  := normalize(camTarget - camPos);
@@ -59,7 +62,7 @@ end;
 function TNanoTubes.rand(n: vec3): float;
 begin
   n := floor(n);
-  Exit(fract(system.sin((n.x + n.y * 1E2 + n.z * 1E4) * 1E-4) * 1E5));
+  Exit(fract(sinLarge((n.x + n.y * 1E2 + n.z * 1E4) * 1E-4) * 1E5));
 end;
 
 // .x is distance, .y = colour
@@ -84,7 +87,7 @@ begin
   p.z := p.z - 0.5;
   rr  := rand(p);
   rn  := d - rr * RADIUS;
-  rm  := abs(fract(p.z) - 0.5); // offset so at end of cylinder
+  rm  := System.abs(fract(p.z) - 0.5); // offset so at end of cylinder
 
   rd := system.sqrt(rn * rn + rm * rm); // end with ring
 
@@ -124,7 +127,7 @@ begin
     total_d := total_d + (d.x);
     ray     := ray + (rayDir * d.x);
     m       := m + 1;
-    if abs(d.x) < 0.01 then
+    if System.abs(d.x) < 0.01 then
       break;
 
     if total_d > MAX_DISTANCE then
@@ -135,7 +138,7 @@ begin
   end;
 
   c      := total_d * 0.0001;
-  Result := TColor32((1 - vec3.Create(c) - vec3_3 * (m * 0.8)) * d.y);
+  Result := TColor32((1 - c - vec3_3 * (m * 0.8)) * d.y);
 end;
 
 initialization

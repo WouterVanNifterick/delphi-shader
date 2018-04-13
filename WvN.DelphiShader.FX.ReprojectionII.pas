@@ -14,6 +14,10 @@ type
   end;
 
   TReprojectionII = class(TShader)
+  var
+    vMouse                   : vec2;
+    vCameraPos, vCameraTarget: vec3;
+
   public const
     kMaxDist = 1000.0;
     kEpsilon = 0.0001;
@@ -89,13 +93,6 @@ begin
 
 end;
 
-procedure TReprojectionII.PrepareFrame;
-begin
-  // Reprojection II - @P_Malin
-
-  // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-
-end;
 
 procedure TReprojectionII.TraceSlab(const ray: C_Ray; const vMin, vMax, vNormal: vec3; out fNear, fFar: float);
 
@@ -120,7 +117,7 @@ begin
 
   fDir := dot(ray.vDir, vNormal);
 
-  if abs(fDir) < kEpsilon then
+  if System.abs(fDir) < kEpsilon then
   begin
     // ray parallel to slab
 
@@ -477,7 +474,6 @@ var
   vCameraTargetC   : vec3;
   vCameraPosD      : vec3;
   vCameraTargetD   : vec3;
-
 begin
   fCameraGlobalTime := iGlobalTime * 0.5;
   fCameraTime       := fract(fCameraGlobalTime);
@@ -492,12 +488,22 @@ begin
   vCameraTarget := BSpline(vCameraTargetA, vCameraTargetB, vCameraTargetC, vCameraTargetD, fCameraTime);
 end;
 
+procedure TReprojectionII.PrepareFrame;
+begin
+  // Reprojection II - @P_Malin
+
+  // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+  GetCamera(vCameraPos, vCameraTarget);
+  vMouse := iMouse.xy / resolution.xy;
+
+
+end;
+
+
 function TReprojectionII.Main(var gl_FragCoord: vec2): TColor32;
 var
   ray                      : C_Ray;
   vResult                  : vec3;
-  vMouse                   : vec2;
-  vCameraPos, vCameraTarget: vec3;
   fHitDist                 : float;
   vHitPos                  : vec3;
   fIntensity               : float;
@@ -511,15 +517,11 @@ var
 begin
   vResult := vec3Black;
 
-  vMouse := iMouse.xy / resolution.xy;
-
-  GetCamera(vCameraPos, vCameraTarget);
-
   vUV          := gl_FragCoord.xy / resolution.xy;
   vViewCoord   := vUV * 2 - 1;
   vViewCoord.x := vViewCoord.x * (resolution.x / resolution.y);
-  vViewCoord.y := vViewCoord.y * (-1);
-  vViewCoord   := vViewCoord * (0.5);
+  vViewCoord.y := -vViewCoord.y;
+  vViewCoord   := vViewCoord * 0.5;
 
   GetCameraRayLookat(vViewCoord, vCameraPos, vCameraTarget, ray);
 
@@ -530,14 +532,12 @@ begin
   vResult := vResult * vResult;
 
 {$IFDEF FORCE_SHADOW}
-  if abs(vHitPos.z) > 9.48 then
+  if System.abs(vHitPos.z) > 9.48 then
   begin
-    if abs(vHitPos.x) < 20 then
+    if System.abs(vHitPos.x) < 20 then
     begin
       fIntensity := length(vResult);
-
       fIntensity := min(fIntensity, 0.05);
-
       vResult := normalizeS(vResult) * fIntensity;
     end;
 

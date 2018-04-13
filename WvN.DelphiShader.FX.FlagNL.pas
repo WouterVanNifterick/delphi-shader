@@ -7,9 +7,9 @@ uses GR32, Types, WvN.DelphiShader.Shader;
 type
   TFlagNL = class(TShader)
   const
-    cRed   : vec3 = (r: 1; g: 0.2; b: 0.2);
-    cWhite : vec3 = (r: 1.0; g: 1.0; b: 1.0);
-    cBlue  : vec3 = (r: 0.2; g: 0.2; b: 1.0);
+    cRed   : vec3 = (x: 1; y: 0.2; z: 0.2);
+    cWhite : vec3 = (x: 1; y: 1; z: 1);
+    cBlue  : vec3 = (x: 0.2; y: 0.2; z: 1.0);
 
     function Main(var gl_FragCoord: Vec2): TColor32;
 
@@ -44,7 +44,7 @@ begin
   if p.y < 0.3333333333333333333333 then
     c := cBlue
   else
-    if (p.y > 0.3333333333333333) and (p.y < 0.666666666666666666666666) then
+    if (p.y < 0.666666666666666666666666) then
       c := cWhite
     else
       c    := cRed;

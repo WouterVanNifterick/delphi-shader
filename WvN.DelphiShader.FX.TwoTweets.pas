@@ -15,6 +15,8 @@ type
   const
     vec3_1: vec3 = (x: 0.2; y: 0.12; z: 0.01);
     vec3_2: vec3 = (x: 0; y: 0.1; z: 0.2);
+  var
+    st:double;
 
   end;
 
@@ -34,6 +36,7 @@ end;
 
 procedure TTwoTweets.PrepareFrame;
 begin
+  st := sinLarge( iGlobalTime );
 end;
 
 // Created by inigo quilez - iq/2013
@@ -41,32 +44,34 @@ end;
 
 function TTwoTweets.f(const p: vec3): float;
 var
-  q,r: vec3;
+  r: vec3;
 begin
-  q.x    := p.x;
-  q.y    := p.y;
-  q.z    := p.z + iGlobalTime;
-  cos(q,r);
-  Result := length(0.05 * system.cos(9 * q.y * q.x) +
-               r - 0.10 * system.cos(9 * (q.z + 0.3 * q.x - q.y))) - 1;
+  r.x := sin(p.x);
+  r.y := sin(p.y);
+  r.z := sinLarge(p.z+ iGlobalTime);
+
+  Result := length(
+              0.05 * system.cos(9 * p.y * p.x) +
+              r - 0.10 * cosLarge(9 * (p.z + 0.3 * p.x - p.y))) - 1;
 end;
 
 function TTwoTweets.Main(var gl_FragCoord: Vec2): TColor32;
 var
-  d,o,t: vec3;
+  t:float;
+  d,o: vec3;
   i: integer;
 begin
   d.x := 0.5 - gl_FragCoord.x / resolution.x;
-  d.y := 0.5 - gl_FragCoord.y / resolution.x; // y?
+  d.y := 0.5 - gl_FragCoord.y / resolution.y; // y?
   d.z := 0.5;
   o   := d;
 
   for i := 0 to 98 do
   begin
     t := f(o);
-    o.x := o.x + t.x * d.x;
-    o.y := o.y + t.y * d.y;
-    o.z := o.z + t.z * d.z;
+    o.x := o.x + t * d.x;
+    o.y := o.y + t * d.y;
+    o.z := o.z + t * d.z;
   end;
 
   Result := TColor32(

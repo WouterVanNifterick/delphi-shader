@@ -13,7 +13,7 @@ type
     r: float;
     p, e, c: vec3;
     refl: int;
-    constructor Create(_r: float; _p, _e, _c: vec3; _refl: int);
+    constructor Create(_r: float; const _p, _e, _c: vec3; _refl: int);
   end;
 
   TFastSmallPT = class(TShader)
@@ -286,7 +286,7 @@ begin
     else
     begin
       a     := dot(n, r.d);
-      ddn   := abs(a);
+      ddn   := System.abs(a);
       nc    := 1;
       nt    := 1.5;
       nnt   := mix(nc / nt, nt / nc, ifthen(a > 0, 1, 0));
@@ -353,7 +353,7 @@ begin
   Result := TColor32(pow(clamp(color / SAMPLES, 0, 1), vec3(1 / 2.2)));
 end;
 
-constructor Sphere.Create(_r: float; _p, _e, _c: vec3; _refl: int);
+constructor Sphere.Create(_r: float; const _p, _e, _c: vec3; _refl: int);
 begin
   r    := _r;
   p    := _p;

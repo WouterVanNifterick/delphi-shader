@@ -18,7 +18,7 @@ type
     vec3_3: vec3 = (x: 0;   y:-0.5; z:  0.5);
     vec3_4: vec3 = (x: 0;   y: 0  ; z: -0.5);
 
-    function e(const _c: vec3): float;
+    function e(c: vec3): float;
     function Main(var gl_FragCoord: Vec2): TColor32;
 
   var
@@ -58,24 +58,23 @@ begin
   ct14 := system.cos(time/14) / 8;
 end;
 
-function TNautilus2.e(const _c: vec3): float;
-var
-  c: vec3;
+function TNautilus2.e(c: vec3): float;
 begin
-  c := _c;
-  c.r := system.cos(c.r + t8) * c.r - system.cos(c.g + t9) * c.g;
+  c.r := system.cos(c.r + t8) * c.r -
+         system.cos(c.g + t9) * c.g;
   c.g := c.b / 3 * c.r - ct7 * c.g;
   c.b := c.r + c.g + c.b / 1.25 + time;
   cos(c,c);
   mult(c,c);
-  Result := dot(c, vec3_1) - 1;
+  Result := c.r + c.g + c.b - 1;
 end;
 
 function TNautilus2.Main(var gl_FragCoord: Vec2): TColor32;
 var
   c      : Vec2;
   o, g   : vec3;
-  m, t   : float;
+  m, t,t41 : float;
+
   j      : integer;
   n, v, ogt: vec3;
   col:vec3;
@@ -102,10 +101,11 @@ begin
   v      := dot(vec3_4, n) +
             dot(vec3_3, n);
 
-  col.r  := 0.1 + ct14;
-  col.g  := 0.1;
-  col.b  := 0.1 - ct3;
-  col    := v + col * (t / 41);
+  t41 := t / 41;
+  col.r  := v.x+( 0.1 + ct14 )*t41;
+  col.g  := v.y+( 0.1        )*t41;
+  col.b  := v.z+( 0.1 - ct3  )*t41;
+//  col    := v + col * (t / 41);
   Result := TColor32(col);
 end;
 

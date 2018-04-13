@@ -26,8 +26,8 @@ type
     vec3_11: vec3 = (x: 0.4; y: 0.2; z: 0.67);
     vec3_12: vec3 = (x: 0.4; y: 0.4; z: 0.2);
     vec3_13: vec3 = (x: 0.2125; y: 0.7154; z: 0.0721);
-   var
-     mo       : vec2;
+  var
+    mo       : vec2;
     ro       : vec3;
     ta       : vec3;
     ww       : vec3;
@@ -41,9 +41,6 @@ type
     function map(const p: vec3): vec4;
     function raymarch(const ro, rd: vec3): vec4;
     function Main(var gl_FragCoord: vec2): TColor32;
-
-  var
-    time: float;
 
     constructor Create; override;
     procedure PrepareFrame;
@@ -71,8 +68,6 @@ begin
   // Edited by Dave Hoskins into "Star Nursery"
   // V.1.1 Some speed up in the ray-marching loop.
   // V.1.2 Added Shadertoy's fast 3D noise for better, smaller step size.
-
-  time := iGlobalTime + 46;
 
   mo  := (-1 + 2 + iMouse.xy) / resolution.xy;
 
@@ -122,7 +117,7 @@ begin
   f := f * f * (3 - 2 * f);
 
   uv := (p.xy + vec2_1 * p.z) + f.xy;
-  rg := texture2D(tex[0], (uv + 0.5) / 256 { , -100 } ).yx;
+  rg := texture2D(tex[15], (uv + 0.5) / 256 { , -100 } ).yx;
   Exit(mix(rg.x, rg.y, f.z));
 end;
 
@@ -164,7 +159,7 @@ var
   sum: vec4;
   t  : float;
   pos: vec3;
-  i  : integer; // loop variable
+  i  : integer;
   col: vec4;
 
 begin
@@ -226,9 +221,9 @@ begin
   v  := 1 / (2 * (1 + rd.z));
   xy.x := rd.y * v;
   xy.y := rd.x * v;
-  s  := noise(rd.xz * 134);
-  s  := s + (noise(rd.xz * 370));
-  s  := s + (noise(rd.xz * 870));
+  s  := noise(rd.xz * 134)
+      + noise(rd.xz * 370)
+      + noise(rd.xz * 870);
   s  := pow(s, 19) * 0.00000001 * Math.max(rd.y, 0);
   if s > 0 then
   begin
@@ -241,7 +236,7 @@ begin
 
   col := mix(vec3Gray, mix(vec3.Create(dot(vec3_13, col * BRIGHTNESS)), col * BRIGHTNESS, SATURATION), CONTRAST);
 
-  Result := TColor32(col*2);
+  Result := TColor32(col);
 end;
 
 initialization

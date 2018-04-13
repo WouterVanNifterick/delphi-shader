@@ -23,18 +23,17 @@ const
 
   trap1color : vec3=(x:1.00;y:0.40;z:0.10);
   trap2color : vec3=(x:0.35;y:0.25;z:1.00);
-  trap3color : Vec3=(r:1;g:1;b:0.05);
+  trap3color : Vec3=(x:1;y:1;z:0.05);
 
-  trapsbright : Vec3=(r:1.2;g:1.5;b:1);
-  trapscontrast : vec3=(r:10;g:10;b:10);
+  trapsbright : Vec3=(x:1.2;y:1.5;z:1);
+  trapscontrast : vec3=(x:10;y:10;z:10);
 
   rotspeed = 0.2;
 
   saturation = 0.5;
   brightness = 2;
   contrast = 1.5;
-  antialias = 2
-  ; //max 4;
+  antialias = 1; //max 4;
 
   var
   scale :double;// 1.3+iMouse.y/resolution.y;
@@ -66,8 +65,8 @@ end;
 
 procedure TFracTraps2.PrepareFrame;
 begin
-  scale := 1.3+iMouse.y/resolution.y;
-  trans := 0.75-iMouse.x/resolution.x;
+  scale := 1.3+Mouse.y/resolution.y;
+  trans := 0.75-Mouse.x/resolution.x;
 	pixsize := 1/resolution.xy*zoo;
 	pixsize.x := pixsize.x * (aspect);
 end;
@@ -89,7 +88,6 @@ var
   aacolor:vec3;
   uv:vec2;
   pos:vec2;
-  av:float;
   its:vec3;
   t:float;
   otrap:vec3;
@@ -108,19 +106,18 @@ begin
 	uv := gl_FragCoord.xy / resolution.xy - 0.5;
 	pos := uv;
 	pos.x := pos.x * aspect;
-	pos := pos + (offset);
-	pos := pos * (zoo);
-	av := 0;
+	pos := pos + offset;
+	pos := pos * zoo;
 	its := vec3Black;
 	t := iGlobalTime*rotspeed;
   for aa := 0 to 15 do
   begin
 		otrap := vec3_1000;
-		if aa<antialias*antialias then
+		if aa < antialias * antialias then
     begin
 			aacoord := floor(Vec2.Create(aa/antialias,aa mod antialias));
 			z := pos+aacoord*pixsize/antialias;
-			for i := 0 to iterations do
+			for i := 0 to iterations-1 do
       begin
 				z := abs(z)-aspect*trans;
 				z := rotate(z,-t+3.3);
@@ -160,7 +157,7 @@ begin
 	color := mix(Vec3.Create(length(aacolor)),aacolor,saturation)*brightness;
 	color :=pow(color,vec3(contrast));
 	color := color * (vec3_3);
-	color := color * (1-pow(max(0,math.max(abs(uv.x),abs(uv.y))-0.4)/0.1,8));
+	color := color * (1-pow(max(0,math.max(System.abs(uv.x),System.abs(uv.y))-0.4)/0.1,8));
 	Result  := TColor32(color);
 end;
 

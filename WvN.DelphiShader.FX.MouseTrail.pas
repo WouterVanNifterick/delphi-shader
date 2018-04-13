@@ -28,9 +28,11 @@ uses SysUtils, Math;
 constructor TMouseTrail.Create;
 begin
   inherited;
-  FrameProc     := PrepareFrame;
-  PixelProc     := Main;
   UseBackBuffer := True;
+  SetBufferCount(1);
+
+  PixelProc := Main;
+  FrameProc := PrepareFrame;
 end;
 
 procedure TMouseTrail.PrepareFrame;
@@ -50,7 +52,7 @@ var
 begin
   dist := length(pos - me);
   if dist = 0 then
-    intensity := 0
+    intensity := 1
   else
     intensity := pow(size / dist, 3);
 
@@ -66,7 +68,7 @@ var
   zenkai: vec4;
 begin
   texPos := vec2(gl_FragCoord.xy / resolution);
-  zenkai := texture2D(BackBuffer, texPos) * 0.95;
+  zenkai := texture2D(Buffers[0].Bitmap, texPos) * 0.95;
   Result := TColor32(zenkai + maru(m, gl_FragCoord.xy));
 end;
 

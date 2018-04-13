@@ -37,9 +37,9 @@ end;
 
 procedure TMandel.PrepareFrame;
 begin
-  zoo := 0.62 + 0.38 * system.sin(0.1 * time);
-  coa := system.cos(0.1 * (1 - zoo) * time);
-  sia := system.sin(0.1 * (1 - zoo) * time);
+  zoo := 0.62 + 0.38 * sinLarge(0.01 * time);
+  coa := cosLarge(0.01 * (1 - zoo) * time);
+  sia := sinLarge(0.01 * (1 - zoo) * time);
   zoo := pow(zoo, 8);
 end;
 
@@ -49,27 +49,26 @@ var
   xy : vec2;
   cc : vec2;
   z  : vec2;
-  c,co,m2 : float;
+  c,co,m2,n : float;
   i  : integer;
   col: vec3;
 begin
-  p   := -1 + 2 * gl_FragCoord.xy / resolution.xy;
-  p.x := p.x * (resolution.x / resolution.y);
+  p    := -1 + 2 * gl_FragCoord.xy / resolution.xy;
+  p.x  := p.x * (resolution.x / resolution.y);
   xy.x := p.x * coa - p.y * sia;
   xy.y := p.x * sia + p.y * coa;
-  cc := vec2_1 + xy * zoo;
+  cc   := vec2_1 + xy * zoo;
 
   z  := vec2_2;
   co := 0;
   m2 := 0;
 
-  // chrome/angelproject/nvidia/glslES don't seem to like to "break" a loop...
-  // so we have to rewrite it in another way
-
   for i := 0 to 255 do
     if m2 < 1024 then
     begin
-      z  := cc + vec2.Create(z.x * z.x - z.y * z.y, 2 * z.x * z.y);
+//      z  := cc + vec2.Create(z.x * z.x - z.y * z.y, 2 * z.x * z.y);
+      z.x  := cc.x + z.x * z.x - z.y * z.y;
+      z.y  := cc.y + 2 * z.x * z.y;
       m2 := dot(z, z);
       co := co + 1;
     end;
@@ -80,11 +79,12 @@ begin
 
   co := co / 256;
   if co>0 then
-    co     := system.sqrt(co);
+    co := system.sqrt(co);
 
-  col.r  := 0.5 + 0.5 * system.cos(6.2831 * co + 0);
-  col.g  := 0.5 + 0.5 * system.cos(6.2831 * co + 0.4);
-  col.b  := 0.5 + 0.5 * system.cos(6.2831 * co + 0.7);
+  n := 2 * pi * co;
+  col.r  := 0.5 + 0.5 * system.cos(n + 0.0);
+  col.g  := 0.5 + 0.5 * system.cos(n + 0.4);
+  col.b  := 0.5 + 0.5 * system.cos(n + 0.7);
 
   Result := TColor32(col);
 end;

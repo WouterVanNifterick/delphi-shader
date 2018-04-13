@@ -6,6 +6,9 @@ uses GR32, Types, WvN.DelphiShader.Shader;
 
 type
   TAngelicParticles=class(TShader)
+  const
+    vec12 :vec3=(x:1.2;y:1.2;z:1.2);
+  var
     ray:Vec3;
     constructor Create;override;
     procedure PrepareFrame;
@@ -40,16 +43,15 @@ end;
 constructor TAngelicParticles.Create;
 begin
   inherited;
-  FrameProc := prepareFrame;
-  PixelProc := RenderPixel;
+  Image.FrameProc := prepareFrame;
+  Image.PixelProc := RenderPixel;
 end;
 
 procedure TAngelicParticles.PrepareFrame;
 begin
-	ray := vec3.create(
-           system.sin(iGlobalTime * 0.1) * 0.2,
-           system.cos(iGlobalTime * 0.13) * 0.2,
-           1.5);
+	ray.x := sinLarge(iGlobalTime * 0.10) * 0.2;
+	ray.y := cosLarge(iGlobalTime * 0.13) * 0.2;
+	ray.z := 1.5;
 
 end;
 
@@ -57,21 +59,21 @@ end;
 function TAngelicParticles.RenderPixel(var gl_FragCoord:Vec2): TColor32;
 var
   uv:Vec2;
-  v,it,br:Float;
+  dp,v,it,br:Float;
+
   r,dir,acc,p,col:Vec3;
   inc:Float; i,j:Integer;
 begin
-  uv := gl_FragCoord.xy / Resolution.xy;
-	uv.x := uv.x * 2.0 - 1.0;
-	uv.y := uv.y * 2.0 - 1.0;
+	uv.x := 2 * gl_FragCoord.x/ Resolution.x - 1;
+	uv.y := 2 * gl_FragCoord.y/ Resolution.y - 1;
  //	uv.x := uv.x * (iResolution.x / iResolution.y);
 
-	v := 0.0;
+	v := 0;
   r := ray;
 	dir := normalize(vec3.create(uv, 1.0));
 
-	r.z := r.z + iGlobalTime * 0.1 - 20.0;
-	dir.xz := rotate(dir.xz, system.sin(iGlobalTime * 0.1) * 2.0);
+	r.z := r.z + iGlobalTime * 0.1 - 20;
+	dir.xz := rotate(dir.xz, sinLarge(iGlobalTime * 0.1) * 2);
 	dir.xy := rotate(dir.xy, iGlobalTime * 0.2);
 
 	// very little steps for the sake of a good framerate
@@ -89,13 +91,19 @@ begin
 
 		// fractal from "cosmos"
     for I := 0 to 13 do
-			p := (abs(p) / dot(p, p)) * 2.0 - 1.0;
+    begin
+      dp := dot(p, p);
+//  	p := (abs(p) / dot(p, p)) * 2.0 - 1.0;
+    	p.x := (abs(p.x) / dp) * 2 - 1;
+    	p.y := (abs(p.y) / dp) * 2 - 1;
+    	p.z := (abs(p.z) / dp) * 2 - 1;
+    end;
 
 		it := 0.001 * length(p * p);
 		v :=  v + it;
 
 		// cheap coloring
-		acc := acc + (sqrt(it) * texture2D(tex2, r.xy * 0.1 + r.z * 0.1).xyz);
+		acc := acc + (System.sqrt(it) * texture2D(tex[2], r.xy * 0.1 + r.z * 0.1).xyz);
 
 		r := r + (dir * inc);
   end;
@@ -103,8 +111,8 @@ begin
 	// old blueish colorset
   // Exit(Tcolor32(256*pow(vec3(v), 4.0 * vec3.create(0.9, 0.3, 0.1))));
 
-	br  := pow(v * 4.0, 3.0) * 0.1;
-	col := pow(acc * 0.3, vec3(1.2)) + br;
+	br  := pow(v * 4, 3) * 0.1;
+	col := pow(acc * 0.3, vec12) + br;
 
 	Result := TColor32(col*4);
 end;

@@ -5,7 +5,7 @@ interface
 uses GR32, Types, WvN.DelphiShader.Shader;
 
 const
-  v3    : vec3  = (x: 1E20; y: 0.57735; z: 0);
+  v3: vec3      = (x: 1E20; y: 0.57735; z: 0);
   vec3_1: vec3  = (x: 0; y: 0.57735; z: 0);
   vec3_2: vec3  = (x: 1; y: 0.7; z: 0.9);
   vec2_3: vec2  = (x: 0.5; y: 0.5);
@@ -25,10 +25,10 @@ const
 type
   TSierpkinki = class(TShader)
   var
-    m  : vec2;
-    pow_4_7,pow_2_7, an,res: double;
+    m                        : vec2;
+    pow_4_7, pow_2_7, an, res: double;
 
-    ro, rd, ta, ww, uu, vv : vec3;
+    ro, rd, ta, ww, uu, vv   : vec3;
 
     function map(aP: vec3): vec2;
     function intersect: vec3;
@@ -62,17 +62,17 @@ begin
   FrameProc := PrepareFrame;
   PixelProc := Main;
 
-  va     := vec3_1;
-  vb     := vec3.Create( 0, -1,  1.15470);
-  vc     := vec3.Create( 1, -1, -0.57735);
-  vd     := vec3.Create(-1, -1, -0.57735);
-  precis := 0.001;
-  lig    := normalize(vec3_2);
-  pow_2_7 := pow(2,7);
-  pow_4_7 := pow(4, 7);
+  va        := vec3_1;
+  vb        := vec3.Create(0, -1, 1.15470);
+  vc        := vec3.Create(1, -1, -0.57735);
+  vd        := vec3.Create(-1, -1, -0.57735);
+  precis    := 0.001;
+  lig       := normalize(vec3_2);
+  pow_2_7   := pow(2, 7);
+  pow_4_7   := pow(4, 7);
 end;
 
-function dot2(const pp:vec3):Float;inline;
+function dot2(const pp: vec3): float; inline;
 begin
   Result := pp.x * pp.x + pp.y * pp.y + pp.z * pp.z;
 end;
@@ -84,37 +84,37 @@ var
   c         : vec3;
   dist, d, t: float;
   i         : integer;
-  p,pp      : vec3;
+  p, pp     : vec3;
 begin
   p := aP;
-  if p.x > 1e+6 then
+  if p.x > 1E+6 then
     Exit;
-  if p.x < -1e+6 then
+  if p.x < -1E+6 then
     Exit;
 
-  a := 0;
+  a      := 0;
 
-  for i := 0 to 6 do
+  for i  := 0 to 6 do
   begin
-    pp   := p - va;   d := dot2(pp);
-    c    := va;  dist := d;   t := 0;
-
-    pp := p - vb; d := dot2(pp);
-    if d < dist then
+    pp   := p - va;    d    := dot2(pp);    c    := va;    dist := d;    t    := 0;
+    pp   := p - vb;    d    := dot2(pp);    if d < dist then
     begin
-      c := vb;   dist := d;   t := 1;
+      c    := vb;
+      dist := d;
+      t    := 1;
     end;
 
-    pp := p - vc; d := dot2(pp);
-    if d < dist then
+    pp := p - vc;    d  := dot2(pp);    if d < dist then
     begin
-      c := vc;   dist := d;   t := 2;
+      c    := vc;
+      dist := d;
+      t    := 2;
     end;
 
-    pp := p - vd; d := dot2(pp);
-    if d < dist then
+    pp := p - vd;    d  := dot2(pp);    if d < dist then
     begin
-      c := vd;   dist := d;   t := 3;
+      c    := vd;
+      t    := 3;
     end;
 
     p := c + 2 * (p - c);
@@ -135,7 +135,7 @@ var
   m   : float;
   i   : integer;
 begin
-  Result:= v3;
+  Result := v3;
 
   // plane
   tp := (-1 - ro.y) / rd.y;
@@ -172,9 +172,11 @@ var
   eps: vec3;
 
 begin
-  eps := vec3.Create(precis * 10, 0, 0);
+  eps    := vec3.Create(precis * 10, 0, 0);
 
-  Result := normalize(vec3.Create(map(pos + eps.xyy).x - map(pos - eps.xyy).x, map(pos + eps.yxy).x - map(pos - eps.yxy).x, map(pos + eps.yyx).x - map(pos - eps.yyx).x));
+  Result := normalize(vec3.Create(map(pos + eps.xyy).x - map(pos - eps.xyy).x,
+    map(pos + eps.yxy).x - map(pos - eps.yxy).x, map(pos + eps.yyx).x -
+    map(pos - eps.yyx).x));
 end;
 
 function TSierpkinki.softshadow(const ro, rd: vec3; mint, k: float): float;
@@ -225,35 +227,33 @@ procedure TSierpkinki.PrepareFrame;
 begin
   // Created by inigo quilez - iq/2013
   // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-  res    := resolution.x / resolution.y;
+  res := resolution.x / resolution.y;
 
-
-  m := vec2_3;
+  m   := vec2_3;
   if iMouse.z > 0 then
     m := iMouse.xy / resolution.xy;
 
   // camera
   an := 3.2 + 0.5 * iGlobalTime - 6.2831 * (m.x - 0.5);
-  ro := vec3.Create(2.51 * system.sin(an), 0, 2.5 * system.cos(an));
+  ro := vec3.Create(2.51 * sinLarge(an), 0, 2.5 * cosLarge(an));
   ta := vec3_4;
   ww := normalize(ta - ro);
   uu := normalize(cross(ww, vec3_5));
   vv := normalize(cross(uu, ww));
 
-
 end;
 
 function TSierpkinki.Main(var gl_FragCoord: vec2): TColor32;
 var
-  q, p: vec2;
+  q, p                       : vec2;
   col, tm, pos, nor, maa, lin: vec3;
-  occ, amb, dif, sha, att: float;
+  occ, amb, dif, sha, att    : float;
 begin
   q   := gl_FragCoord.xy / resolution.xy;
   p   := -1 + 2 * q;
   p.x := p.x * res;
 
-  rd := normalize(p.x * uu + p.y * vv + 2.5 * ww);
+  rd  := normalize(p.x * uu + p.y * vv + 2.5 * ww);
 
   // render
   col := vec3_6;
@@ -277,23 +277,23 @@ begin
     else
     begin
       nor := calcNormal(pos);
-      maa := 0.5 + 0.5 * cos(6.2831 * tm.z + vec3_10);
+      maa := 0.5 + 0.5 * cos(&mod(6.2831 * tm.z + vec3_10,2*pi));
       occ := occ * (0.5 + 0.5 * clamp((pos.y + 1) / 0.5, 0, 1));
     end;
 
     occ := occ * occlusion(pos, nor);
 
     // lighting
-    amb := (0.5 + 0.5 * nor.y) * (1 - smoothstep(10, 40, length(pos.xz)));
-    dif := Math.max(dot(nor, lig), 0);
-    sha := 0;
+    amb   := (0.5 + 0.5 * nor.y) * (1 - smoothstep(10, 40, length(pos.xz)));
+    dif   := Math.max(dot(nor, lig), 0);
+    sha   := 0;
     if dif > 0.01 then
       sha := softshadow(pos + 0.01 * nor, lig, 0.0005, 32);
     att   := 1 - smoothstep(1.5, 2.5, length(pos.xz));
     // lights
-    lin := vec3_11;
-    lin := lin + (1.5 * dif * vec3_13 * pow(vec3(sha * att), vec3_12));
-    lin := lin + (0.4 * amb * vec3_14 * occ);
+    lin   := vec3_11;
+    lin   := lin + (1.5 * dif * vec3_13 * pow(vec3(sha * att), vec3_12));
+    lin   := lin + (0.4 * amb * vec3_14 * occ);
 
     // surface-light interacion
     col := maa * lin;
@@ -301,7 +301,7 @@ begin
   end;
 
   // gamma
-  col := pow(clamp(col, 0, 1), vec3_15);
+  col    := pow(clamp(col, 0, 1), vec3_15);
 
   Result := TColor32(col);
 end;

@@ -99,7 +99,6 @@ function TNewton.trace(pos: vec3; dir: vec3): vec4;
 var
   spos        : array [0 .. SPHERES - 1] of vec3;
   i, j        : integer; // loop variables
-  th          : float;
   mint        : float;
   sphereHit   : vec4;
   t           : float;
@@ -120,8 +119,6 @@ begin
 
   for i := 0 to SPHERES - 1 do
   begin
-    th := i * (2.0 * pi / SPHERES);
-    // spos[i]  := Vec3.Create(sin(th + (time * .34))* 4.,0.0,cos(th + (time*.55)) * 4.);
     spos[i] := vec3.Create((i * 2) - 4, 0, 0);
 
     if i = 0 then

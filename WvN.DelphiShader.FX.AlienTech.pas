@@ -36,7 +36,7 @@ type
     function Main(var gl_FragCoord: Vec2): TColor32;
 
   var
-    ti  : float;
+    ti  : TVecType;
     ldir: vec3;
     ot  : float;
     blur: float;
@@ -59,8 +59,8 @@ uses SysUtils, Math;
 constructor TAlienTech.Create;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := Main;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := Main;
 end;
 
 function TAlienTech.formula(const _p: Vec2): float;
@@ -88,7 +88,7 @@ begin
     begin // exponential smoothing calc, with iteration skipping
       pl     := l;
       l      := length(p);
-      expsmo := expsmo + (exp(-1 / abs(l - pl)));
+      expsmo := expsmo + (exp(-1 / System.abs(l - pl)));
       ot     := Math.min(ot, l);
     end;
   end;
@@ -143,10 +143,13 @@ var
   ax,ay           : integer;
   aacoord, p      : Vec2;
   k, star         : float;
+
+const AA=0; {default=2}
+  colMult=1; {default=0.2}
 begin
   uv      := gl_FragCoord.xy / resolution.xy - 0.5;
   sph     := length(uv);
-  sph     := system.sqrt(1 - sph * sph) * 1.5;                // curve for spheric distortion
+  sph     := System.sqrt(1 - sph * sph) * 1.5;                // curve for spheric distortion
   uv      := normalize(vec3.Create(uv, sph)).xy * 1.3; // normalize back to 2D and scale (zoom level)
   pixsize := normalize(vec3.Create(pixsize, sph)).xy * 1.3; // the same with pixsize for proper AA
 
@@ -155,8 +158,8 @@ begin
   titila      := texture2D(tex[11], texCoord).x;
 
   // AA loop
-  for ay := 0 to 2 do
-    for ax := 0 to 2 do
+  for ay := 0 to AA do
+    for ax := 0 to AA do
     begin
       aacoord.Create(ax, ay);
       p       := uv + aacoord * pixsize;
@@ -167,7 +170,7 @@ begin
       lig     := lig + (math.max(0, 2 - ot) / 2);
     end;
 
-  col := col * 0.2;
+  col := col * colMult;
   luv := uv + lightpos.xy;
 
   // min amb light + spotlight with falloff * varying intensity
@@ -175,7 +178,7 @@ begin
 
   // rotating star light
 {$IFDEF SHOWLIGHT}
-  star := abs(1.5708 - &mod(atan(luv.x, luv.y) * 3 - ti * 10, 3.1416)) * 0.02 - 0.05;
+  star := System.Abs(1.5708 - &mod(atan(luv.x, luv.y) * 3 - ti * 10, 3.1416)) * 0.02 - 0.05;
   col := col + (pow(max(0, 0.3 - length(luv * 1.5) - star) / 0.3, 5) * (1 - titila * 0.5));
 {$ENDIF }
   // yellow lights

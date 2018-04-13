@@ -39,7 +39,7 @@ end;
 
 function TWaves.wave( const position:vec2;freq:float;height:float;speed:float ):float;
 begin
-	result  := system.sin(position.x*freq - time*tscale*speed);
+	result  := sinLarge(position.x*freq - time*tscale*speed);
 	result  := result * 0.8 * 5.0 - 1.0;
 	result  := result  * (height);
 end;
@@ -51,12 +51,12 @@ var
   lum   :float;
 begin
 	offset  := pi * (center * 8.9);
-	lum     := abs(tan(position.y * pi + offset)) - pi / 100.9;
+	lum     := System.abs(tan(position.y * pi + offset)) - pi / 100.9;
 	lum     := lum  * (size);
 
-  Result.r := lum + wave(position, 10.0, 0.9*size, 1.008);
+  Result.r := lum + wave(position, 10.0, 0.9*size,  1.008);
 	Result.g := lum + wave(position, 10.5, 0.5*size, -0.023);
-	Result.b := lum + wave(position, 10.5, 0.2*size, 1.042);
+	Result.b := lum + wave(position, 10.5, 0.2*size,  1.042);
 end;
 
 
@@ -68,10 +68,10 @@ begin
 	// normalize position
 	position  := gl_FragCoord.xy / resolution.xy;
 
-	c  := vecBlack;
-	c  := c  + combo(position, 0.1+0.05*system.sin(0.6*time + 4.0*position.x), 0.05);
-	c  := c  + combo(position, 0.5+0.05*system.sin(0.9*time + (2.0)*position.x), 0.25);
-	c  := c  + combo(position, 0.85+0.05*system.sin(0.42*time + 1.3*position.x), 0.05);
+	c  := vec3Black;
+	c  := c  + combo(position, 0.10+0.05*sinLarge(0.60*time + 4.0*position.x), 0.05);
+	c  := c  + combo(position, 0.50+0.05*sinLarge(0.90*time + 2.0*position.x), 0.25);
+	c  := c  + combo(position, 0.85+0.05*sinLarge(0.42*time + 1.3*position.x), 0.05);
  // c  := c  + combo(position, 0.02+0.05*sin(0.012*time + 6.3*position.y), -0.5);
 
 	Result := TColor32(c);

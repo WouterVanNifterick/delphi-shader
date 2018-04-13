@@ -484,7 +484,7 @@ var
     vViewCoord  := vUV * 2 - 1;
     vViewCoord.y  := vViewCoord.y  / fRatio;
 
-    ray.vOrigin  := vecBlack;
+    ray.vOrigin  := vec3Black;
     ray.vDir.x := vViewCoord.x;
     ray.vDir.y := vViewCoord.y;
     ray.vDir.z := 1;

@@ -126,7 +126,7 @@ begin
   f := startf;
   for i := 0 to 256-1 do
   begin
-    if (abs(s.x)<precis) or (f>maxd) or (i>maxite) then
+    if (System.abs(s.x)<precis) or (f>maxd) or (i>maxite) then
       break;
     f := f + (s.x);
     p := prp+scp*f;
@@ -153,7 +153,7 @@ begin
 end;
 
 
-function render( const prp,scp:vec3;maxite:int;precis,startf,maxd:float;const background,light:vec3;spec:float;const ambLight:vec3;out n:vec3;out p:vec3;out f:float;out objid:float ):vec3;
+function renderIt( const prp,scp:vec3;maxite:int;precis,startf,maxd:float;const background,light:vec3;spec:float;const ambLight:vec3;out n:vec3;out p:vec3;out f:float;out objid:float ):vec3;
 var c,cf:vec3;
 begin
   objid := -1.0;
@@ -204,16 +204,16 @@ begin
 
  maxe  := 0.01;
  startf  := 0.1;
- backc  := vecBlack;
+ backc  := vec3Black;
  spec  := 8.0;
  ambi  := vec3_7;
 
-  c1 := render(prp,scp,256,maxe,startf,60,backc,light,spec,ambi,n,p,f,o);
+  c1 := renderIt(prp,scp,256,maxe,startf,60,backc,light,spec,ambi,n,p,f,o);
   c1 := c1*max(1.0-f*0.015,0.0);
   c2 := backc;
   if o>0.5 then begin
     scp := reflect(scp,n);
-    c2 := render(p+scp*0.05,scp,32,maxe,startf,10.0,backc,light,spec,ambi,n,p,f,o);
+    c2 := renderIt(p+scp*0.05,scp,32,maxe,startf,10.0,backc,light,spec,ambi,n,p,f,o);
   end;
 
   c2 := c2*max(1.0-f*0.1,0.0);

@@ -59,9 +59,9 @@ var x,y:integer;
 
 begin
 	rotation  := 0.04 * M_TAU * iGlobalTime;
-  if system.length(map)<>Buffer.Width then
+  if system.length(map)<>Image.Bitmap.Width then
   begin
-    SetLength(map,Buffer.width,Buffer.Height);
+    SetLength(map,image.Bitmap.width,Image.Bitmap.Height);
     for y := 0 to high(map) do
       for x := 0 to High(map[0]) do
       begin

@@ -6,6 +6,12 @@ uses GR32, Types, WvN.DelphiShader.Shader;
 
 type
   TNoiseBlur = class(TShader)
+  const
+    v3_1:vec3=(x:0.6; y:0.7; z:0.7);
+    v3_2:vec3=(x:1.0; y:0.95;z: 0.9);
+    v2:vec2=(x:0.707;y:0.707);
+
+  var st:double;
     constructor Create; override;
     procedure PrepareFrame;
     function RenderPixel(var gl_FragCoord: Vec2): TColor32;
@@ -25,76 +31,90 @@ begin
   PixelProc := RenderPixel;
 end;
 
-
-
-function noise( const x :vec2 ):float;
-var p :vec2; f :vec2; n :float;
+function noise(const x: Vec2): float;
+var
+  p: Vec2;
+  f: Vec2;
+  n: float;
 begin
-    p  := floor(x);
-    f  := fract(x);
-    f  := f*f*(3.0-2.0*f);
-    n  := p.x + p.y*57.0;
-    Result := mix(mix( hash(n+  0.0), hash(n+  1.0),f.x), mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y);
+  p      := floor(x);
+  f      := fract(x);
+  f      := f * f * (3 - 2 * f);
+  n      := p.x + p.y * 57;
+  Result := mix(mix(hash(n     ),
+                    hash(n +  1), f.x),
+                mix(hash(n + 57),
+                    hash(n + 58), f.x), f.y);
 end;
-
 
 procedure TNoiseBlur.PrepareFrame;
 begin
+  st := sinLarge(0.1 * iGlobalTime);
 end;
 
 function TNoiseBlur.RenderPixel(var gl_FragCoord: Vec2): TColor32;
-var p :vec2; uv :vec2; acc :float; col :vec3; dir :vec2; h :float; w :float; ttt :vec3; gg :float; nor :vec3; di :vec2;
-    i:Integer;
-  function map( var p :vec2 ):vec2;
-  var a :float;
+var
+  p  : Vec2;
+  uv : Vec2;
+  acc: float;
+  col: vec3;
+  dir: Vec2;
+  h  : float;
+  w  : float;
+  ttt: vec3;
+//  gg :float;
+//  nor: vec3;
+  di : Vec2;
+  i  : Integer;
+  a: float;
+  g:float;
+  function map(aP: Vec2): Vec2;
   begin
-    p.x  := p.x  + (0.1*system.sin( iGlobalTime + 2.0*p.y ) );
-    p.y  := p.y  + (0.1*system.sin( iGlobalTime + 2.0*p.x ) );
+    ap.x := ap.x + (0.1 * sinLarge(iGlobalTime + 2.0 * ap.y));
+    ap.y := ap.y + (0.1 * sinLarge(iGlobalTime + 2.0 * ap.x));
 
-    a  := noise(p*1.5 + system.sin(0.1*iGlobalTime))*6.2831;
-    a  := a  - (iGlobalTime + gl_FragCoord.x / Resolution.x);
-    Exit( Vec2.Create( system.cos(a),system.sin(a) ) );
+    a   := Noise(ap * 1.5 + st) * 6.2831 - g;
+    Result.x := cosLarge(a);
+    Result.y := sinLarge(a);
   end;
 
-
-
 begin
-    p  := gl_FragCoord.xy / Resolution.xy;
-	uv  := -1.0 + 2.0*p;
-	uv.x  := uv.x  * (Resolution.x / Resolution.y);
+  p     := gl_FragCoord.xy / Resolution.xy;
+  uv    := -1 + 2 * p;
+  uv.x  := uv.x * (Resolution.x / Resolution.y);
 
-	acc  := 0.0;
-	col  := vec3(0.0);
-    for i:=0 to 31 do
-   	begin
-		dir  := map( uv );
+  acc   := 0;
+  col   := vec3Black;
+  g     := iGlobalTime + gl_FragCoord.x / Resolution.x;
+  for i := 0 to 31 do
+  begin
+    dir := map(uv);
 
-		h  := i/32.0;
-		w  := 4.0*h*(1.0-h);
+    h   := i / 32;
+    w   := 4 * h * (1 - h);
 
-		ttt  := w*texture2D( tex[1], uv ).xyz;
-		ttt  := ttt  * (mix(
-                      vec3.create(0.6,0.7,0.7),
-                      vec3.create(1.0,0.95,0.9), 0.5 - 0.5 * dot( reflect(vec3.create(dir,0.0), Vec3.Create(1.0,0.0,0.0)).xy,vec2.create(0.707) ) ));
-		col  := col  + (w*ttt);
-		acc  := acc  + (w);
+    ttt := w * texture2D(tex[1], uv).xyz
+             * (mix(
+                    v3_1,
+                    v3_1,
+                    0.5 - 0.5 * dot(reflect(vec3.Create(dir, 0), vec3Red ).xy, v2))
+                );
+    col := col + w * ttt;
+    acc := acc + w;
+    uv  := uv  + 0.008 * dir;
+  end;
 
-		uv  := uv  + (0.008*dir);
-	end;
+  col := col / acc;
+//  gg  := dot( col, vec3(0.333) );
+//  nor  := normalize( Vec3.Create( dFdx(gg),0.5,dFdy(gg) ) );
+//  col    := col + (vec3(0.4) * dot(nor, vec3.Create(0.7, 0.01, 0.7)));
 
-	col  := col  / (acc);
+  di     := map(uv);
+  col    := col * (0.65 + 0.35 * dot(di, v2))
+                * (0.20 + 0.80 * power(4 * p.x * (1 - p.x), 0.1))
+                * 1.7;
 
-	gg  := dot( col, vec3(0.333) );
-//	nor  := normalize( Vec3.Create( dFdx(gg),0.5,dFdy(gg) ) );
-  col  := col  + (vec3(0.4)*dot( nor, Vec3.Create(0.7,0.01,0.7) ));
-
-
-	di  := map( uv );
-	col  := col  * (0.65 + 0.35*dot( di, vec2(0.707) ));
-	col  := col  * (0.20 + 0.80*pow( 4.0*p.x*(1.0-p.x), 0.1 ));
-	col  := col  * (1.7);
-
-	Result := TColor32(col);
+  Result := TColor32(col);
 end;
 
 initialization

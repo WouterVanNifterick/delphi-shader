@@ -42,9 +42,9 @@ var
 begin
   v := 0.001;
   t := 0.001;
-  f := gl_FragCoord.xyy^;
+  f := vec3.create(gl_FragCoord.x, gl_FragCoord.y, gl_FragCoord.y);
 
-  for j := 0 to 100 do
+  for j := 0 to 99 do
   begin
     s := j * 0.01;
     p := s * f * t + vec3.Create(0.1, 0.2, fract(s + ft));
@@ -53,9 +53,9 @@ begin
     begin
       // p   := abs(p) / dot(p, p) - 0.8;
       d   := p.x * p.x + p.y * p.y + p.z * p.z;
-      p.x := abs(p.x) / d - 0.8;
-      p.y := abs(p.y) / d - 0.8;
-      p.z := abs(p.z) / d - 0.8;
+      p.x := System.abs(p.x) / d - 0.8;
+      p.y := System.abs(p.y) / d - 0.8;
+      p.z := System.abs(p.z) / d - 0.8;
     end;
 
     v := v + dot(p, p) * t;

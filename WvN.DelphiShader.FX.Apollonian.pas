@@ -18,6 +18,10 @@ type
 
   TApollonian = class(TShader)
   public const
+    maxd   = 100;
+    precis = 0.001;
+    precis2 = precis * 2;
+    iterations = 199;
     vec1000: Vec4 = (x: 1000; y: 1000; z: 1000; w: 1000);
     vec3_1: Vec3  = (x: 1; y: 1; z: 1);
     vec3_2: Vec3  = (x: 0.4; y: 0.4; z: 0.4);
@@ -63,7 +67,6 @@ function TApollonian.map(p: Vec3): float;
 var
   i           : Integer;
   r2, scale, k: float;
-
 begin
   scale := 1;
   orb := vec1000;
@@ -76,21 +79,19 @@ begin
     p     := p * k;
     scale := scale * k;
   end;
-  Result := 0.25 * abs(p.y) / scale;
+  Result := 0.25 * System.abs(p.y) / scale;
 end;
 
 function TApollonian.trace(const ro, rd: Vec3): float;
 var
-  maxd, precis, h, t: float;
+  h, t: float;
   i                 : Integer;
 begin
-  maxd   := 100.0;
-  precis := 0.001;
-  h      := precis * 2.0;
-  t      := 0.0;
-  for i  := 0 to 199 do
+  h      := precis2;
+  t      := 0;
+  for i  := 0 to Iterations do
   begin
-    if (abs(h) < precis) or (t > maxd) then
+    if (System.abs(h) < precis) or (t > maxd) then
       break;
     t := t + h;
     h := map(ro + rd * t);
@@ -112,8 +113,8 @@ end;
 constructor TApollonian.Create;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := RenderPixel;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := RenderPixel;
 
   light1 := Vec3.Create(0.577, 0.577, -0.577);
   light2 := Vec3.Create(-0.707, 0.000, 0.707);
@@ -127,12 +128,15 @@ begin
   ss   := 1.1 + 0.5 * smoothstep(-0.3, 0.3, system.cos(0.1 * iGlobalTime));
 
   // camera
-  ro := Vec3.Create(2.8 * system.cos(0.1 + 0.33 * time), 0.4 + 0.30 * system.cos(0.37 * time), 2.8 * system.cos(0.5 + 0.35 * time));
+  ro := Vec3.Create(2.8 * cosLarge(0.1 + 0.33 * time), 0.4 + 0.30 * cosLarge(0.37 * time), 2.8 * cosLarge(0.5 + 0.35 * time));
 
-  ta   := Vec3.Create(1.9 * system.cos(1.2 + 0.41 * time), 0.4 + 0.10 * system.cos(0.27 * time), 1.9 * system.cos(2.0 + 0.38 * time));
-  roll := 0.2 * system.cos(0.1 * time);
+  ta   := Vec3.Create(1.9 * cosLarge(1.2 + 0.41 * time), 0.4 + 0.10 * cosLarge(0.27 * time), 1.9 * cosLarge(2.0 + 0.38 * time));
+  roll := 0.2 * cosLarge(0.1 * time);
   cw   := normalize(ta - ro);
-  cp   := Vec3.Create(system.sin(roll), system.cos(roll), 0.0);
+  cp   := Vec3.Create(
+            system.sin(roll),
+            system.cos(roll),
+            0.0);
   cu   := normalize(cross(cw, cp));
   cv   := normalize(cross(cu, cw));
 end;

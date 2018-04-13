@@ -36,7 +36,7 @@ begin
   // water turbulence effect by joltz0r 2013-07-04, improved 2013-07-07
   // Altered
 
-  pulse  := abs(system.sin(time * 5));
+  pulse  := System.abs(system.sin(time * 5));
   pulse2 := pow(system.sin(time * 3), 0.25);
   pulse3 := pow(system.sin(time * 2), 2);
 end;

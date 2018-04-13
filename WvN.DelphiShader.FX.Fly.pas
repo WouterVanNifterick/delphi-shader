@@ -52,8 +52,8 @@ begin
   if ly=0 then
     Exit(clBlack32);
 
-  uv.x := 0.25 * lx / abs(ly);
-  uv.y := 0.20 * iGlobalTime + 0.25 / abs(ly);
+  uv.x := 0.25 * lx / System.abs(ly);
+  uv.y := 0.20 * iGlobalTime + 0.25 / System.abs(ly);
 
   Result := TColor32(vec4.Create(texture2D(tex[0], uv).xyz * ly * ly,1));
 end;

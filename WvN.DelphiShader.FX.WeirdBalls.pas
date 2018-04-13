@@ -77,13 +77,13 @@ end;
 
 function TWeirdBalls.hash(  x:float ):float;
 begin
-	Exit( fract(system.sin(x*0.0127863)*17143.321) ); //decent hash for noise generation
+	Result := fract(sinLarge(x*0.0127863)*17143.321); //decent hash for noise generation
 end;
 
 
 function TWeirdBalls.hash( const x:vec2 ):float;
 begin
-	Exit( fract(system.cos(dot(x.xy,vec2_1)*124.123)*412) );
+	Result := fract(cosLarge(dot(x.xy,vec2_1)*124.123)*412);
 end;
 
 
@@ -137,17 +137,16 @@ var
 begin
 	pm  := &mod(p,1);
 	pd  := p-pm;
-	Exit( hashmix(pd,(pd+vec3_3), pm) );
+	Result := hashmix(pd,(pd+vec3_3), pm)
 end;
 
 
 function TWeirdBalls.cc( const color:vec3; factor, factor2:float ):vec3; // color modifier
 var
   w :float;
-
 begin
 	w  := color.x+color.y+color.z;
-	Exit( mix(color,vec3(w)*factor,w*factor2) );
+	Result := mix(color,vec3(w)*factor,w*factor2);
 end;
 
 
@@ -158,9 +157,9 @@ var
 begin
 	ca := system.cos(angle);
   sa := system.sin(angle);
-	Exit( v*mat3.Create(+ca, -sa, +0,
-                      +sa, +ca, +0,
-                      + 0, + 0, +1) );
+	Result := v * mat3.Create(+ca, -sa, +0,
+                            +sa, +ca, +0,
+                            + 0, + 0, +1);
 end;
 
 
@@ -170,10 +169,10 @@ var
 begin
 	ca := system.cos(angle);
   sa := system.sin(angle);
-	Exit( v*mat3.Create(
-		+ca, +0, -sa,
-		+ 0, +1, + 0,
-		+sa, +0, +ca) );
+	Result := v * mat3.Create(
+                   +ca, +0, -sa,
+ 		               + 0, +1, + 0,
+		               +sa, +0, +ca);
 end;
 
 
@@ -183,42 +182,36 @@ var
 begin
 	ca := system.cos(angle);
   sa := system.sin(angle);
-	Exit( v*mat3.Create(
+	Result := v * mat3.Create(
 		+1, + 0, + 0,
 		+0, +ca, -sa,
-		+0, +sa, +ca) );
+		+0, +sa, +ca) ;
 end;
 
 
 function TWeirdBalls.dist( p:vec3 ):float;//distance function
 var
   t :float;
-  d :float;
   i:integer;
-  fi :float;
   tof:float;
   offs :vec3;
   v :vec3;
 begin
 	t  := iGlobalTime+4;
-	d  := 1000;//p.y+2.0;
+	Result := 1000;//p.y+2.0;
 	p.y := p.y + (system.sin(t*0.5)*0.2);
-	d := min(length(p)-1,d);
+	Result := min(length(p)-1,Result);
 
 	for i := 0 to object_count-1 do
 	begin
-		fi  := i;
-		tof := 1442.530/object_count*fi;
+		tof := 1442.530/object_count*i;
 		offs  := Vec3.Create(
-			system.sin(t*0.7+tof*6),
-			system.sin(t*0.8+tof*4),
-			system.sin(t*0.9+tof*3));
+			sinLarge(t*0.7+tof*6),
+			sinLarge(t*0.8+tof*4),
+			sinLarge(t*0.9+tof*3));
 		v  := p+normalize(offs)*1.3;
-		d  := min(d,length(v)-0.3);
+		Result  := min(Result,length(v)-0.3);
 	end;
-
-
-	Exit( d );
 end;
 
 
@@ -226,91 +219,92 @@ function TWeirdBalls.amb_occ( const p:vec3 ):float;
 var
   acc:float;
 const
-  ambocce = 0.2;
-  v1:vec3=(x:-ambocce;y:-ambocce;z:-ambocce);
-  v2:vec3=(x:-ambocce;y:-ambocce;z:+ambocce);
-  v3:vec3=(x:-ambocce;y:+ambocce;z:-ambocce);
-  v4:vec3=(x:-ambocce;y:+ambocce;z:+ambocce);
-  v5:vec3=(x:+ambocce;y:-ambocce;z:-ambocce);
-  v6:vec3=(x:+ambocce;y:-ambocce;z:+ambocce);
-  v7:vec3=(x:+ambocce;y:+ambocce;z:-ambocce);
-  v8:vec3=(x:+ambocce;y:+ambocce;z:+ambocce);
+  ambocce  = 0.2;
+  v1: vec3 = (x:-ambocce; y:-ambocce; z:-ambocce);
+  v2: vec3 = (x:-ambocce; y:-ambocce; z:+ambocce);
+  v3: vec3 = (x:-ambocce; y:+ambocce; z:-ambocce);
+  v4: vec3 = (x:-ambocce; y:+ambocce; z:+ambocce);
+  v5: vec3 = (x:+ambocce; y:-ambocce; z:-ambocce);
+  v6: vec3 = (x:+ambocce; y:-ambocce; z:+ambocce);
+  v7: vec3 = (x:+ambocce; y:+ambocce; z:-ambocce);
+  v8: vec3 = (x:+ambocce; y:+ambocce; z:+ambocce);
 begin
-	acc := 0;
-	acc := acc + (dist(p+v1));
-	acc := acc + (dist(p+v2));
-	acc := acc + (dist(p+v3));
-	acc := acc + (dist(p+v4));
-	acc := acc + (dist(p+v5));
-	acc := acc + (dist(p+v6));
-	acc := acc + (dist(p+v7));
-	acc := acc + (dist(p+v8));
-	Exit( 0.5+acc /(16*ambocce) );
+  acc := 0;
+  acc := acc +
+     (dist(p + v1))
+   + (dist(p + v2))
+   + (dist(p + v3))
+   + (dist(p + v4))
+   + (dist(p + v5))
+   + (dist(p + v6))
+   + (dist(p + v7))
+   + (dist(p + v8));
+
+  Result := 0.5 + acc / (16 * ambocce);
 end;
 
 
-function TWeirdBalls.occ( const start, light_pos:vec3; size:float ):float;
+function TWeirdBalls.occ(const start, light_pos: vec3; size: float): float;
 var
-  dir :vec3;
-  total_dist :float;
-  travel :float;
-  p:vec3;
-  search_travel,search_o:float;
-  e :float;
-  i:integer;
-  cd :float;
-  co :float;
-  tr :float;
-  oc :float;
+  dir          : vec3;
+  total_dist   : float;
+  travel       : float;
+  p            : vec3;
+  search_travel: float;
+  search_o     : float;
+  e            : float;
+  i            : integer;
+  cd           : float;
+  co           : float;
+  tr           : float;
+  oc           : float;
 begin
-	dir  := light_pos-start;
-	total_dist  := length(dir);
-	dir  := dir/total_dist;
+  dir        := light_pos - start;
+  total_dist := length(dir);
+  dir        := dir / total_dist;
 
-	travel := 0.1;
-	Result := 1;
-	p := start;
+  p := start;
 
-	search_travel := 0;
-	search_o := 1;
+  search_travel := 0;
+  search_o      := 1;
 
-	e  := 0.5*total_dist/occlusion_pass1_quality;
+  e := 0.5 * total_dist / occlusion_pass1_quality;
 
-	//pass 1 fixed step search
+  // pass 1 fixed step search
 
-	for i := 0 to occlusion_pass1_quality-1 do
-	begin
-		travel  := (i+0.5)*total_dist/occlusion_pass1_quality;
-		cd  := dist(start+travel*dir);
-		co  := cd/travel*total_dist*size;
-		if co<search_o then
-		begin
-			search_o := co;
-			search_travel := travel;
-			if co<0 then
-				break;
-		end;
-	end;
+  for i := 0 to occlusion_pass1_quality - 1 do
+  begin
+    travel := (i + 0.5) * total_dist / occlusion_pass1_quality;
+    cd     := dist(start + travel * dir);
+    co     := cd / travel * total_dist * size;
+    if co < search_o then
+    begin
+      search_o      := co;
+      search_travel := travel;
+      if co < 0 then
+        break;
+    end;
+  end;
 
-	//pass 2 tries to find a better match in close proximity to the result from the
-	//previous pass
+  // pass 2 tries to find a better match in close proximity to the result from the
+  // previous pass
 
-	for i := 0 to occlusion_pass2_quality-1 do
-	begin
-		tr  := search_travel+e;
-		oc  := dist(start+tr*dir)/tr*total_dist*size;
-		if (tr<0) or (tr>total_dist) then
-			break;
+  for i := 0 to occlusion_pass2_quality - 1 do
+  begin
+    tr := search_travel + e;
+    oc := dist(start + tr * dir) / tr * total_dist * size;
+    if (tr < 0) or (tr > total_dist) then
+      break;
 
-		if oc<search_o then
-		begin
-			search_o  := oc;
-			search_travel  := tr;
-		end;
-		e := e*-0.75;
-	end;
+    if oc < search_o then
+    begin
+      search_o      := oc;
+      search_travel := tr;
+    end;
+    e := e * -0.75;
+  end;
 
-	Result := math.max(search_o,0);
+  Result := Math.max(search_o, 0);
 end;
 
 
@@ -334,8 +328,6 @@ begin
 	total_dist  := length(dir);
 	dir  := dir/total_dist;
 
-	travel  := 0.1;
-	Result  := 1;
 	p := start;
 
 	search_travel := 0;
@@ -426,7 +418,7 @@ var
 begin
 	pm  := &mod(p,1);
 	pd  := p-pm;
-	Exit( hashmix(pd,(pd+vec2_7), pm) );
+	Result := hashmix(pd,(pd+vec2_7), pm);
 end;
 
 //computes the material for the object
@@ -477,10 +469,10 @@ begin
 		spec  := pow(dot(r,ld)*0.5+0.5,100);
 
 		icolor := vec3_9*diffuse*od*0.6 + vec3(spec)*od*reflectance;
-		color  := color  + (icolor);
+		color  := color  + icolor;
 	end;
 
-	color  := color  + (background(p,r)*(0.1+&or*reflectance));
+	color  := color  + background(p,r)*(0.1+&or*reflectance);
 
 	Exit( color*ao*1.2 );
 end;
@@ -573,4 +565,3 @@ finalization
 FreeandNil(WeirdBalls);
 
 end.
-

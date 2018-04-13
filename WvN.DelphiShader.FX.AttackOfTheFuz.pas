@@ -58,8 +58,8 @@ const
 constructor TAttackOfTheFuz.Create;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := RenderPixel;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := RenderPixel;
 end;
 
 
@@ -150,14 +150,14 @@ end;
 function TAttackOfTheFuz.DE(const aZ: vec3): float;
 var
   i               : integer;
-  d, tim, arm     : float;
+  d, tim, arm     : double;
   p5, p8, p11, p14: vec3;
   si, st, ct      : double;
   z : vec3;
 begin
   z.x := math.max(0,aZ.x);
   z.y := math.max(0,aZ.y);
-  z.z := math.max(0,z.z) + (iGlobalTime * 0.1);
+  z.z := math.max(0,aZ.z) + (iGlobalTime * 0.1);
   i   := trunc(Math.floor(z.z) + Math.floor(z.x));
   si  := system.sin(i);
   // z.xz:=abs(vec2(1.0)-&mod(z.xz,2.0))-vec2(0.5)+0.25*vec2(sin(i));//for moon walking
@@ -166,8 +166,8 @@ begin
   arm    := si * 0.2;
   st     := system.sin(tim);
   ct     := system.cos(tim);
-  p5     := vec3.Create(-0.38 + abs(arm), arm - 0.1 - abs(-st * 0.05), -0.1 - ct * 0.1);
-  p8     := vec3.Create(0.38 - abs(arm), arm - 0.1 - abs(system.sin(tim + pi) * 0.05), -0.1 + ct * 0.1);
+  p5     := vec3.Create(-0.38 + System.abs(arm), arm - 0.1 - System.abs(-st * 0.05), -0.1 - ct * 0.1);
+  p8     := vec3.Create(0.38 - System.abs(arm), arm - 0.1 - System.abs(system.sin(tim + pi) * 0.05), -0.1 + ct * 0.1);
   p11    := vec3.Create(-0.075, -0.975 + max(0.0, system.cos(tim + pi) * 0.05), st * 0.2);
   p14    := vec3.Create(0.075, -0.975 + max(0.0, ct * 0.05), -st * 0.2);
   d      := Math.min(z.y + 1.0, min(length(z * c1) - 0.1, Segment(z, p1, p2, 0.065)));

@@ -9,6 +9,8 @@ uses GR32, Types, WvN.DelphiShader.Shader;
 // https://www.google.co.uk/search?q=escher+depth
 // simon green 26/01/2011
 
+{$define USE_TEXTURE}
+{$EXCESSPRECISION OFF}
 type
   TEscherDepth = class(TShader)
   public const
@@ -35,12 +37,15 @@ type
     vec3_21: vec3 = (x: 1; y: 0.3; z: 0);
     vec3_22: vec3 = (x: 0.9; y: 0.25; z: 0);
     vec3_23: vec3 = (x: 0.0; y: 0.0; z: 0.0);
-    vec3_24: vec3 = (x: 0; y: 0; z: 0);
+    BGColor1: vec3 = (x: 0; y: 0; z: 0);
+    BGColor2: vec3 = (x: 0; y: 0; z: 0);
     vec3_25: vec3 = (x: 0.0; y: 0.0; z: 0.0);
     vec3_26: vec3 = (x: 0; y: 0; z: 4);
     vec3_27: vec3 = (x: 1; y: 0.9; z: 0.7);
 
   var
+    crx,cry,
+    srx,sry,
     rx, ry: float;
     ro    : vec3;
     asp   : float;
@@ -52,8 +57,12 @@ type
     function plane(const p, n: vec3; d: float): float; overload; inline;
     function box(const p, b: vec3): float;
     function sphere(const p: vec3; r: float): float; inline;
-    function rotateX(const p: vec3; a: float): vec3;
-    function rotateY(const p: vec3; a: float): vec3;
+    function rotateX(const p: vec3; a: float): vec3;    overload;
+    function rotateY(const p: vec3; a: float): vec3;    overload;
+    function rotateX(const p: vec3; sa,ca: float): vec3;    overload;
+    function rotateY(const p: vec3; sa,ca: float): vec3;    overload;
+
+
     function scene(const ap: vec3): float;
     function sceneNormal(const pos: vec3): vec3;
     function ambientOcclusion(const p, n: vec3): float;
@@ -142,6 +151,13 @@ begin
   Result.z := sa * p.y + ca * p.z;
 end;
 
+function TEscherDepth.rotateX(const p: vec3; sa,ca: float): vec3;
+begin
+  Result.x := p.x;
+  Result.y := ca * p.y - sa * p.z;
+  Result.z := sa * p.y + ca * p.z;
+end;
+
 function TEscherDepth.rotateY(const p: vec3; a: float): vec3;
 var
   sa, ca: float;
@@ -154,13 +170,20 @@ begin
   Result.z := -sa * p.x + ca * p.z;
 end;
 
+function TEscherDepth.rotateY(const p: vec3; sa, ca: float): vec3;
+begin
+  Result.x := ca * p.x + sa * p.z;
+  Result.y := p.y;
+  Result.z := -sa * p.x + ca * p.z;
+end;
+
 // distance to scene
 function TEscherDepth.scene(const ap: vec3): float;
 var
   d, f: float;
   p   : vec3;
 begin
-  d := 1E10;
+  // d := 1E10;
 
   p := ap + vec3_1;
   p := &mod(p, 3);
@@ -201,9 +224,12 @@ const
 var
   n: vec3;
 begin
-  n.x    := scene(vec3.Create(pos.x + eps, pos.y, pos.z)) - scene(vec3.Create(pos.x - eps, pos.y, pos.z));
-  n.y    := scene(vec3.Create(pos.x, pos.y + eps, pos.z)) - scene(vec3.Create(pos.x, pos.y - eps, pos.z));
-  n.z    := scene(vec3.Create(pos.x, pos.y, pos.z + eps)) - scene(vec3.Create(pos.x, pos.y, pos.z - eps));
+  n.x    := scene(vec3.Create(pos.x + eps, pos.y      , pos.z      )) -
+            scene(vec3.Create(pos.x - eps, pos.y      , pos.z      ));
+  n.y    := scene(vec3.Create(pos.x      , pos.y + eps, pos.z      )) -
+            scene(vec3.Create(pos.x      , pos.y - eps, pos.z      ));
+  n.z    := scene(vec3.Create(pos.x      , pos.y      , pos.z + eps)) -
+            scene(vec3.Create(pos.x      , pos.y      , pos.z - eps));
   Result := n;
   Result.NormalizeSelf;
 end;
@@ -254,7 +280,6 @@ var
   fresnel  : float;
   ao       : float;
   sx       : float;
-  a        : float;
   w        : float;
   sz       : float;
 
@@ -275,20 +300,20 @@ begin
   fresnel := pow(1 - dot(n, v), 5);
   ao      := ambientOcclusion(pos, n);
 
-{$IF true}
+{$IFDEF USE_TEXTURE}
   // stripes
   sx := pulse(0, 0.5, 0.1, fract( { pos.t } pos.y * 15));
-  a  := arctan2(pos.y, pos.x) / 3.1415;
+  //a  := arctan2(pos.y, pos.x) / 3.1415;
   // a  := //a  - (0.1);
-  sx := pulse(0.0, 0.5, 0.1, frac(a * 8.0));
+  //sx := pulse(0.0, 0.5, 0.1, frac(a * 8.0));
 
   w  := 0.5;
-  w  := 1.1 - diff;
-  w  := smoothstep(0.25, -0.25, pos.y);
-  w  := 1.0 - (pos.y + 0.25) * 2.0;
+  //w  := 1.1 - diff;
+  //w  := smoothstep(0.25, -0.25, pos.y);
+  //w  := 1.0 - (pos.y + 0.25) * 2.0;
   sz := pulse(0, w, 0.1, fract(pos.z * 20)) * (ifthen((w > 0.1), 1, 0));
 
-  color := mix(vec3.Create(1), vec3_21, sx) * vec3(1 - sz);
+  color := mix(vec3White, vec3_21, sx) * vec3(1 - sz);
 {$ELSE }
   color := vec3_22;
 {$ENDIF }
@@ -321,6 +346,7 @@ begin
     if d < hitThreshold then
     begin
       hit := true;
+      Exit(pos);
       // return pos;
     end;
 
@@ -333,7 +359,7 @@ end;
 function TEscherDepth.background(const rd: vec3): vec3;
 begin
   // return mix(Vec3.Create(1.0),vec3_23,rd.y);
-  Exit(mix(vec3Black, vec3_24, abs(rd.y)));
+  //Exit(mix(BGColor1, BGColor2, abs(rd.y)));
   // return vec3_25;
 end;
 
@@ -349,11 +375,16 @@ begin
   asp := resolution.x / resolution.y;
 
   rx := -0.4;
-  ry := time * 0.1;
+  ry := &mod(time * 0.1,2000);
+
+  srx := sinLarge(rx);
+  sry := sinLarge(ry);
+  crx := cosLarge(rx);
+  cry := cosLarge(ry);
 
   ro := vec3_26;
-  ro := rotateX(ro, rx);
-  ro := rotateY(ro, ry);
+  ro := rotateX(ro, srx,crx);
+  ro := rotateY(ro, sry,cry);
 end;
 
 function TEscherDepth.Main(var gl_FragCoord: Vec2): TColor32;
@@ -371,8 +402,8 @@ begin
 
   // compute ray origin and direction
   rd := normalize(vec3.Create(asp * pixel.x, pixel.y, -3));
-  rd := rotateX(rd, rx);
-  rd := rotateY(rd, ry);
+  rd := rotateX(rd, srx,crx);
+  rd := rotateY(rd, sry,cry);
 
   // trace ray
   pos := trace(ro, rd, hit);
@@ -385,7 +416,7 @@ begin
     rgb := shade(pos, n, ro);
   end
   else
-    rgb := background(rd);
+    rgb := {background(rd)}BGColor1;
 
   // fog
   d := length(pos) * 0.07;

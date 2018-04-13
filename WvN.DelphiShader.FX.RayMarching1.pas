@@ -10,7 +10,7 @@ type
     c1, s1,
     c2, s2,
     c3, s3  :TVecType;
-    rotmat:TMatrix3d;
+    rotmat:Mat4;
 
 
     constructor Create;override;
@@ -41,7 +41,7 @@ begin
 end;
 
 procedure TRayMarching1.PrepareFrame;
-var m1,m2,m3:TMatrix3d;
+var m1,m2,m3:Mat4;
 begin
   mx := system.sin(1.32 + time * 0.00037312) * 1.45 + 0.5;
   my := system.cos(1.01 + time * 0.00023312) * 1.45 + 0.5;
@@ -53,33 +53,32 @@ begin
   c3 := system.cos(imouse.x * PI2);
   s3 := system.sin(imouse.x * PI2);
 
-  m1.m11 := c1 ;  m1.m12 := -s1;  m1.m13 := 0;  m1.m14 := 0;
-  m1.m21 := s1 ;  m1.m22 :=  c1;  m1.m23 := 0;  m1.m24 := 0;
-  m1.m31 := 0  ;  m1.m32 :=   0;  m1.m33 := 1;  m1.m34 := 0;
-  m1.m41 := 0  ;  m1.m42 :=   0;  m1.m43 := 0;  m1.m34 := 0;
+  m1.r1.x := c1 ;  m1.r1.y := -s1;  m1.r1.z := 0;  m1.r1.w := 0;
+  m1.r2.x := s1 ;  m1.r2.y :=  c1;  m1.r2.z := 0;  m1.r2.w := 0;
+  m1.r3.x := 0  ;  m1.r3.y :=   0;  m1.r3.z := 1;  m1.r3.w := 0;
+  m1.r4.x := 0  ;  m1.r4.y :=   0;  m1.r4.z := 0;  m1.r4.w := 0;
 
+  m2.r1.x := 1  ;  m2.r1.y :=   0;  m2.r1.z:=  0;  m2.r1.w := 0;
+  m2.r2.x := 0  ;  m2.r2.y :=  c2;  m2.r2.z:= -s2; m2.r2.w := 0;
+  m2.r3.x := 0  ;  m2.r3.y :=  s2;  m2.r3.z:= c2;  m2.r3.w := 0;
+  m2.r4.x := 0  ;  m2.r4.y :=   0;  m2.r4.z:=  0;  m2.r4.w := 0;
 
-  m2.m11 := 1  ;  m2.m12 :=   0;  m2.m13 := 0;  m2.m14 := 0;
-  m2.m21 := 0  ;  m2.m22 :=  c2;  m2.m23 :=-s2; m2.m24 := 0;
-  m2.m31 := 0  ;  m2.m32 :=  s2;  m2.m33 :=c2;  m2.m34 := 0;
-  m2.m41 := 0  ;  m2.m42 :=   0;  m2.m43 := 0;  m2.m34 := 0;
+  m3.r1.x := c3 ;  m3.r1.y :=   0;  m3.r1.z := -s3;m3.r1.w := 0;
+  m3.r2.x := 0  ;  m3.r2.y :=   1;  m3.r2.z := 0;  m3.r2.w := 0;
+  m3.r3.x := s3 ;  m3.r3.y :=   0;  m3.r3.z := c3; m3.r3.w := 0;
+  m3.r4.x := 0  ;  m3.r4.y :=   0;  m3.r4.z := 0;  m3.r4.w := 0;
 
-  m3.m11 := c3 ;  m3.m12 :=   0;  m3.m13 := -s3;m3.m14 := 0;
-  m3.m21 := 0  ;  m3.m22 :=   1;  m3.m23 := 0;  m3.m24 := 0;
-  m3.m31 := s3 ;  m3.m32 :=   0;  m3.m33 := c3; m3.m34 := 0;
-  m3.m41 := 0  ;  m3.m42 :=   0;  m3.m43 := 0;  m3.m34 := 0;
-
-  RotMat := m1*m2*m3;
+  RotMat := m1 * m2 * m3;
 end;
 
 function tri( x:TVectype ):TVectype;overload;
 begin
   if IsNan(x) then exit(0);
-  if IsInfinite(x) then exit(0);  
+  if IsInfinite(x) then exit(0);
   if x < -1000 then Exit (0);
   if x>1000000 then exit(0);
 
- 	Result := abs(fract(x)-0.5)-0.25;
+ 	Result := System.abs(fract(x)-0.5)-0.25;
 end;
 
 function tri( const p:Vec3 ):Vec3;overload;
@@ -104,9 +103,9 @@ begin
     v := v + ((imouse.y - 0.5)*1.0);
 //		v := v * rotmat;
 
-    v.x := v.x * rotmat.M[0].V[0] + v.x * rotmat.M[0].V[1] + v.x * rotmat.M[0].V[2];
-    v.y := v.y * rotmat.M[1].V[0] + v.y * rotmat.M[1].V[1] + v.y * rotmat.M[1].V[2];
-    v.z := v.z * rotmat.M[2].V[0] + v.z * rotmat.M[2].V[1] + v.z * rotmat.M[2].V[2];
+    v.x := v.x * rotmat.r1.x + v.x * rotmat.r1.y + v.x * rotmat.r1.z;
+    v.y := v.y * rotmat.r2.x + v.y * rotmat.r2.y + v.y * rotmat.r2.z;
+    v.z := v.z * rotmat.r3.x + v.z * rotmat.r3.y + v.z * rotmat.r3.z;
 
 		v := tri( v ); // fold // -0.25 <= tri() <= +0.25
   end;
@@ -129,15 +128,15 @@ begin
 		if ( i = 0) and (d < 0.0 ) then
 			dir := -dir;
 
-		if ( abs(d) < 0.0001 ) and (not IsZero(d)) and (not IsZero(t)) then
+		if ( System.abs(d) < 0.0001 ) and (not IsZero(d)) and (not IsZero(t)) then
     begin
 			c := (M-i) / M;
-			Exit( TColor32(vec3.create( c*c*1.2, c*1.0, c*c*0.5+abs(0.2/t) )) );
+			Exit( TColor32(vec3.create( c*c*1.2, c*1.0, c*c*0.5+System.abs(0.2/t) )) );
     end;
 		t := t + (d * 1.00);
   end;
 
-	Result := TColor32(vec3.create( 0.0, 0.0, abs(0.2/t) ) );
+	Result := TColor32(vec3.create( 0.0, 0.0, System.abs(0.2/t) ) );
 
 end;
 

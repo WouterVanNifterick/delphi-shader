@@ -7,6 +7,8 @@ uses GR32, Types, WvN.DelphiShader.Shader;
 type
   TNautilus=class(TShader)
   var ct4,ct7,t5,t6,t7:double;
+      tm:double;
+
   n:array[0..99] of vec3;
   const
     m = 1.0-1.5;
@@ -46,22 +48,28 @@ end;
 function TNautilus.e(const c: vec3): Double;
 var t:Vec3;
 begin
+  {$EXCESSPRECISION OFF}
+
   t.x := System.Cos(
-           System.cos(c.r  +t6) * c.r -
-           System.cos(c.g*3+t5) * c.g );
+           System.Cos(c.r  +t6) * c.r -
+           System.Cos(c.g*3+t5) * c.g );
+
   t.y := System.Cos( ct4*c.b/3 * c.r -
                      ct7*c.g          );
-  t.z := System.Cos( c.r+c.g+c.b+time                                );
+
+  t.z := System.Cos( c.r+c.g+c.b+tm );
+
   t := t * t;
-  result := dot(t,vec3White)-1;
+  result := t.x + t.y + t.z -1;
 end;
 
 procedure TNautilus.PrepareFrame;
 begin
-  t5 := time/5;
-  t6 := time/6;
-  t7 := time/7;
-  ct4 := System.cos(time/4);
+  tm := &mod(time,1000);
+  t5 := tm/5;
+  t6 := tm/6;
+  t7 := tm/7;
+  ct4 := System.cos(tm/4);
   ct7 := System.cos(t7);
 end;
 
@@ -73,15 +81,17 @@ var
   o      : vec3;
   r, q   : integer;
   l, h   : double;
+const
+  Iterations=80;
+  IterationsMult=1/(Iterations-1);
 begin
   c.x := -1 + 2 * gl_FragCoord.x / Resolution.x;
   c.y := -1 + 2 * gl_FragCoord.y / Resolution.y;
   o   := vec3.Create(c.x, c.y, 0);
   g   := vec3.Create(c.x, c.y, 1) * (1 / 64);
   v   := vec3Gray;
-  // m := 0.4;
 
-  for r := 0 to 99 do
+  for r := 1 to Iterations do
   begin
     h := e(o) - m;
     if h < 0 then
@@ -95,12 +105,16 @@ begin
 
   // ambient occlusion
   a     := 0;
-  for q := 0 to 99 do
+  for q := 1 to Iterations do
   begin
     l := e(o + 0.5 * n[q]) - m;
     a := a + clamp(l);
   end;
-  v      := v * a * (1 / 99);
+//  v      := v * a * (1 / 99);
+  v.x := v.x * a * IterationsMult;
+  v.y := v.y * a * IterationsMult;
+  v.z := v.z * a * IterationsMult;
+
   result := TColor32(v);
 end;
 

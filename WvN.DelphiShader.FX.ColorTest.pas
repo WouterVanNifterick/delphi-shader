@@ -38,9 +38,9 @@ var
 begin
 	uv  := gl_FragCoord.xy / resolution.xy;
 
-	col.r  := WvN.DelphiShader.Shader.sqrt(mix(-0.20,2,dot(uv.x*2,uv.y*0.5)))+0.2;
-	col.g  := WvN.DelphiShader.Shader.sqrt(mix(-0.20,2,dot(1-uv.y,1-uv.x)))+0.2;
-	col.b  := WvN.DelphiShader.Shader.sqrt(mix(-0.20,2,dot(1-uv.x,uv.y)))+0.2;
+	col.r  := sqrts(mix(-0.20,2,dot(uv.x*2,uv.y*0.5)))+0.2;
+	col.g  := sqrts(mix(-0.20,2,dot(1-uv.y,1-uv.x)))+0.2;
+	col.b  := sqrts(mix(-0.20,2,dot(1-uv.x,uv.y)))+0.2;
 	Result := TColor32(col);
 end;
 

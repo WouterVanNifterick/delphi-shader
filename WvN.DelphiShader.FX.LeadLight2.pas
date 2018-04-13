@@ -6,11 +6,11 @@ uses GR32, Types, WvN.DelphiShader.Shader;
 
 type
   TLeadLight2 = class(TShader)
-    position:Vec2;
+    position: Vec2;
     constructor Create; override;
     procedure PrepareFrame;
-    procedure PrepareLine(y:Integer);
-    function RenderPixel(var gl_FragCoord: Vec2): TColor32;inline;
+    procedure PrepareLine(y: Integer);
+    function RenderPixel(var gl_FragCoord: Vec2): TColor32; inline;
   end;
 
 var
@@ -25,7 +25,7 @@ begin
   inherited;
   FrameProc := PrepareFrame;
   PixelProc := RenderPixel;
-  LineProc := PrepareLine;
+  LineProc  := PrepareLine;
 end;
 
 procedure TLeadLight2.PrepareFrame;
@@ -34,26 +34,29 @@ end;
 
 procedure TLeadLight2.PrepareLine(y: Integer);
 begin
-	position.y := (y / Resolution.x) - 0.5;
+  position.y := (y / Resolution.x) - 0.5;
 end;
 
 function TLeadLight2.RenderPixel(var gl_FragCoord: Vec2): TColor32;
 var
-  r,a,light:Double;
-  color:vec3;
-  t:Float;
+  r, a, light: Double;
+  color      : vec3;
+  t          : Float;
+  sl:double;
 begin
-	position.x := (gl_FragCoord.x / Resolution.x) - 0.5;
+  position.x := (gl_FragCoord.x / Resolution.x) - 0.5;
 
-	r := length(position);
-	a := atan(position.y, position.x);
-	t := time + 50.0/(r+1.0);
+  r := length(position);
+  a := atan(position.y, position.x);
+  t := time + 50.0 / (r + 1.0);
 
-	light := 15.0*abs(0.05/(system.sin(time+a*8.0)));
-	color.x := -system.sin(r*5.0-a-time+system.sin(r+t));
-	color.y := system.sin(r*3.0+a-system.cos(time)+system.sin(r+t));
-	color.z := system.cos(r+a*2.0+log(5.001-(a/4.0))-time)+system.sin(r+t);
-	Result := TColor32((normalize(color)+0.9) * light);
+  light   := 15.0 * System.abs(0.05 / (sinLarge(time + a * 8)));
+  sl := sinLarge(r + t);
+  color.x := -sinLarge(r * 5 - a - time + sl);
+  color.y := System.sin(r * 3 + a - cosLarge(time) + sl);
+  color.z := System.cos(r + a * 2 + log(5.001 - (a / 4)) - time) + sl;
+  color.NormalizeSelf;
+  Result  := TColor32((color + 0.9) * light);
 end;
 
 initialization

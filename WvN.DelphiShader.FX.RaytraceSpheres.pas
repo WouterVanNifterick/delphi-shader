@@ -28,7 +28,7 @@ type
   TRaytraceSpheres = class(TShader)
   const
     AMBIENT         = 0.01;
-    GAMMA           = (1.0 / 2.2);
+    GAMMA           = 1 / 2.2;
     TINY_AMOUNT     = 0.001;
     MAX_TRACE_DEPTH = 4;
 
@@ -45,8 +45,10 @@ type
     vec3_11: vec3 = (x: 0; y: 0.4; z: - 1.5);
     vec3_12: vec3 = (x: 0.1; y: 0.01; z: 0.1);
     vec2_13: vec2 = (x: 0.5; y: 0.5);
+  var
+    cYaw, t, ca,sa: float;
 
-    function CreatePrimaryRay(t: float; const screen: vec2): Ray;
+    function CreatePrimaryRay(const screen: vec2): Ray;
     function TracePlane(const r: Ray; out iSec: Intersection; const Normal: vec3; distance: float): float;
     function TraceSphere(r: Ray; out iSec: Intersection; const centre: vec3; radius: float): float;
     procedure Trace(const r: Ray; out iSec: Intersection; out m: Material);
@@ -74,37 +76,48 @@ end;
 
 procedure TRaytraceSpheres.PrepareFrame;
 begin
+  t := iGlobalTime;
+  cYaw         := t * 0.25;
+  ca := cosLarge(cYaw);
+  sa := sinLarge(cYaw);
+
 end;
 
-function TRaytraceSpheres.CreatePrimaryRay(t: float; const screen: vec2): Ray;
+function TRaytraceSpheres.CreatePrimaryRay(const screen: vec2): Ray;
 var
-  r           : Ray;
-  cYaw        : float;
   cameraOrigin: vec3;
-
 begin
+  cameraOrigin.x := 3 * sa;
+  cameraOrigin.y := 1;
+  cameraOrigin.z := -3 * ca;
 
-  cYaw         := t * 0.25;
-  cameraOrigin := vec3.Create(
-                       3 * system.sin(cYaw),
-                       1,
-                       -3 * system.cos(cYaw));
-  r.Origin     := cameraOrigin;
-  r.Direction  := normalize(vec3.Create(screen.x, screen.y, 1));
-  r.Direction  := vec3.Create(r.Direction.x * system.cos(cYaw) - r.Direction.z * system.sin(cYaw), r.Direction.y, r.Direction.x * system.sin(cYaw) + r.Direction.z * system.cos(cYaw));
-  Exit(r);
+  result.Origin     := cameraOrigin;
+  result.Direction.x  := screen.x;
+  result.Direction.y  := screen.y;
+  result.Direction.z  := 1;
+
+  result.Direction.NormalizeSelf;
+
+  result.Direction.x := result.Direction.x * ca
+                      - result.Direction.z * sa;
+  result.Direction.y := result.Direction.y;
+  result.Direction.z := result.Direction.x * sa
+                      + result.Direction.z * ca;
 end;
 
 function TRaytraceSpheres.TracePlane(const r: Ray; out iSec: Intersection; const Normal: vec3; distance: float): float;
 var
   d: float;
 begin
+  iSec := default(Intersection);
+
   iSec.Intersected := false;
   if IsNan(r.Direction.y) then
     Exit(0);
 
   if r.Direction.y = 0 then
     Exit(0);
+
   d := -r.Origin.y / r.Direction.y;
   if d > 0 then
   begin
@@ -125,29 +138,18 @@ var
   temp: float;
 
 begin
+  iSec := default(Intersection);
   iSec.Intersected := false;
-  if IsNan(r.Direction.x) then
-    exit(-1);
-
-  if r.Direction.x < -1e5 then
-    exit(-1);
-  if r.Direction.y < -1e5 then
-    exit(-1);
-  if r.Direction.z < -1e5 then
-    exit(-1);
-  if r.Direction.x > 1e5 then
-    exit(-1);
-  if r.Direction.y > 1e5 then
-    exit(-1);
-  if r.Direction.z > 1e5 then
-    exit(-1);
-
-  if IsZero(r.Origin.x) then
-    exit(-1);
-  if IsZero(r.Origin.y) then
-    exit(-1);
-  if IsZero(r.Origin.z) then
-    exit(-1);
+  if IsNan(r.Direction.x) then exit(-1);
+  if r.Direction.x < -1e5 then exit(-1);
+  if r.Direction.y < -1e5 then exit(-1);
+  if r.Direction.z < -1e5 then exit(-1);
+  if r.Direction.x > 1e5  then exit(-1);
+  if r.Direction.y > 1e5  then exit(-1);
+  if r.Direction.z > 1e5  then exit(-1);
+  if IsZero(r.Origin.x)   then exit(-1);
+  if IsZero(r.Origin.y)   then exit(-1);
+  if IsZero(r.Origin.z)   then exit(-1);
 
   r.Origin         := r.Origin - centre;
 
@@ -191,14 +193,13 @@ begin
 end;
 
 procedure TRaytraceSpheres.Trace(const r: Ray; out iSec: Intersection; out m: Material);
-
 var
   d, Dmin: float;
   iTemp  : Intersection;
-
 begin
-
   Dmin := 1000000;
+  iSec := Default(Intersection);
+  m := Default(Material);
 
   d := TracePlane(r, iTemp, vec3_2, 0);
   if (iTemp.Intersected) and (d < Dmin) then
@@ -261,7 +262,6 @@ begin
   d := TraceSphere(r, iTemp, vec3_11, 0.4);
   if (iTemp.Intersected) and (d < Dmin) then
   begin
-    Dmin         := d;
     m.Colour     := vec3_12;
     m.Reflection := 0.6;
     m.Specular   := 0.6;
@@ -280,11 +280,21 @@ var
   sm     : Material;
   lFactor: float;
   rDir   : vec3;
+  t: Double;
 
 begin
   lDir := m.LightPos - iSec.Intersection;
 
+  if lDir.x > 1e20 then lDir.x := 0;
+  if lDir.y > 1e20 then lDir.y := 0;
+  if lDir.z > 1e20 then lDir.z := 0;
+  if lDir.x < -1e20 then lDir.x := 0;
+  if lDir.y < -1e20 then lDir.y := 0;
+  if lDir.z < -1e20 then lDir.z := 0;
+
   lDir.NormalizeSelf;
+
+
 
   // Ambient
   c := m.Colour * AMBIENT;
@@ -308,7 +318,15 @@ begin
   if iSec.Intersection.x < -1e6 then
     exit;
 
-  lFactor := 1/pow(length(m.LightPos - iSec.Intersection), 2);
+  t := length(m.LightPos - iSec.Intersection);
+  if t<>0 then
+    t := 1
+  else
+    t := pow(t, 2);
+  if IsZero(t) then
+    lFactor := 0
+  else
+    lFactor := 1/t;
 
   if not si.Intersected then
   begin
@@ -339,11 +357,15 @@ var
   i          : integer; // loop variable
 
 begin
+
   coefficient := 1;
   col         := vec4Black;
 
   for i := 0 to MAX_TRACE_DEPTH do
   begin
+    if Ray.Origin.y > 1e6 then
+      continue;
+
     Trace(Ray, iSec, mat);
     if iSec.Intersected then
       col       := col + (coefficient * CalcColour(Ray, iSec, mat));
@@ -380,7 +402,7 @@ var
 begin
   screen     := gl_FragCoord.xy / resolution.xy - vec2_13;
   screen.x   := screen.x * (resolution.x / resolution.y);
-  primaryRay := CreatePrimaryRay(iGlobalTime, screen);
+  primaryRay := CreatePrimaryRay(screen);
   c          := TracePixel(primaryRay)*16;
   if isNan(c.r) then  c.r := 0 else if c.r<0 then c.r := 0;
   if isNan(c.g) then  c.g := 0 else if c.g<0 then c.g := 0;

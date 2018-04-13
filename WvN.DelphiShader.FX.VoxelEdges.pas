@@ -24,12 +24,15 @@ const
   vec3_15:vec3=(x:0.40;y:0.30;z:0.15);
   vec3_16:vec3=(x:5;y:0.6;z:0);
   vec3_17:vec3=(x:1;y:2;z:3);
+var
+  gro:vec3;
+  lig : vec3;
 
   function hash( const x :vec3 ):float;
   function noise( const x :vec3 ):float;overload;
   function noise( const x :vec2 ):float;overload;
-  function texcube( const p, n :vec3 ):vec4;
-  function mapTerrain( const p :vec3 ):float;
+  function texcube( const tex:TBitmap32; const p, n :vec3 ):vec4;
+  function mapTerrain( p :vec3 ):float;
   function map( const c:vec3 ):bool;
   function castRay( const ro, rd:vec3;out oVos, oDir :vec3 ):float;
   function castVRay( const ro, rd:vec3;const maxDist :float ):float;
@@ -54,10 +57,12 @@ begin
   inherited;
   FrameProc := PrepareFrame;
   PixelProc := Main;
+  Lig := normalize( vec3.create(-0.4,0.3,0.7) );
 end;
 
 procedure TVoxelEdges.PrepareFrame;
 begin
+  gro := vec3Black;
 end;
 
 // Created by inigo quilez - iq/2013
@@ -86,7 +91,7 @@ begin
 	f  := f*f*(3-2*f);
 
 	uv  := (p.xy+vec2_2*p.z) + f.xy;
-	rg  := texture2D( tex0, (uv+ 0.5)/256 ).yx;
+	rg  := texture2D( tex[0], (uv+ 0.5)/256 ).yx;
 	Exit( mix( rg.x, rg.y, f.z ) );
 end;
 
@@ -101,12 +106,12 @@ begin
     p  := floor(x);
     f  := fract(x);
 	uv  := p.xy + f.xy*f.xy*(3-2*f.xy);
-	Exit( texture2D( tex0, (uv+118.4)/256, -100 ).x );
+	Exit( texture2D( tex[0], (uv+118.4)/256, -100 ).x );
 end;
 
 
 
-function TVoxelEdges.texcube( const p, n :vec3 ):vec4;
+function TVoxelEdges.texcube( const tex:TBitmap32; const p, n :vec3 ):vec4;
 var
   x :vec4;
   y :vec4;
@@ -114,9 +119,9 @@ var
   m  :mat3;
 
 begin
-	x  := texture2D( Tex0, p.yz );
-	y  := texture2D( Tex0, p.zx );
-	z  := texture2D( Tex0, p.xy );
+	x  := texture2D( Tex, p.yz );
+	y  := texture2D( Tex, p.zx );
+	z  := texture2D( Tex, p.xy );
 	Exit( x*abs(n.x) + y*abs(n.y) + z*abs(n.z) );
 end;
 
@@ -128,7 +133,7 @@ end;
                     -0.60, -0.48,  0.64 );
                      }
 
-function TVoxelEdges.mapTerrain( const p :vec3 ):float;
+function TVoxelEdges.mapTerrain(  p :vec3 ):float;
 var
   time :float;
   ft :float;
@@ -137,7 +142,6 @@ var
   f:float;
 
 begin
-
 	p  := p  * (0.1);
 	p.xz  := p.xz  * (0.6);
 
@@ -158,8 +162,6 @@ end;
 
 
 
-function TVoxelEdges.gro = vec3:vec3;;
-
 function TVoxelEdges.map( const c:vec3 ):bool;
 var
   p :vec3;
@@ -171,14 +173,10 @@ begin
 
 	f  := mapTerrain( p ) + 0.25*p.y;
 
-    f  := mix( f, 1, step( length(gro-p), 5 ) );
+    f  := mix( f, 1, step( length(vec3Black-p), 5 ) );
 
 	Exit( f < 0.5 );
 end;
-
-
-function TVoxelEdges.lig = normalize( vec3:vec3;;
-
 
 function TVoxelEdges.castRay( const ro, rd:vec3;out oVos, oDir :vec3 ):float;
 var
@@ -197,14 +195,21 @@ nor :vec3;
 begin
 	pos  := floor(ro);
 	ri  := 1/rd;
-	rs  := sign(rd);
+	rs.x := Math.sign(rd.x);
+	rs.y := Math.sign(rd.y);
+	rs.z := Math.sign(rd.z);
+
 	dis  := (pos-ro + 0.5 + rs*0.5) * ri;
 
 	res  := -1;
 	mm  := vec3(0);
 	for i := 0 to 127 do
 	begin
-		if  map(pos)  then  begin  res=1; continue; end;
+		if  map(pos)  then
+    begin
+      res:=1;
+      continue;
+    end;
 
 		mm  := step(dis.xyz, dis.yxy) * step(dis.xyz, dis.zzx);
 		dis  := dis  + (mm * rs * ri);
@@ -217,7 +222,7 @@ begin
 
     // intersect the cube
 	mini  := (pos-ro + 0.5 - 0.5*vec3(rs))*ri;
-	t  := max ( mini.x, max ( mini.y, mini.z ) );
+	t  := Math.max ( mini.x, Math.max ( mini.y, mini.z ) );
 
 	oDir  := mm;
 	oVos  := vos;
@@ -241,13 +246,19 @@ begin
 
 	pos  := floor(ro);
 	ri  := 1/rd;
-	rs  := sign(rd);
+	rs.x  := Math.sign(rd.x);
+	rs.y  := Math.sign(rd.y);
+	rs.z  := Math.sign(rd.z);
 	dis  := (pos-ro + 0.5 + rs*0.5) * ri;
 
 	res  := 1;
 	for i := 0 to 49 do
 	begin
-		if  map(pos)  then  begin res=0; continue; end;
+		if  map(pos)  then
+    begin
+      res := 0;
+      continue;
+    end;
 
 		mm  := step(dis.xyz, dis.yxy) * step(dis.xyz, dis.zzx);
 		dis  := dis  + (mm * rs * ri);
@@ -274,7 +285,7 @@ begin
 	v3  := vos + nor + dir.zxy;
 	v4  := vos + nor - dir.zxy;
 
-	res  := vec4(0);
+	res  := vec4Black;
 	if  map(v1)  then  res.x  := 1;
 	if  map(v2)  then  res.y  := 1;
 	if  map(v3)  then  res.z  := 1;
@@ -298,7 +309,7 @@ begin
 	v3  := vos +  dir.zxy;
 	v4  := vos -  dir.zxy;
 
-	res  := vec4(0);
+	res  := vec4Black;
 	if  map(v1)  then  res.x  := 1;
 	if  map(v2)  then  res.y  := 1;
 	if  map(v3)  then  res.z  := 1;
@@ -346,19 +357,17 @@ var
   www :float;
   vvv :float;
   dif :float;
-  sha = 0; if( dif>0.01) sha:float;
+  sha:float;
   bac :float;
   sky :float;
   amb :float;
   occ :float;
-  v1 :vec3;
-  v2 :vec3;
-  v3 :vec3;
-  v4 :vec3;
+  v1,v2,v3,v4 :vec3;
   ff:float;
   lin :vec3;
   lineglow :float;
   linCol :vec3;
+  c:vec3;
 
 begin
     // inputs
@@ -367,8 +376,9 @@ begin
     p.x  := p.x  * (resolution.x/ resolution.y);
 
     mo  := iMouse.xy / resolution.xy;
-    if  iMouse.w<=0.00001 ) mo := vec2(0 then ;
+    if  iMouse.w<=0.00001 then mo := vec2Black;
 
+  sha:=0;
 	time  := 2*iGlobalTime + 50*mo.x;
     // camera
     ro  := 20.5*normalize(Vec3.Create(cos(time),0.5,sin(time)));
@@ -384,7 +394,7 @@ begin
     uu  := normalize(cross( Vec3.Create(sin(cr),cos(cr),0),ww ));
     vv  := normalize(cross(ww,uu));
 	r2  := p.x*p.x*0.32 + p.y*p.y;
-    p  := p  * ((7-sqrt(37.5-11.5*r2))/(r2+1));
+    p  := p  * ((7-system.sqrt(37.5-11.5*r2))/(r2+1));
     rd  := normalize( p.x*uu + p.y*vv + 2.5*ww );
 
 	col  := vec3(0);
@@ -393,7 +403,9 @@ begin
 	t  := castRay( ro, rd, vos, dir );
 	if  t>0  then
 	begin
-	nor  := -dir*sign(rd);
+  nor.x := -dir.x*Math.sign(rd.x);
+  nor.y := -dir.y*Math.sign(rd.y);
+  nor.z := -dir.z*Math.sign(rd.z);
 	pos  := ro + rd*t;
 	ed  := edges( vos, nor, dir );
 	ep  := edgesp( vos, nor, dir );
@@ -405,9 +417,9 @@ begin
 	uvw  := pos - vos;
 	wir  := smoothstep( 0.4, 0.48, abs(uvw-0.5) );
     www  := 0;
-	{$if 0}
+	{$if true}
 	www  := (1-wir.x*wir.y)*(1-wir.x*wir.z)*(1-wir.y*wir.z);
-	#else
+	{$else}
 	www  := 1;
     www  := www  * (1 -smoothstep( 0.85, 0.99,     dot(uvw,dir.yzx) )*(1-ep.x*(1-ed.x)));
     www  := www  * (1 -smoothstep( 0.85, 0.99, 1-dot(uvw,dir.yzx) )*(1-ep.y*(1-ed.y)));
@@ -418,14 +430,14 @@ begin
 	wir  := smoothstep( 0.4, 0.5, abs(uvw-0.5) );
 	vvv  := (1-wir.x*wir.y)*(1-wir.x*wir.z)*(1-wir.y*wir.z);
 
-	col = 2*texture2D( tex1,0.01*pos.xz ).zyx;
+	col  := 2*texture2D( tex[1],0.01*pos.xz ).zyx;
 	col  := col  + (0.8*vec3_11);
-	col  := col  * (0.5 + 0.5*texcube( tex2, 0.5*pos, nor ).x);
+	col  := col  * (0.5 + 0.5*texcube(Tex[2] , 0.5*pos, nor ).x);
 	col  := col  * (1 - 0.75*(1-vvv)*www);
 
     // lighting
     dif  := clamp( dot( nor, lig ), 0, 1 );
- if  dif>0.01) sha := castVRay(pos+nor*0.01,lig,32 then ;
+ if  dif>0.01 then sha := castVRay(pos+nor*0.01,lig,32);
     bac  := clamp( dot( nor, normalize(lig*vec3_12) ), 0, 1 );
     sky  := 0.5 + 0.5*nor.y;
 	amb  := clamp(0.75 + pos.y/25,0,1);
@@ -437,17 +449,18 @@ begin
 	v3  := vos + nor + dir.zxy;
 	v4  := vos + nor - dir.zxy;
 
-	occ = 0;
+	occ := 0;
 
-	ff = mix( 1, pow(1-dot(uvw,dir.yzx),1), ed.x); occ  := ff = mix( 1, pow(1-dot(uvw,dir.yzx),1), ed.x); occ  + ((0.98/4)*ff);
-	ff = mix( 1, pow(    dot(uvw,dir.yzx),1), ed.y); occ  := ff = mix( 1, pow(    dot(uvw,dir.yzx),1), ed.y); occ  + ((0.98/4)*ff);
-	ff = mix( 1, pow(1-dot(uvw,dir.zxy),1), ed.z); occ  := ff = mix( 1, pow(1-dot(uvw,dir.zxy),1), ed.z); occ  + ((0.98/4)*ff);
-	ff = mix( 1, pow(    dot(uvw,dir.zxy),1), ed.w); occ  := ff = mix( 1, pow(    dot(uvw,dir.zxy),1), ed.w); occ  + ((0.98/4)*ff);
-    occ  := pow(occ,3);
+	ff := mix( 1, pow(1-dot(uvw,dir.yzx),1), ed.x); ff := mix( 1, pow(1-dot(uvw,dir.yzx),1), ed.x); occ  := ff; occ  := occ  + ((0.98/4)*ff);
+	ff := mix( 1, pow(    dot(uvw,dir.yzx),1), ed.y); ff := mix( 1, pow(    dot(uvw,dir.yzx),1), ed.y); occ  := ff; occ  := occ  + ((0.98/4)*ff);
+	ff := mix( 1, pow(1-dot(uvw,dir.zxy),1), ed.z); ff := mix( 1, pow(1-dot(uvw,dir.zxy),1), ed.z); occ  := ff; occ  := occ  + ((0.98/4)*ff);
+	ff := mix( 1, pow(    dot(uvw,dir.zxy),1), ed.w); ff := mix( 1, pow(    dot(uvw,dir.zxy),1), ed.w); occ  := ff; occ  := occ  + ((0.98/4)*ff);
+
+  occ  := pow(occ,3);
 	occ  := occ  * (amb);
 
 
-    lin  := vec3(0);
+    lin  := vec3Black;
     lin  := lin  + (6*dif*vec3_13*sha*(0.5+0.5*occ));
     lin  := lin  + (0.5*bac*vec3_14*occ);
     lin  := lin  + (2*sky*vec3_15*occ);
@@ -456,10 +469,10 @@ begin
 	//lin = vec3(1.0)*occ*12.0;
 	// line glow
 	lineglow  := 0;
-    lineglow  := lineglow  + (smoothstep( 0.4, 1,     dot(uvw,dir.yzx) )*(1-ep.x*(1-ed.x)));
-    lineglow  := lineglow  + (smoothstep( 0.4, 1, 1-dot(uvw,dir.yzx) )*(1-ep.y*(1-ed.y)));
-    lineglow  := lineglow  + (smoothstep( 0.4, 1,     dot(uvw,dir.zxy) )*(1-ep.z*(1-ed.z)));
-    lineglow  := lineglow  + (smoothstep( 0.4, 1, 1-dot(uvw,dir.zxy) )*(1-ep.w*(1-ed.w)));
+  lineglow  := lineglow  + (smoothstep( 0.4, 1,     dot(uvw,dir.yzx) )*(1-ep.x*(1-ed.x)));
+  lineglow  := lineglow  + (smoothstep( 0.4, 1, 1-dot(uvw,dir.yzx) )*(1-ep.y*(1-ed.y)));
+  lineglow  := lineglow  + (smoothstep( 0.4, 1,     dot(uvw,dir.zxy) )*(1-ep.z*(1-ed.z)));
+  lineglow  := lineglow  + (smoothstep( 0.4, 1, 1-dot(uvw,dir.zxy) )*(1-ep.w*(1-ed.w)));
 
 	linCol  := 2*vec3_16;
 	linCol  := linCol  * ((0.5+0.5*occ)*(0.25+sha));
@@ -467,14 +480,21 @@ begin
 
     col  := col*lin;
 
-	col  := col  + (8*linCol*vec3_17*(1-www);
+	col  := col  + (8*linCol*vec3_17*(1-www));
 	col  := col  + (0.1*lineglow*linCol);
 
 	col  := col  * (min(0.1,exp( -0.07*t )));
 
 
-function TVoxelEdges.col2 = vec3(1.3)*(0.5+0.5*nor.y)*occ*www*(0.9+0.1*vvv)*exp:vec3;;;
-function TVoxelEdges.mi = sin:float;;
+function TVoxelEdges.col2:vec3;
+begin
+  Result := vec3(1.3)*(0.5+0.5*nor.y)*occ*www*(0.9+0.1*vvv)*exp:vec3;
+end;
+
+function TVoxelEdges.mi:vec3;
+
+
+= sin:float;;
 mi  := smoothstep( 0.90, 0.95, mi );
 col  := mix( col, col2, mi );
 

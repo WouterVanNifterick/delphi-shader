@@ -169,7 +169,7 @@ begin
   f     := 1.0;
   for i := 0 to 255 do
   begin
-    if (abs(s.x) < 0.01) or (f > maxd) then
+    if (System.abs(s.x) < 0.01) or (f > maxd) then
       break;
     f := f + (s.x);
     p := prp + scp * f;

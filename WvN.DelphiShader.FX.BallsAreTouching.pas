@@ -17,6 +17,13 @@ const
 
 type
   TBallsAreTouching=class(TShader)
+  public const
+    	e:vec2=(x:0; y:NORMAL_EPSILON);
+      e_yxx:vec3 =(x:NORMAL_EPSILON; y:0; z:0);
+      e_xyx:vec3 =(x:0; y:NORMAL_EPSILON; z:0);
+      e_xxy:vec3 =(x:0; y:0; z:NORMAL_EPSILON);
+  var
+
     t:Double;
     p:vec3;
     balls:array[0..pred(NUM_BALLS)] of Vec3;
@@ -42,20 +49,20 @@ uses SysUtils, Math;
 constructor TBallsAreTouching.Create;
 begin
   inherited;
-  FrameProc := prepareFrame;
-  PixelProc := RenderPixel;
+  Image.FrameProc := prepareFrame;
+  Image.PixelProc := RenderPixel;
 end;
 
 // http://the-witness.net/news/2012/02/seamless-cube-map-filtering/
 function TBallsAreTouching.cube(v: vec3): Vec3;
 var M,scale:Float;
 begin
-   M := Math.Max(Math.Max(abs(v.x), abs(v.y)), abs(v.z));
+   M := Math.Max(Math.Max(System.abs(v.x), System.abs(v.y)), System.abs(v.z));
    scale := (TShader.cubes[4].Faces[POSITIVE_X].Width - 1) /
              TShader.cubes[4].Faces[POSITIVE_X].Width;
-   if (abs(v.x) <> M) then v.x := v.x * scale;
-   if (abs(v.y) <> M) then v.y := v.y * scale;
-   if (abs(v.z) <> M) then v.z := v.z * scale;
+   if (System.abs(v.x) <> M) then v.x := v.x * scale;
+   if (System.abs(v.y) <> M) then v.y := v.y * scale;
+   if (System.abs(v.z) <> M) then v.z := v.z * scale;
 
    Result := textureCube(TShader.cubes[4], v).rgb;
 end;
@@ -135,12 +142,10 @@ begin
 end;
 
 function TBallsAreTouching.normal(const at:vec3):vec3;
-var e:Vec2;
 begin
-	e := vec2.create(0, NORMAL_EPSILON);
-	Result := normalize(vec3.create(world(at+e.yxx^)-world(at),
-						world(at+e.xyx^)-world(at),
-						world(at+e.xxy^)-world(at)));
+	Result := normalize(vec3.create(world(at+e_yxx)-world(at),
+						world(at+e_xyx)-world(at),
+						world(at+e_xxy)-world(at)));
 end;
 
 function TBallsAreTouching.RenderPixel(var gl_FragCoord:Vec2): TColor32;

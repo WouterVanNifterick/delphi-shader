@@ -59,21 +59,23 @@ end;
 procedure TRayWalker.PrepareFrame;
 begin
   time4        := iGlobalTime * 4;
-  stime        := System.sin(iGlobalTime);
-  ctime        := System.cos(iGlobalTime);
+  stime        := sinLarge(iGlobalTime);
+  ctime        := cosLarge(iGlobalTime);
 
   Ratio := Resolution.x / Resolution.y;
 
   // Camera animation
   vuv                := Vec3.create(stime                 , 1, 0); // view up vector
-  ViewReferencePoint := Vec3.create(System.sin(iGlobalTime * 0.7) * 10.0, 0, System.cos(iGlobalTime * 0.9) * 10.0);
+  ViewReferencePoint := Vec3.create(sinLarge(iGlobalTime * 0.7) * 10.0, 0, cosLarge(iGlobalTime * 0.9) * 10.0);
   CameraPos          := Vec3.create(
-                           System.sin(iGlobalTime  * 0.7) * 20 + ViewReferencePoint.x + 20,
-                                            stime  * 4.0  +  4 + ViewReferencePoint.y +  3,
-                           System.cos(iGlobalTime  * 0.6) * 20 + ViewReferencePoint.z + 14);
+                           sinLarge(iGlobalTime  * 0.7) * 20 + ViewReferencePoint.x + 20,
+                                          stime  * 4.0  +  4 + ViewReferencePoint.y +  3,
+                           cosLarge(iGlobalTime  * 0.6) * 20 + ViewReferencePoint.z + 14);
   // Camera setup
   vpn      := Vec3(ViewReferencePoint - CameraPos).Normalize^;
-  u        := vuv.Cross(vpn).Normalize^;
+  u        := vuv.Cross(vpn);
+  u.NormalizeSelf;
+
   v        := vpn.Cross(u);
   w        := u * Ratio;
   vcv      := CameraPos + vpn;
@@ -100,7 +102,10 @@ begin
   // Raymarching
   // speed optimization -advance ray (simple raytracing) until plane y=2.5
 
-  f := -(CameraPos.y - planePos) / scp.y * 0.5;
+  if IsZero(scp.y) then
+    f := 0
+  else
+    f := -(CameraPos.y - planePos) / scp.y * 0.5;
   if (f > 0) then
     p := CameraPos + scp * f
   else
@@ -108,10 +113,13 @@ begin
 
   for i := 0 to 255 do
   begin
-    if (abs(s) < 0.1) or (f > maxd) then
+    if (System.abs(s) < 0.1) or (f > maxd) then
       break;
     f := f + s;
-    p := CameraPos + scp * f;
+    // p := CameraPos + scp * f;
+    p.x := CameraPos.x + scp.x * f;
+    p.y := CameraPos.y + scp.y * f;
+    p.z := CameraPos.z + scp.z * f;
     s := inObj(p);
   end;
 
@@ -122,19 +130,19 @@ begin
     begin
       if ((round(p.x) mod 2) = 0) xor
          ((round(p.z) mod 2) = 0) then
-        ObjectColor := vecBlack
+        ObjectColor := vec3Black
       else
-        ObjectColor := vecWhite;
+        ObjectColor := vec3White;
 
-      n := vecGreen;
+      n := vec3Green;
     end
     else
     begin
       D := p.Length;
 
-      ObjectColor.r := (System.sin(D * 0.25 - time4) + 1.0) * 0.5;
-      ObjectColor.g := (stime + 1.0) * 0.5;
-      ObjectColor.b := (System.sin(D - time4) + 1.0) * 0.5;
+      ObjectColor.r := (sinLarge(D * 0.25 - time4) + 1) * 0.5;
+      ObjectColor.g := (stime + 1) * 0.5;
+      ObjectColor.b := (sinLarge(D - time4) + 1) * 0.5;
 
       n.x := s - inObj(p - e.xyy);
       n.y := s - inObj(p - e.yxy);
@@ -142,7 +150,7 @@ begin
       n.NormalizeSelf;
     end;
     b := n.Dot((CameraPos - p).Normalize^);
-    col    := (b * ObjectColor + power(b, 54.0)) * (1.0 - f * 0.01);
+    col    := (b * ObjectColor + power(b, 54)) * (1 - f * 0.01);
     Result :=  TColor32(col);
   end
   else

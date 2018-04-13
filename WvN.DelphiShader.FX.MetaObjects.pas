@@ -8,6 +8,11 @@ type
 TMetaObjects = class(TShader)
   M,A,B,E:vec3;
   ratio:double;
+  st07,st77,st,ct:double;
+
+  t1,sp1,sp2,sp3,sp4:vec3;
+
+
   const  MAX_DEPTH = 20;
   function ObjUnion( const obj_floor:vec2;const obj_roundBox:vec2 ):vec2;
   function torus( const p:vec3;const t:vec2 ):float;inline;
@@ -33,7 +38,7 @@ const
   vec3_3:vec3=(x:1;y:1;z:1);
   vec3_4:vec3=(x:0;y:0;z:0);
   vec3_5:vec3=(x:1;y:1;z:1);
-  vec3_6:vec3=(x:0.1;y:0.1;z:1.0);
+  RoundBoxCol:vec3=(x:0.1;y:0.1;z:1.0);
   vec2_7:vec2=(x:2.0;y:1.0);
   vec3_8:vec3=(x:0;y:1;z:0);
   vec3_9:vec3=(x:0;y:0;z:0);
@@ -91,8 +96,9 @@ function TMetaObjects.torus( const p:vec3;const t:vec2 ):float;
 var
   q :vec2;
 begin
-	q  := Vec2.Create(length(Vec2.Create(p.x,p.z))-t.x,p.y);
-	Exit( length(q) - t.y );
+	q.x := length(p.xz)-t.x;
+  q.y := p.y;
+	Result := length(q) - t.y;
 end;
 
 
@@ -101,16 +107,17 @@ function TMetaObjects.sphere( p:vec3;radius:float ):float;
 var
   length :float;
 begin
-	p.y  := p.y  - (1.0);
+	p.y  := p.y  - 1;
 	length  := system.sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
-	Exit( length-radius );
+	Result := length-radius;
 end;
 
 
 //Floor
 function TMetaObjects.obj_floor( const p:vec3 ):vec2;
 begin
-  Exit( Vec2.Create(p.y+3.0,0) );
+  Result.x := p.y+3;
+  Result.y := 0;
 end;
 
 //Floor Color (checkerboard)
@@ -132,21 +139,21 @@ end;
 //IQs RoundBox (try other objects http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm)
 function TMetaObjects.obj_roundBox( const p:vec3 ):vec2;
 begin
-  Result.x := length(max(abs(p)-vec3_5,0.0))-0.25;
+  Result.x := length(max(abs(p)-vec3_5,0))-0.25;
   Result.y := 1;
 end;
 
 
 function TMetaObjects.obj_sphere( const p:vec3 ):vec2;
 begin
-  Exit( vec2(length(p)-2.0) );
+  Result := vec2(length(p)-2)
 end;
 
 
 //RoundBox with simple solid color
 function TMetaObjects.obj_roundBox_c( const p:vec3 ):vec3;
 begin
-	Exit( vec3_6 );
+	Exit( RoundBoxCol );
 end;
 
 
@@ -161,20 +168,28 @@ var
   b4 :float;
   b5 :float;
   b :float;
-  dist :vec2;
+  d:vec2;
 const
   e = 0.1;
-  r = 2.0;
+  r = 2;
+  re=e+r;
 begin
     floor  := obj_floor(p);
-    b1  := torus(p+Vec3.Create(system.sin(time*0.77)*1.4,system.sin(time)*2.,system.cos(time)*5),vec2_7);
-    b2  := sphere(p+Vec3.Create(system.cos(time)*4.4,system.cos(time)*2.,system.cos(time*1.2)*3.5),2.0);
-    b3  := sphere(p+Vec3.Create(system.sin(time)*3.6,system.sin(time*0.7)*2.,system.sin(time)*2.6),2.0);
-    b4  := sphere(p+Vec3.Create(system.cos(time*0.7)*4.4,system.sin(time*1.1)*2.,system.cos(time)*3.5),2.0);
-    b5  := sphere(p+Vec3.Create(system.sin(time*1.3)*3.6,system.cos(time*1.33)*2.,system.sin(time*0.94)*2.6),2.0);
-    b  := 1.0/(b1+1.5+e)+1.0/(b2+r+e)+1.0/(b3+r+e)+1.0/(b4+r+e)+1.0/(b5+r+e);
-    dist  := ObjUnion(Vec2.Create(1.0/b-0.7, 1),floor);
-    Exit( dist );
+    b1  := torus(p+t1,vec2_7);
+    b2  := sphere(p+sp1,2);
+    b3  := sphere(p+sp2,2);
+    b4  := sphere(p+sp1,2);
+    b5  := sphere(p+sp4,2);
+    b   := 1/(b1+1.5+e)
+          +1/(b2+re)
+          +1/(b3+re)
+          +1/(b4+re)
+          +1/(b5+re);
+
+    d.x := 1/b-0.7;
+    d.y := 1;
+
+    Result  := ObjUnion(d,floor);
 end;
 
 
@@ -246,6 +261,12 @@ begin
   //Camera animation
   U := vec3_8;
   viewDir := vec3_9;
+
+  st := sinlarge(time);
+  ct := cosLarge(time);
+  st77 := sinLarge(time*0.77);
+  st07 := sinLarge(time*0.7);
+
   E := Vec3.Create(-system.sin(time*0.2)*8.0,4,system.cos(time*0.2)*8.0); //Camera location;
 //  E := Vec3.Create(mouse.x*4.0,4,mouse.y*4.0); //Camera location;
 
@@ -254,6 +275,12 @@ begin
   A := cross(C, U);
   B := cross(A, C);
   M := (E+C);
+
+  t1   := Vec3.Create(st77*1.4,st*2.0,ct*5);
+  sp1  := Vec3.Create(ct*4.4,ct*2.,cosLarge(time*1.2)*3.5);
+  sp2  := Vec3.Create(st*3.6,st07*2.,st*2.6);
+  sp3  := Vec3.Create(cosLarge(time*0.7)*4.4,sinLarge(time*1.1)*2.,ct*3.5);
+  sp4  := Vec3.Create(sinLarge(time*1.3)*3.6,cosLarge(time*1.33)*2.,sinLarge(time*0.94)*2.6);
 end;
 
 function TMetaObjects.main;
@@ -285,7 +312,7 @@ begin
 
   f := 1;  g := 1;
   for i := 0 to 499 do begin
-    if (abs(s.x)<0.007) or (f>MAX_DEPTH) then
+    if (System.abs(s.x)<0.007) or (f>MAX_DEPTH) then
 	     break;
     f := f + s.x;
     g := g + l.x;
@@ -302,7 +329,7 @@ begin
   y  := vec2_13;
   for Z := 0 to 299 do
   begin
-    if (abs(y.x)<0.007) or (t > MAX_DEPTH) then
+    if (System.abs(y.x)<0.007) or (t > MAX_DEPTH) then
       break;
     t := t + y.x;
     u_ := E+scp*t;
@@ -329,20 +356,20 @@ begin
       else
         vt := obj_roundBox_c(u_);
 
-      c_ := obj_roundBox_c(p)
-            + (obj_floor_c(m_+n)*(1.0-g*0.03)*gt) * 0.5
+      c_ := RoundBoxCol {obj_roundBox_c(p)}
+            + (obj_floor_c(m_+n) * (1-g*0.03)*gt) * 0.5
             + (vt*(1-t*0.03)*gt);
     end;
 
     b_ := dot(n,normalize(E-p));
 
-    gl_FragColor:=vec3((b_*c_+pow(b_,300)) * (1.0-f*0.03));//simple phong LightPosition=CameraPosition
+    gl_FragColor:=vec3((b_*c_+power(b_,300)) * (1-f*0.03));//simple phong LightPosition=CameraPosition
 
     if s.y=1 then
-      gl_FragColor  := gl_FragColor  - (1.0 - ao(p, n, 0.1))
+      gl_FragColor  := gl_FragColor  - (1 - ao(p, n, 0.1))
     else
       if s.y=0 then
-        gl_FragColor  := gl_FragColor  * softshadow(p, n, 16.0);
+        gl_FragColor  := gl_FragColor  * softshadow(p, n, 16);
 
     Result := TColor32(gl_FragColor);
   end

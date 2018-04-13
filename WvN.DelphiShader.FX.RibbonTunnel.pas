@@ -63,7 +63,7 @@ begin
                             system.sin(q.z * 3.0) * 0.3,
                             -0.1 + system.cos(q.z      ) * 0.1,
                             0.0)) - vt,
-              vecBlack)
+              vec3Black)
             );
 end;
 

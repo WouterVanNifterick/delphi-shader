@@ -41,17 +41,18 @@ begin
   p.x := -1 + 2 * gl_FragCoord.x / Resolution.x;
   p.y := -1 + 2 * gl_FragCoord.y / Resolution.y;
   r := System.sqrt(dot(p, p));
-  a := arctan2(p.y, p.x) + 0.5 * System.sin(0.5 * r - 0.5 * iGlobalTime);
+  a := arctan2(p.y, p.x) + 0.5 *
+       System.sin(0.5 * r - 0.5 * iGlobalTime);
   s := 0.5 + 0.5 * System.cos(7 * a);
   ao := s;
   s := smoothstep(0, 1, s);
   s := smoothstep(0, 1, s);
   s := smoothstep(0, 1, s);
   s := smoothstep(0, 1, s);
-  if abs(s)<0.0001 then
+  if System.abs(s)<0.0001 then
     s := 0;
 
-//  s := clamp(s,0,1);
+//  s := clamp(s,0.0001,1);
 
   t := (r + 0.2 * s);
 
@@ -59,7 +60,7 @@ begin
   // sometimes at the end of the tunnel, t gets rounded to 0,
   // because the tunnel is basically infinite. It's usually a single pixel.
   // We can safely paint that black.
-  if t=0 then
+  if t<0.001 then
     exit(clBlack32);
   uv.x := iGlobalTime + 1 / t;
   uv.y := 3 * a / pi;
@@ -68,7 +69,8 @@ begin
 
   col := texture2D(tex[0], uv);
 
-  ao := smoothstep(0, 0.4, ao) - smoothstep(0.4, 0.7, ao);
+  ao := smoothstep(0.0, 0.4, ao) -
+        smoothstep(0.4, 0.7, ao);
   ao := 1 - 0.5 * ao * r;
 
   Result := TColor32(col * w * ao);

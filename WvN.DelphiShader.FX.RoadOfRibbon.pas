@@ -21,10 +21,10 @@ type
     vt,q,org:Vec3;
     v4:vec4;
     res,ht:Double;
-    function oa(const q:vec3):TVecType;inline;
-    function ob(const q:Vec3):TVecType;inline;
-    function o(const q:vec3):TVecType;inline;
-    function gn(const q:vec3):Vec3;inline;
+    function oa(const q:vec3):TVecType;//inline;
+    function ob(const q:Vec3):TVecType;//inline;
+    function o(const q:vec3):TVecType;//inline;
+    function gn(const q:vec3):Vec3;//inline;
     constructor Create;override;
     procedure PrepareFrame;
     function RenderPixel(var gl_FragCoord:Vec2): TColor32;
@@ -49,7 +49,7 @@ end;
 //Object A (tunnel)
 function TRoadOfRibbon.oa(const q:vec3):TVecType;
 begin
- Result := System.cos(q.x)+System.cos(q.y*1.5)+System.cos(q.z)+System.cos(q.y*20.0)*0.05;
+ Result := System.cos(q.x)+System.cos(q.y*1.5)+System.cos(fmod(q.z,2*pi))+System.cos(q.y*20.0)*0.05;
 end;
 
 
@@ -60,8 +60,8 @@ begin
               max(
                 abs(
                   q-vec3.create(
-                      System.cos(q.z*1.5)*0.3,
-                      -0.5+System.cos(q.z)*0.2,
+                      cosLarge(q.z*1.5)*0.3,
+                      -0.5+cosLarge(q.z)*0.2,
                       0.0)
                 )
                 -
@@ -97,7 +97,10 @@ end;
 procedure TRoadOfRibbon.PrepareFrame;
 begin
   ht := iGlobalTime * 0.5;
-  org:=vec3.create(System.sin(iGlobalTime)*0.5,System.cos(ht)*0.25+0.25,iGlobalTime);
+  org:=vec3.create(
+          sinLarge(iGlobalTime)*0.5,
+          cosLarge(ht)*0.25+0.25,
+          iGlobalTime);
   res := resolution.x/resolution.y;
   vt := vec3.create(0.125,0.02,time+3.0);
 
@@ -125,7 +128,6 @@ begin
   c   := Vec4One;
   dir := normalize(Vec3.Create(p.x * 1.6, p.y, 1));
   q   := org;
-  d   := 0.0;
 
   // First raymarching
   for i := 0 to pred(depth) do

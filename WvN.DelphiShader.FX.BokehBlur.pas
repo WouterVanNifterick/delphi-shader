@@ -48,8 +48,8 @@ uses SysUtils, Math;
 constructor TBokehBlur.Create;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := Main;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := Main;
 
 	rot  := mat3.Create(1,0,0,0,0.8,0.6,0,-0.6,0.8)*mat3.Create(0.96,0.28,0,-0.28,0.96,0,0,0,1);
 
@@ -63,7 +63,11 @@ var
 
 begin
 	abd  := Vec2.Create(a.x*b.x+a.y*b.y,a.y*b.x-a.x*b.y);
-	y_x  := abd.y/(abd.x-1);
+  if abd.x<>1 then
+  	y_x := abd.y/(abd.x-1)
+  else
+    y_x := 0;
+
 
 	Exit( arctan(-y_x)-y_x/(1+y_x*y_x)+PI/2 );
 end;

@@ -48,6 +48,9 @@ const
   vec3_11:vec3=(x:0.0;y:0.9;z:0.0);
   vec3_12:vec3=(x:0.0;y:0.0;z:-5.0);
 
+  var
+  vCameraPos :vec3;
+
 function RotateX( const vPos:vec3;const fAngle :float ):vec3;
 function RotateY( const vPos:vec3;const fAngle :float ):vec3;
 function RotateZ( const vPos:vec3;const fAngle :float ):vec3;
@@ -108,6 +111,11 @@ uses SysUtils, Math;
 constructor TMonteCarloPOV.Create;
 begin
   inherited;
+  {$ifdef ENABLE_MONTE_CARLO}
+  UseBackBuffer := True;
+  SetBufferCount(1);
+  {$endif ENABLE_MONTE_CARLO}
+
   FrameProc := PrepareFrame;
   PixelProc := Main;
 
@@ -119,6 +127,10 @@ end;
 
 procedure TMonteCarloPOV.PrepareFrame;
 begin
+	vCameraPos  := OrbitPoint(-mouse.x * 7.0, (mouse.y + 0.1) * kPI * 0.25) * 7.0 - vec3_11;
+	{$ifdef ENABLE_MONTE_CARLO }
+	vCameraPos  := vCameraPos  + (gRandomNormal * 0.05);
+	{$endif }
 end;
 
 
@@ -126,15 +138,10 @@ function TMonteCarloPOV.RotateX( const vPos:vec3;const fAngle :float ):vec3;
 var
   s :float;
   c :float;
-  vResult :vec3;
-
 begin
 	s  := system.sin(fAngle);
 	c  := system.cos(fAngle);
-
-	vResult  := Vec3.Create( vPos.x,c * vPos.y + s * vPos.z,-s * vPos.y + c * vPos.z);
-
-	Exit( vResult );
+	Result := Vec3.Create( vPos.x,c * vPos.y + s * vPos.z,-s * vPos.y + c * vPos.z);
 end;
 
 
@@ -142,15 +149,10 @@ function TMonteCarloPOV.RotateY( const vPos:vec3;const fAngle :float ):vec3;
 var
   s :float;
   c :float;
-  vResult :vec3;
-
 begin
 	s  := system.sin(fAngle);
 	c  := system.cos(fAngle);
-
-	vResult  := Vec3.Create( c * vPos.x + s * vPos.z,vPos.y,-s * vPos.x + c * vPos.z);
-
-	Exit( vResult );
+	Result  := Vec3.Create( c * vPos.x + s * vPos.z,vPos.y,-s * vPos.x + c * vPos.z);
 end;
 
 
@@ -158,15 +160,10 @@ function TMonteCarloPOV.RotateZ( const vPos:vec3;const fAngle :float ):vec3;
 var
   s :float;
   c :float;
-  vResult :vec3;
-
 begin
 	s  := system.sin(fAngle);
 	c  := system.cos(fAngle);
-
-	vResult  := Vec3.Create( c * vPos.x + s * vPos.y,-s * vPos.x + c * vPos.y,vPos.z);
-
-	Exit( vResult );
+	Result  := Vec3.Create( c * vPos.x + s * vPos.y,-s * vPos.x + c * vPos.y,vPos.z);
 end;
 
 
@@ -191,39 +188,29 @@ end;
 
 function TMonteCarloPOV.DomainRepeatXZGetTile( const vPos:vec3;const vRepeat:vec2;out vTile :vec2 ):vec3;
 var
-  vResult :vec3;
   vTilePos :vec2;
-
 begin
-	vResult  := vPos;
+	Result  := vPos;
 	vTilePos  := (vPos.xz / vRepeat) + 0.5;
 	vTile  := floor(vTilePos + 1000.0);
-	vResult.xz  := (fract(vTilePos) - 0.5) * vRepeat;
-	Exit( vResult );
+	Result.xz  := (fract(vTilePos) - 0.5) * vRepeat;
 end;
 
 
 function TMonteCarloPOV.DomainRepeatXZ( const vPos:vec3;const vRepeat :vec2 ):vec3;
 var
-  vResult :vec3;
   vTilePos :vec2;
-
 begin
-	vResult  := vPos;
+	Result  := vPos;
 	vTilePos  := (vPos.xz / vRepeat) + 0.5;
-	vResult.xz  := (fract(vTilePos) - 0.5) * vRepeat;
-	Exit( vResult );
+	Result.xz  := (fract(vTilePos) - 0.5) * vRepeat;
 end;
 
 
 function TMonteCarloPOV.DomainRepeatY( const vPos:vec3;const fSize :float ):vec3;
-var
-  vResult :vec3;
-
 begin
-	vResult  := vPos;
-	vResult.y  := (fract(vPos.y / fSize + 0.5) - 0.5) * fSize;
-	Exit( vResult );
+	Result  := vPos;
+	Result.y  := (fract(vPos.y / fSize + 0.5) - 0.5) * fSize;
 end;
 
 
@@ -234,7 +221,6 @@ var
   steppedAngle :float;
   s :float;
   c :float;
-
 begin
 	angle  := atan( vPos.x, vPos.z );
 
@@ -254,7 +240,6 @@ end;
 function TMonteCarloPOV.GetDistanceXYTorus( const p:vec3;const r1:float;const r2 :float ):float;
 var
   q :vec2;
-
 begin
 	q  := Vec2.Create(length(p.xy)-r1,p.z);
 	Exit( length(q)-r2 );
@@ -263,7 +248,6 @@ end;
 function TMonteCarloPOV.GetDistanceYZTorus( const p:vec3;const r1:float;const r2 :float ):float;
 var
   q :vec2;
-
 begin
 	q  := Vec2.Create(length(p.yz)-r1,p.x);
 	Exit( length(q)-r2 );
@@ -296,13 +280,11 @@ end;
 // result is x=scene distance y=material or object id; zw are material specific parameters (maybe uv co-ordinates)
 function TMonteCarloPOV.GetDistanceScene( const vPos :vec3 ):vec4;
 var
-  vResult :vec4;
   vSphereDomain :vec3;
   vDistSphere :vec4;
   vDistFloor :vec4;
-
 begin
-	vResult  := vec4_3;
+	Result  := vec4_3;
 
 	vSphereDomain  := DomainRepeatXZ(vPos, vec2_4);
 
@@ -314,22 +296,17 @@ begin
                     vSphereDomain.y
                   );
 
-	vResult  := DistCombineUnion(vResult, vDistSphere);
+	Result  := DistCombineUnion(Result, vDistSphere);
 
 	vDistFloor  := vec4.create(vPos.y + 1, 1, vPos.x,vPos.z);
-	vResult  := DistCombineUnion(vResult, vDistFloor);
-
-	Exit( vResult );
+	Result  := DistCombineUnion(Result, vDistFloor);
 end;
 
 
 function TMonteCarloPOV.GetObjectMaterial( const vObjId:vec3;const vPos :vec3 ):C_Material;
 var
   mat:C_Material;
-
 begin
-
-
 	if vObjId.x < 1.5 then
 	begin
 		// floor
@@ -345,8 +322,6 @@ begin
 		mat.fSmoothness  := 0.9;
 		mat.cAlbedo  := vec3_6;
 	end;
-
-
 	Exit( mat );
 end;
 
@@ -356,7 +331,7 @@ var
 
 begin
 	fBlend  := vDir.y * 0.5 + 0.5;
-	Exit( mix(vecBlack, vec3_7, fBlend) );
+	Exit( mix(vec3Black, vec3_7, fBlend) );
 end;
 
 function TMonteCarloPOV.GetLightPos(  ):vec3;
@@ -468,7 +443,7 @@ begin
 		result.vObjectId  := vSceneDist.yzw;
 
 		// abs allows backward stepping - should only be necessary for non uniform distance functions
-		if (abs(vSceneDist.x) <= kRaymarchEpsilon)  or  (result.fDistance >= fMaxDist)  or  (i > maxIter) then
+		if (System.abs(vSceneDist.x) <= kRaymarchEpsilon)  or  (result.fDistance >= fMaxDist)  or  (i > maxIter) then
 		begin
 			break;
 		end;
@@ -729,11 +704,12 @@ end;
 
 
 function TMonteCarloPOV.OrbitPoint( const fHeading:float;const fElevation :float ):vec3;
+var ce:double;
 begin
-	Result := Vec3.Create(
-          system.sin(fHeading) * system.cos(fElevation),
-          system.sin(fElevation),
-          system.cos(fHeading) * system.cos(fElevation)) ;
+  ce := system.cos(fElevation);
+	Result.x := system.sin(fHeading) * ce;
+  Result.y := system.sin(fElevation);
+  Result.z := system.cos(fHeading) * ce;
 end;
 
 
@@ -775,15 +751,14 @@ end;
 
 
 function TMonteCarloPOV.main;
-
 var
   ray:C_Ray;
-  vCameraPos :vec3;
-  fDepthOfField :float;
   cScene :vec3;
   fExposure :float;
+	{$ifdef ENABLE_MONTE_CARLO}
   cPrev :vec3;
   fBlend :float;
+  {$endif ENABLE_MONTE_CARLO}
   cFinal :vec3;
 
             {$ifdef ENABLE_MONTE_CARLO}
@@ -793,54 +768,47 @@ var
               s2 :vec4;
             begin
               // Nothing special here, just numbers generated by bashing keyboard
-              s1  := sin(time * 9.3422 + gl_FragCoord.x * vec4_1) * 543.3423;
-              s2  := sin(time * 1.3422 + gl_FragCoord.y * vec4_2) * 654.5423;
+              s1            := sin(&mod( time * 9.3422 + gl_FragCoord.x * vec4_1,2*pi)) * 543.3423;
+              s2            := sin(&mod( time * 1.3422 + gl_FragCoord.y * vec4_2,2*pi)) * 654.5423;
               gPixelRandom  := fract(2142.4 + s1 + s2);
-              gRandomNormal  := normalize( gPixelRandom.xyz - 0.1);
+              gRandomNormal := normalize(gPixelRandom.xyz - 0.1);
             end;
             {$endif }
 
 
 
-            procedure GetCameraRay( const vPos:vec3;const vForwards:vec3;const vWorldUp:vec3;out ray:C_Ray );
+            procedure GetCameraRay(const vPos: vec3; const vForwards: vec3; const vWorldUp: vec3; out ray: C_Ray);
             var
-              vPixelCoord :vec2;
-              vUV :vec2;
-              vViewCoord :vec2;
-              fRatio :float;
-              vRight :vec3;
-              vUp :vec3;
+              vPixelCoord: vec2;
+              vUV        : vec2;
+              vViewCoord : vec2;
+              fRatio     : float;
+              vRight     : vec3;
+              vUp        : vec3;
             begin
-              vPixelCoord  := gl_FragCoord.xy;
-              {$ifdef ENABLE_MONTE_CARLO}
-              vPixelCoord.x  := vPixelCoord.x  + (gPixelRandom.z);
-              vPixelCoord.y  := vPixelCoord.y  + (gPixelRandom.w);
-              {$endif }
-              vUV  := ( vPixelCoord / resolution.xy );
-              vViewCoord  := vUV * 2.0 - 1.0;
-
-              vViewCoord  := vViewCoord  * (0.75);
-
-              fRatio  := resolution.x / resolution.y;
-
-              vViewCoord.y  := vViewCoord.y  / (fRatio);
-
+              vPixelCoord := gl_FragCoord.xy;
+{$IFDEF ENABLE_MONTE_CARLO}
+              vPixelCoord.x := vPixelCoord.x + (gPixelRandom.z);
+              vPixelCoord.y := vPixelCoord.y + (gPixelRandom.w);
+{$ENDIF }
+              vUV          := (vPixelCoord / resolution.xy);
+              vViewCoord   := vUV * 2.0 - 1.0;
+              vViewCoord   := vViewCoord * (0.75);
+              fRatio       := resolution.x / resolution.y;
+              vViewCoord.y := vViewCoord.y / (fRatio);
               ray.vOrigin  := vPos;
-
-              vRight  := normalize(cross(vForwards, vWorldUp));
-              vUp  := cross(vRight, vForwards);
-
-              ray.vDir := normalize( vRight * vViewCoord.x + vUp * vViewCoord.y + vForwards);
+              vRight       := normalize(cross(vForwards, vWorldUp));
+              vUp          := cross(vRight, vForwards);
+              ray.vDir     := normalize(vRight * vViewCoord.x + vUp * vViewCoord.y + vForwards);
             end;
 
-            procedure GetCameraRayLookat( const vPos:vec3;const vInterest:vec3;out ray:C_Ray );
+            procedure GetCameraRayLookat(const vPos: vec3; const vInterest: vec3; out ray: C_Ray);
             var
-              vForwards :vec3;
-              vUp :vec3;
+              vForwards: vec3;
+              vUp      : vec3;
             begin
-              vForwards  := normalize(vInterest - vPos);
-              vUp  := vec3_10;
-
+              vForwards := normalize(vInterest - vPos);
+              vUp       := vec3_10;
               GetCameraRay(vPos, vForwards, vUp, ray);
             end;
 
@@ -850,13 +818,7 @@ begin
 	CalcPixelRandom();
 	{$endif }
 
-	vCameraPos  := OrbitPoint(-mouse.x * 7.0, (mouse.y + 0.1) * kPI * 0.25) * 7.0 - vec3_11;
-	{$ifdef ENABLE_MONTE_CARLO }
-	fDepthOfField  := 0.0;
-	vCameraPos  := vCameraPos  + (gRandomNormal * 0.05);
-	{$endif }
-
-	GetCameraRayLookat( vCameraPos, vecBlack, ray);
+	GetCameraRayLookat( vCameraPos, vec3Black, ray);
 	//GetCameraRayLookat(vec3_12, vecBlack, ray);
 
 	cScene  := GetSceneColour( ray );
@@ -865,12 +827,13 @@ begin
 	cScene  := cScene * fExposure;
 
 	{$ifdef ENABLE_MONTE_CARLO                              }
-	cPrev  := texture2D(Buffer, gl_FragCoord.xy / resolution).xyz;
+	cPrev  := texture2D(Buffers[0].Bitmap, gl_FragCoord.xy / resolution).xyz;
+
 	/// add noise to pixel value (helps values converge)
-	//cPrev  := //cPrev  + ((gPixelRandom.xyz - 0.5) * (1.0 / 255.0));
-	//cPrev  := InvTonemap(cPrev);
+	cPrev  := cPrev  + ((gPixelRandom.xyz - 0.5) * (1.0 / 255.0));
+	cPrev  := InvTonemap(cPrev);
 	// converge speed
-	fBlend  := 0.9;
+	fBlend  := 0.3;
 	cFinal  := mix(cPrev, cScene, fBlend);
 	{$else}
 	cFinal  := cScene;
@@ -894,4 +857,3 @@ finalization
 FreeandNil(MonteCarloPOV);
 
 end.
-

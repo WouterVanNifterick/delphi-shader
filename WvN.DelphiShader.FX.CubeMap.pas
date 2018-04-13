@@ -13,6 +13,18 @@ type
     vec4_3: vec4 = (x: 0; y: 0; z: 0; w: 0);
     vec3_4: vec3 = (x: 4; y: 4; z: 4);
 
+    eps100:vec3 = (x: precis; y: 0; z: 0);
+    eps010:vec3 = (x: 0; y: precis; z: 0);
+    eps001:vec3 = (x: 0; y: 0; z: precis);
+  var
+    mo  : vec2;
+    an1 : float;
+    an2 : float;
+    ro  : vec3;
+    ww  : vec3;
+    uu  : vec3;
+    vv  : vec3;
+    sl3:double;
     function map(p: vec3): vec2;
     function sphereColor(const pos, nor: vec3): vec4;
     function satelitesColor(const pos, nor: vec3): vec4;
@@ -39,12 +51,6 @@ begin
   PixelProc := Main;
 end;
 
-procedure TCubeMap.PrepareFrame;
-begin
-  // Created by inigo quilez - iq/2013
-  // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-
-end;
 
 function TCubeMap.map(p: vec3): vec2;
 var
@@ -59,9 +65,11 @@ begin
   d2 := vec2.Create(p.y + 1, 2);
 
   r  := 1;
-  f  := smoothstep(0, 0.5, system.sin(3 + iGlobalTime));
-  d  := 0.5 + 0.5 * system.sin(4 * p.x + 0.13 * iGlobalTime) * system.sin(4 * p.y + 0.11 * iGlobalTime) * system.sin(4 * p.z + 0.17 * iGlobalTime);
-  r  := r + (f * 0.4 * pow(d, 4)){ * (0.5-0.5*p.y)};
+  f  := smoothstep(0, 0.5, sl3);
+  d  := 0.5 + 0.5 * sinLarge(4 * p.x + 0.13 * iGlobalTime) *
+                    sinLarge(4 * p.y + 0.11 * iGlobalTime) *
+                    sinLarge(4 * p.z + 0.17 * iGlobalTime);
+  r  := r + (f * 0.4 * power(d, 4)){ * (0.5-0.5*p.y)};
   d1 := vec2.Create(length(p) - r, 1);
 
   if d2.x < d1.x then
@@ -73,7 +81,7 @@ begin
   if d3.x < d1.x then
     d1 := d3;
 
-  Exit(d1);
+  Result := d1;
 end;
 
 function TCubeMap.sphereColor(const pos, nor: vec3): vec4;
@@ -132,44 +140,51 @@ begin
   sid   := -1;
   for i := 0 to 99 do
   begin
-    if (abs(h) < precis) or (t > maxd) then
+    if (System.abs(h) < precis) or (t > maxd) then
       break;
-    t   := t + (h);
+    t   := t + h;
     res := map(ro + rd * t);
     h   := res.x;
     sid := res.y;
   end;
 
+  Result.x := t;
+
   if t > maxd then
-    sid := -1;
-  Exit(vec2.Create(t, sid));
+    Result.y := -1
+  else
+    Result.y := sid;
 end;
 
 function TCubeMap.calcNormal(const pos: vec3): vec3;
-var
-  eps: vec3;
-  nor: vec3;
-
 begin
-  eps := vec3.Create(precis, 0, 0);
+  Result.x := map(pos + eps100).x - map(pos - eps100).x;
+  Result.y := map(pos + eps010).x - map(pos - eps010).x;
+  Result.z := map(pos + eps001).x - map(pos - eps001).x;
+  Result.NormalizeSelf;
+end;
 
-  nor.x := map(pos + eps.xyy).x - map(pos - eps.xyy).x;
-  nor.y := map(pos + eps.yxy).x - map(pos - eps.yxy).x;
-  nor.z := map(pos + eps.yyx).x - map(pos - eps.yyx).x;
-  Exit(normalize(nor));
+
+procedure TCubeMap.PrepareFrame;
+begin
+  // Created by inigo quilez - iq/2013
+  // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+  mo  := iMouse.xy / resolution.xy;
+  // camera
+  an1 := 0.2 * iGlobalTime - 6.2831 * mo.x;
+  an2 := clamp(0.8 + 0.6 * system.sin(2.2 + iGlobalTime * 0.11) + 1 * mo.y, 0.3, 1.35);
+  ro  := 2.5 * normalize(vec3.Create(system.sin(an2) * system.cos(an1), system.cos(an2) - 0.5, system.sin(an2) * system.sin(an1)));
+  ww  := normalize(vec3_1 - ro);
+  uu  := normalize(cross(vec3_2, ww));
+  vv  := normalize(cross(ww, uu));
+  sl3 := sinLarge(3 + iGlobalTime);
 end;
 
 function TCubeMap.Main(var gl_FragCoord: vec2): TColor32;
 var
   q   : vec2;
   p   : vec2;
-  mo  : vec2;
-  an1 : float;
-  an2 : float;
-  ro  : vec3;
-  ww  : vec3;
-  uu  : vec3;
-  vv  : vec3;
   rd  : vec3;
   col : vec3;
   tmat: vec2;
@@ -181,21 +196,13 @@ var
   tref: vec2;
   fre : float;
   sss : vec3;
-
 begin
   q   := gl_FragCoord.xy / resolution.xy;
   p   := -1 + 2 * q;
   p.x := p.x * (resolution.x / resolution.y);
-  mo  := iMouse.xy / resolution.xy;
 
-  // camera
-  an1 := 0.2 * iGlobalTime - 6.2831 * mo.x;
-  an2 := clamp(0.8 + 0.6 * system.sin(2.2 + iGlobalTime * 0.11) + 1 * mo.y, 0.3, 1.35);
-  ro  := 2.5 * normalize(vec3.Create(system.sin(an2) * system.cos(an1), system.cos(an2) - 0.5, system.sin(an2) * system.sin(an1)));
-  ww  := normalize(vec3_1 - ro);
-  uu  := normalize(cross(vec3_2, ww));
-  vv  := normalize(cross(ww, uu));
-  rd  := normalize(p.x * uu + p.y * vv + 1.4 * ww);
+  rd  := p.x * uu + p.y * vv + 1.4 * ww;
+  rd.NormalizeSelf;
 
   // raymarch
   col := textureCube(CubeMap.cubes[0], rd).xyz;
@@ -221,9 +228,13 @@ begin
     else
       mate := satelitesColor(pos, nor);
 
-    col := col + (2 * rim * pow(mate.w, 3));
-    col := col * (mate.w);
-    col := col * (mate.xyz);
+//    col := col + (2 * rim * pow(mate.w, 3));
+//    col := col * (mate.w);
+//    col := col * (mate.xyz);
+
+    col.x := (col.x + (2 * rim * pow(mate.w, 3))) * mate.w * mate.x;
+    col.y := (col.y + (2 * rim * pow(mate.w, 3))) * mate.w * mate.y;
+    col.z := (col.z + (2 * rim * pow(mate.w, 3))) * mate.w * mate.z;
 
     // reflection occlusion
     tref := intersect(pos + nor * 0.001, ref);
@@ -237,7 +248,7 @@ begin
     col := sqrt(col);
   end;
 
-  col := col * (0.25 + 0.75 * pow(16 * q.x * q.y * (1 - q.x) * (1 - q.y), 0.15));
+  col := col * (0.25 + 0.75 * power(16 * q.x * q.y * (1 - q.x) * (1 - q.y), 0.15));
 
   Result := TColor32(col);
 end;

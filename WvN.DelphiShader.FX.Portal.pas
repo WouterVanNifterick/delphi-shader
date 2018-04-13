@@ -351,13 +351,7 @@ begin
   lightPos := -normalize(hitPos + vec3_28);
 
   diffuse := Math.max(0, dot(normal, -lightPos)) * 0.5 + 0.5;
-  shade   :=
-{$IFDEF SHADOWS}
-    shadow(c.z, hitPos, lightPos) * 0.5 + 0.5;
-{$ELSE}
-    1;
-{$ENDIF}
-  specular := 0;
+  shade   := {$IFDEF SHADOWS}shadow(c.z, hitPos, lightPos) * 0.5 + 0.5;{$ELSE}1;{$ENDIF}
 {$IFDEF SPECULAR}
   if dot(normal, -lightPos) < 0 then
     specular := 0

@@ -15,14 +15,16 @@ type
     lpos            : array [0 .. 6] of vec3;
     lcol            : array [0 .. 6] of vec4;
 const
+  eps = 0.001;
   c1: vec3 = (x: 1.00; y: 0.80; z: 0.60);
   c2: vec3 = (x: 1.00; y: 0.30; z: 0.05);
   c3: vec3 = (x: 0.25; y: 0.20; z: 0.20);
   c4: vec3 = (x: 0.35; y: 0.20; z: 0.10);
   c5: vec3 = (x: 0.10; y: 0.30; z: 0.00);
-  eps_1_0_0 : vec3 = (x:0.001; y:0.000;z:0.000);
-  eps_0_1_0 : vec3 = (x:0.000; y:0.001;z:0.000);
-  eps_0_0_1 : vec3 = (x:0.000; y:0.000;z:0.001);
+  v163: vec3 = (x:1; y:0.6;z:0.2);
+  eps_1_0_0 : vec3 = (x:eps; y:0.000;z:0.000);
+  eps_0_1_0 : vec3 = (x:0.000; y:eps;z:0.000);
+  eps_0_0_1 : vec3 = (x:0.000; y:0.000;z:eps);
   v3_7_7_7: vec3 = (x: 0.70; y: 0.70; z: 0.70);
   vec3_3_15_15: vec3=(x: 0.30; y: 0.15; z: 0.15);
     constructor Create; override;
@@ -45,8 +47,8 @@ uses SysUtils, Math;
 constructor TCatacombs.Create;
 begin
   inherited;
-  FrameProc := PrepareFrame;
-  PixelProc := RenderPixel;
+  Image.FrameProc := PrepareFrame;
+  Image.PixelProc := RenderPixel;
 end;
 
 procedure TCatacombs.PrepareFrame;
@@ -61,9 +63,15 @@ begin
   time := iGlobalTime;
   // camera
   ce   := vec3.Create(0.5, 0.25, 1.5);
-  ro   := ce + vec3.Create(1.3 * system.cos(0.11 * time + 6 * mo.x), 0.65 * (1- mo.y), 1.3 * system.sin(0.11 * time + 6 * mo.x));
-  ta   := ce + vec3.Create(0.95 * system.cos(1.2 + 0.08 * time), 0.4 * 0.25 + 0.75 * ro.y, 0.95 * system.sin(2 + 0.07 * time));
-  roll := -0.15 * system.sin(0.1 * time);
+  ro   := ce + vec3.Create(
+             1.3 * cosLarge(0.11 * time + 6 * mo.x),
+             0.65 * (1- mo.y),
+             1.3 * sinLarge(0.11 * time + 6 * mo.x));
+  ta   := ce + vec3.Create(
+             0.95 * cosLarge(1.2 + 0.08 * time),
+             0.4 * 0.25 + 0.75 * ro.y,
+             0.95 * sinLarge(2 + 0.07 * time));
+  roll := -0.15 * sinLarge(0.1 * time);
 
   // camera tx
   cw := normalize(ta - ro);
@@ -78,9 +86,9 @@ begin
 
   for i := low(lpos) to high(lpos) do
   begin
-    lpos[i].x := 0.5 + 2.2 * system.cos(0.22 + 0.2 * iGlobalTime + 17 * i);
+    lpos[i].x := 0.5 + 2.2 * cosLarge(0.22 + 0.2 * iGlobalTime + 17 * i);
     lpos[i].y := 0.25;
-    lpos[i].z := 1.5 + 2.2 * system.cos(2.24 + 0.2 * iGlobalTime + 13 * i);
+    lpos[i].z := 1.5 + 2.2 * cosLarge(2.24 + 0.2 * iGlobalTime + 13 * i);
 
     // make the lights avoid the columns
     ilpos := floor(lpos[i].xz);
@@ -91,7 +99,7 @@ begin
 
     lpos[i].xz := ilpos + flpos;
 
-    li := system.sqrt(0.5 + 0.5 * system.sin(2 * iGlobalTime + 23.1 * i));
+    li := system.sqrt(0.5 + 0.5 * sinLarge(2 * iGlobalTime + 23.1 * i));
 
     h       := i / 8;
     c       := mix(c1, c2, 0.5 + 0.5 * system.sin(40 * h));
@@ -106,10 +114,13 @@ var
   di: vec3;
 begin
   di := max(abs(p) - abc, 0);
-  Exit(dot(di, di));
+  Result := dot(di, di);
 end;
 
+
+function column(x, y, z: float): Vec2;
 const
+  c = 0.7071;
   v3_1: vec3 = (x: 0.10 * 0.85; y: 1.00; z: 0.10 * 0.85);
   v3_2: vec3 = (x: 0.12; y: 0.40; z: 0.12);
   v3_3: vec3 = (x: 0.05; y: 0.35; z: 0.14);
@@ -119,15 +130,12 @@ const
   v3_7: vec3 = (x: 0.10 * 0.7071; y: 0.10 * 0.7071; z: 0.14);
   v3_8: vec3 = (x: 0.14; y: 0.10 * 0.7071; z: 0.10 * 0.7071);
   v3_9: vec3 = (x: 0.14; y: 0.02; z: 0.14);
-
-function column(x, y, z: float): Vec2;
 var
   p                                          : vec3;
   y2, y3, y4                                 : float;
   di1, di2, di3, di4, di5, di6, di7, di8, di9: float;
   dm                                         : float;
   res                                        : Vec2;
-const c = 0.7071;
 begin
   p := vec3.Create(x, y, z);
 
@@ -202,13 +210,15 @@ begin
     sid     := dis2.y;
   end;
 
-  dsp     := clamp(pos.y, 0, 1) * abs(
-                                     system.sin(6   * pos.y) *
-                                     system.sin(50  * pos.x) *
-                                     system.sin(4*2 * pi * pos.z));
+  dsp     := clamp(pos.y, 0, 1) * System.abs(
+                                     sinLarge(6   * pos.y) *
+                                     sinLarge(50  * pos.x) *
+                                     sinLarge(4*2 * pi * pos.z));
   mindist := mindist - (dsp * 0.03);
 
-  Result := vec3.Create(mindist, sid, dsp);
+  Result.x := mindist;
+  Result.y := sid;
+  Result.z := dsp;
 end;
 
 function castRay(const ro: vec3; const rd: vec3; const precis: float; const startf: float; const maxd: float): vec3;
@@ -227,9 +237,9 @@ begin
   sid   := -1;
   for i := 0 to 50 - 1 do
   begin
-    if (abs(h) < precis) or (t > maxd) then
+    if (System.abs(h) < precis) or (t > maxd) then
       break;
-    t   := t + (h);
+    t   := t + h;
     res := map(ro + rd * t);
     h   := res.x;
     sid := res.y;
@@ -257,7 +267,7 @@ begin
     begin
       h   := map(ro + rd * t).x;
       res := min(res, k * h / t);
-      t   := t + (max(0.05, dt));
+      t   := t + max(0.05, dt);
     end;
   Result := clamp(res, 0, 1);
 end;
@@ -296,7 +306,7 @@ begin
     sca   := sca * 0.5;
   end;
 
-  Exit(1 - clamp(totao, 0, 1));
+  Result := 1 - clamp(totao, 0, 1);
 end;
 
 function TCatacombs.render(const ro: vec3; const rd: vec3): vec3;
@@ -364,7 +374,7 @@ begin
 
     col := col * brdf;
 
-    col := col + (3 * spe * vec3.Create(1, 0.6, 0.2));
+    col := col + (3 * spe * v163);
   end;
 
   col := col * (exp(-0.055 * t * t));
@@ -383,7 +393,7 @@ begin
 
   end;
 
-  Exit(vec3(col));
+  Result := col;
 end;
 
 function TCatacombs.calcColor(const pos: vec3; const nor: vec3; const sid: float): vec3;
@@ -418,10 +428,10 @@ begin
 
     col := v3_7_7_7;
 
-    p   := (smoothstep(0.02, 0.03, abs(FX - 0.1))) *
-           (smoothstep(0.02, 0.03, abs(FX - 0.9))) *
-           (smoothstep(0.02, 0.03, abs(fz - 0.1))) *
-           (smoothstep(0.02, 0.03, abs(fz - 0.9))) ;
+    p   := (smoothstep(0.02, 0.03, System.abs(FX - 0.1))) *
+           (smoothstep(0.02, 0.03, System.abs(FX - 0.9))) *
+           (smoothstep(0.02, 0.03, System.abs(fz - 0.1))) *
+           (smoothstep(0.02, 0.03, System.abs(fz - 0.9))) ;
     col := mix(0.75 * vec3_3_15_15, col, p);
   end;
 
@@ -446,11 +456,14 @@ begin
   b := 0.01;
 
   ref := fbm(48 * pos, nor);
-  gra := -b * vec3.Create(fbm(48 * vec3.Create(pos.x + e, pos.y, pos.z), nor) - ref, fbm(48 * vec3.Create(pos.x, pos.y + e, pos.z), nor) - ref, fbm(48 * vec3.Create(pos.x, pos.y, pos.z + e), nor) - ref) / e;
+  gra := -b * vec3.Create(
+                fbm(48 * vec3.Create(pos.x + e, pos.y, pos.z), nor) - ref,
+                fbm(48 * vec3.Create(pos.x, pos.y + e, pos.z), nor) - ref,
+                fbm(48 * vec3.Create(pos.x, pos.y, pos.z + e), nor) - ref) / e;
 
   tgrad := gra - nor * dot(nor, gra);
-  Exit(normalize(nor - tgrad));
-
+  Result := nor - tgrad;
+  Result.NormalizeSelf;
 end;
 
 function TCatacombs.fbm(p: vec3; const n: vec3): float;
@@ -459,18 +472,19 @@ var
   y: float;
   z: float;
 begin
-  p := p * (0.15);
+  p.x := p.x * 0.15;
+  p.y := p.y * 0.15;
+  p.z := p.z * 0.15;
 
   x := texture2D(tex[1], p.yz).x;
   y := texture2D(tex[1], p.zx).x;
   z := texture2D(tex[1], p.xy).x;
-  {
 
-    x := 1;
-    y := 1;
-    z := 1;
-  }
-  Result := x * abs(n.x) + y * abs(n.y) + z * abs(n.z);
+  x := x * system.Abs(n.x);
+  y := y * system.Abs(n.y);
+  z := z * system.Abs(n.z);
+
+  Result := x+y+z;
 end;
 
 function TCatacombs.RenderPixel(var gl_FragCoord: vec2): TColor32;
@@ -488,7 +502,7 @@ begin
   col := sqrt(col);
 
   // vigneting
-  col := col * (0.25 + 0.75 * pow(16 * q.x * q.y * (1 - q.x) * (1 - q.y), 0.15));
+  col := col * (0.25 + 0.75 * power(16 * q.x * q.y * (1 - q.x) * (1 - q.y), 0.15));
 
   Result := TColor32(col);
 end;

@@ -19,7 +19,8 @@ type
   var
     org : Vec3;
     FireP:Float;
-    t:Vec3;
+    t:{Vec3}Float;
+
     res:double;
     function noise(const p: Vec3): float;
     function sphere(const p: Vec3; const spr: Vec4): float; inline;
@@ -48,7 +49,8 @@ end;
 
 procedure TFlame.PrepareFrame;
 begin
-  t   := Vec3.Create(0, iGlobalTime * 2, 0);
+//  t   := Vec3.Create(0, iGlobalTime * 2, 0);
+  t   := iGlobalTime * 2;
   org := Vec3.Create(0, -2, 4);
   res := Resolution.x / Resolution.y;
 end;
@@ -76,7 +78,11 @@ begin
   f.z := system.cos(ppii.z*pi) * -0.5 + 0.5;
 
   a1     := 1 + a;
-  a      := mix(sin(cos(a) * a), sin(cos(a1) * a1), f.x);
+//  a      := mix(sin(cos(a) * a), sin(cos(a1) * a1), f.x);
+  a.x      := mix(system.sin(system.cos(a.x) * a.x), system.sin(system.cos(a1.x) * a1.x), f.x);
+  a.y      := mix(system.sin(system.cos(a.y) * a.y), system.sin(system.cos(a1.y) * a1.y), f.y);
+  a.z      := mix(system.sin(system.cos(a.z) * a.z), system.sin(system.cos(a1.z) * a1.z), f.z);
+
   a.xy   := mix(a.xz, a.yw, f.y);
   Result := mix(a.x, a.y, f.z);
 end;
@@ -102,7 +108,7 @@ end;
 // -----------------------------------------------------------------------------
 function TFlame.scene(const p: Vec3): float;
 begin
-  Result := Math.min(100 - length(p), abs(FireP));
+  Result := Math.min(100 - length(p), System.abs(FireP));
 end;
 
 function TFlame.Raymarche(const org: Vec3; const dir: Vec3): Vec4;
@@ -114,7 +120,6 @@ var
   glowed: boolean;
   i     : integer;
 begin
-  d      := 0.0;
   p      := org;
   glow   := 0.0;
   eps    := 0.02;

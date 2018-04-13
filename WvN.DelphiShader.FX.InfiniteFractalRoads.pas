@@ -21,6 +21,7 @@ type
     vec3_11: vec3 = (x: 0.05; y: 0.02; z: 0);
     vec3_12: vec3 = (x: 1.1; y: 1.03; z: 1);
     vec3_13: vec3 = (x: 1; y: 0.85; z: 0.7);
+    v3_2: vec3 =  (x: 2; y: 2; z: 2);
 
     Iterations = 13;
     width      = 0.22;
@@ -111,7 +112,7 @@ begin
   ot       := 1000;
   for i    := 0 to Iterations - 1 do
   begin
-    p        := vec3(2) - abs(abs(p.xyz + vec3_4) - vec3(2)) - vec3_3;
+    p        := v3_2 - abs(abs(p.xyz + vec3_4) - v3_2) - vec3_3;
     r2       := dot(p.xyz, p.xyz);
     ot       := clamp(ot, 0, r2);
     p        := p * (Scale / clamp(r2));
@@ -129,7 +130,10 @@ var
 begin
   e := Default(vec3);
   e.y := det;
-  Result := normalize(vec3.Create(de(p + e.yxx) - de(p - e.yxx), de(p + e.xyx) - de(p - e.xyx), de(p + e.xxy) - de(p - e.xxy)));
+  Result := normalize(vec3.Create(
+          de(p + e.yxx) - de(p - e.yxx),
+          de(p + e.xyx) - de(p - e.xyx),
+          de(p + e.xxy) - de(p - e.xxy)));
 end;
 
 function TInfiniteFractalRoads.shadow(const pos, sdir: vec3): float;
@@ -161,7 +165,7 @@ end;
 
 function TInfiniteFractalRoads.AO(const pos, nor: vec3): float;
 var
-  AO   : float;
+  i,
   aoi  : integer;
   totao: float;
   sca  : float;
@@ -170,42 +174,21 @@ var
   dd   : float;
 
 begin
-  // by iq... but I had to unroll it not  (Firefox fault)
-  AO    := 1;
+  // by iq...
   aoi   := 0;
   totao := 0;
   sca   := 20;
 
-  hr    := 0.015 + 0.01 * aoi * aoi;
-  aopos := nor * hr + pos;
-  dd    := de(aopos);
-  totao := totao + (-(dd - hr) * sca);
-  sca   := sca * (0.4);
-  Inc(aoi);
-  hr    := 0.015 + 0.01 * aoi * aoi;
-  aopos := nor * hr + pos;
-  dd    := de(aopos);
-  totao := totao + (-(dd - hr) * sca);
-  sca   := sca * (0.4);
-  Inc(aoi);
-  hr    := 0.015 + 0.01 * aoi * aoi;
-  aopos := nor * hr + pos;
-  dd    := de(aopos);
-  totao := totao + (-(dd - hr) * sca);
-  sca   := sca * (0.4);
-  Inc(aoi);
-  hr    := 0.015 + 0.01 * aoi * aoi;
-  aopos := nor * hr + pos;
-  dd    := de(aopos);
-  totao := totao + (-(dd - hr) * sca);
-  sca   := sca * (0.4);
-  Inc(aoi);
-  hr    := 0.015 + 0.01 * aoi * aoi;
-  aopos := nor * hr + pos;
-  dd    := de(aopos);
-  totao := totao + (-(dd - hr) * sca);
-  sca   := sca * (0.4);
-  Inc(aoi);
+  for I := 0 to 4 do
+  begin
+    hr    := 0.015 + 0.01 * aoi * aoi;
+    aopos := nor * hr + pos;
+    dd    := de(aopos);
+    totao := totao + (-(dd - hr) * sca);
+    sca   := sca * (0.4);
+    Inc(aoi);
+  end;
+
   Exit(1 - clamp(totao, 0, 1));
 end;
 
@@ -240,8 +223,6 @@ var
   i      : integer;
   l      : float;
   backg  : vec3;
-  y      : float;
-
 begin
   st      := 0;
   d       := 1;
@@ -262,7 +243,6 @@ begin
 
   l     := pow(Math.max(0, dot(normalize(-dir), normalize(lightdir))), 4);
   backg := vec3_8 * 0.4 * (0.4 + clamp(l, 0, 0.6)) + vec3_7 * l * 0.5;
-  y     := (p.xy * rota2).y;
   if d < det then
   begin
     ot  := clamp(pow(ot, 2) * 4);
@@ -285,7 +265,6 @@ var
   dir  : vec3;
   col  : vec3;
   flare: vec3;
-
 begin
   uv     := gl_FragCoord.xy / resolution.xy * 2 - 1;
   uv.y   := uv.y * (resolution.y / resolution.x);
@@ -300,7 +279,7 @@ begin
   col    := col + (flare * dot(uv2, uv2));
   col    := col * (length(clamp((0.6 - pow(abs(uv2), vec2_3_3)), Vec2Black, Vec2White)));
   col    := col * vec3_12 + vec3_11;
-  col    := col + (vec3_13 * pow(max(0, 0.3 - length(uv)) / 0.3, 2) * 0.5);
+  col    := col + (vec3_13 * power(max(0, 0.3 - length(uv)) / 0.3, 2) * 0.5);
   Result := TColor32(col);
 end;
 

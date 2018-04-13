@@ -131,7 +131,7 @@ begin
   objDist:=1.0;
   for I := 0 to NaN-1 do
   begin
-    if (abs(objDist)<0.005) or (f>maxd) then
+    if (System.abs(objDist)<0.005) or (f>maxd) then
       break;
     f:=f +objDist;
     p:=prp+scp*f;
