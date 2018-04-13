@@ -34,7 +34,7 @@ end;
 
 procedure TChocolux.PrepareFrame;
 begin
-  s[0] := Vec3(0);
+  s[0] := vec3Black;
   s[3] := Vec3.Create(System.sin(iGlobalTime),
                       System.cos(iGlobalTime), 0);
   s[1] := s[3].zxy;

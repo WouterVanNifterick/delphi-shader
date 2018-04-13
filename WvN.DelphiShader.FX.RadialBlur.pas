@@ -57,7 +57,7 @@ begin
   p := -1 + 2 * gl_FragCoord / Resolution;
   s := p;
 
-  total := vecBlack;
+  total := vec3Black;
   d     := (vec2_black - p) / 20.0;
   w     := 1.0;
   for I := 0 to 19 do

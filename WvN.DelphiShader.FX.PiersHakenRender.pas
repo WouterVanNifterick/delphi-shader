@@ -115,7 +115,7 @@ const
   vec3_30:vec3=(x:-1*4;y:0.86*4;z:2*4);
   vec3_31:vec3=(x:1*4;y:0*4;z:2*4);
 
-  _matFloor : Material = (DiffuseColor:(r:1;g:0.9;b:0.7); SpecularColor: (r:1;g:1;b:1); Shininess: 130);
+  _matFloor : Material = (DiffuseColor:(x:1;y:0.9;z:0.7); SpecularColor: (x:1;y:1;z:1); Shininess: 130);
   _floor    : Plane    = (Point:(x:0;y:0;z:0); Normal: (x:0;y:0;z:1));
    s :Sphere= (Center:(x:0;y:0;z:0);radius:0.5); { Ray }
 
@@ -400,7 +400,7 @@ begin
 	lray.Position :=eye;
   lray.Direction := normalize (look + dx * position.x + dy * position.y);
 
-	color  := vecBlack;
+	color  := vec3Black;
 //  if LightScene (lray, color) then
 //    if LightScene (lray, color) then
        LightScene (lray, color);
