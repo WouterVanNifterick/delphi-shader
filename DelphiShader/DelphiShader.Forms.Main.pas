@@ -6,12 +6,16 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GR32, GR32_Image, Types, Vcl.ExtCtrls,
   GR32_ExtImage, GR32_Resamplers, GR32_Backends, PngImage, GIFImg,
-  Generics.Collections, IoUtils, GraphUtil,
-  WvN.DelphiShader.Shader, System.Diagnostics, DateUtils,
-  Vcl.StdCtrls, Vcl.AppEvnts, Vcl.ComCtrls, Vcl.ImgList, uxTheme;
+  Generics.Collections,
+  Generics.Defaults,
+  IoUtils, GraphUtil,
+  WvN.DelphiShader.Shader,
+  System.Diagnostics, DateUtils,
+  Vcl.StdCtrls, Vcl.AppEvnts, Vcl.ComCtrls, Vcl.ImgList, uxTheme,
+  System.ImageList;
 
 const
-  THUMBNAIL_SIZE = 32;
+  THUMBNAIL_SIZE = 24;
 
 type
 
@@ -27,16 +31,10 @@ type
     Panel1: TPanel;
     Label1: TLabel;
     scrQuality: TScrollBar;
-    Button1: TButton;
     ListView1: TListView;
-    Panel3: TPanel;
-    Panel4: TPanel;
-    cmbResolution: TComboBox;
-    Panel5: TPanel;
-    cmbAA: TComboBox;
-    Label2: TLabel;
-    Label3: TLabel;
-    Timer2: TTimer;
+    Edit1: TButtonedEdit;
+    ProgressBar1: TProgressBar;
+    Button1: TButton;
     procedure pbPaintBuffer(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -52,18 +50,28 @@ type
     procedure pbMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure pbMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure StatusBar1DrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel; const Rect: TRect);
+    procedure ListView1Data(Sender: TObject; Item: TListItem);
+    procedure Edit1Change(Sender: TObject);
+    procedure ListView1AdvancedCustomDrawSubItem(Sender: TCustomListView;
+      Item: TListItem; SubItem: Integer; State: TCustomDrawState;
+      Stage: TCustomDrawStage; var DefaultDraw: Boolean);
+    procedure Button1Click(Sender: TObject);
+    procedure ListView1DblClick(Sender: TObject);
+    procedure pbDblClick(Sender: TObject);
   private
     procedure UpdateShader;
     procedure OnProgress(p, t: Integer);
-    procedure Render(name: string; _s: TShader);
-    procedure FillResolutionInput;
-    procedure FillAAInput;
+    procedure OnProgressShowOnImage(p, t: Integer);
+    procedure Render(name: string; _s: TShader; Resolution:Vec2;AA:Integer);
     procedure CreateAllThumbnails;
+    procedure FilterShaderList;
+    procedure Freeze;
   public
     DrawingBuffer   : TBitmap32;
     Shader          : TShader;
     q               : Integer;
     ThumbnailShaders: TShaderList;
+    VisibleShaders  : TList<TShader>;
   end;
   {
     TThumbnailThread = class(TThread)
@@ -103,15 +111,16 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   // disable theme on statbusbar, so we can paint a custom one
+  ThumbnailsLarge.Width  := THUMBNAIL_SIZE;
+  ThumbnailsLarge.Height := THUMBNAIL_SIZE;
+
+
   SetWindowTheme(StatusBar1.Handle, '', '');
 
   DrawingBuffer                    := TBitmap32.Create;
   DrawingBuffer.ResamplerClassName := 'TLinearResampler';
-  DrawingBuffer.SetSize(512, 512);
+  DrawingBuffer.SetSize(512, 288);
   ListView1.Clear;
-
-  FillResolutionInput;
-  FillAAInput;
 
   // Shader := ReliefTunnel;
   {
@@ -124,7 +133,8 @@ begin
     thread.Resume;
   }
 
-  Sleep(1000);
+  Sleep(100);
+  VisibleShaders := TList<TShader>.Create;
   CreateAllThumbnails;
 
 end;
@@ -136,7 +146,7 @@ begin
   ThumbnailShaders.Free;
 end;
 
-procedure TfrmMain.Render(name: string; _s: TShader);
+procedure TfrmMain.Render(name: string; _s: TShader; Resolution:Vec2; AA:integer);
 // const
 // sz_x=512;
 // sz_y=sz_x;
@@ -152,16 +162,17 @@ var
   sw              : TStopwatch;
   PxPerSec        : Int64;
   PerfStatFileName: string;
-  AA, sz_x, sz_y  : Integer;
-  ThreadedShader  : TThreadedShader;
+  sz_x, sz_y  : Integer;
+//  ThreadedShader  : TThreadedShader;
 begin
-  ThreadedShader := TThreadedShader.Create(_s);
-  sz_x           := StrToInt(string(cmbResolution.Text).Split(['x'])[0].Trim);
-  sz_y           := StrToInt(string(cmbResolution.Text).Split(['x'])[1].Trim);
-  if cmbAA.Text = 'none' then
-    AA := 1
-  else
-    AA   := StrToInt(string(cmbAA.Text).Split([' '])[0].Trim);
+//  ThreadedShader := TThreadedShader.Create(_s);
+
+
+  shader := _s.Create;
+
+  sz_x           := round(Resolution.x);  // StrToInt(string(cmbResolution.Text).Split(['x'])[0].Trim)
+  sz_y           := round(Resolution.y);
+  // if cmbAA.Text = 'none' then AA := 1 else AA   := StrToInt(string(cmbAA.Text).Split([' '])[0].Trim);
   folder := format('%dx%d', [sz_x, sz_y]);
   TDirectory.CreateDirectory(folder);
   framecount := 60;
@@ -199,15 +210,18 @@ begin
       frmProgress.Repaint;
 
       if sz_x * AA > 32 then
-        ThreadedShader.OnProgress := OnProgress;
-      ThreadedShader.SetSize(b.Width, b.Height);
-      ThreadedShader.Mouse.X     := 0.4;
-      ThreadedShader.Mouse.Y     := 0.4;
-      ThreadedShader.iMouse.X    := Round(b.Width / 1.8);
-      ThreadedShader.iMouse.Y    := Round(b.Height / 1.8);
-      ThreadedShader.Time        := 2000000 + Frame / 5;
-      ThreadedShader.iGlobalTime := ThreadedShader.Time;
-      ThreadedShader.RenderThreads(b);
+        Shader.OnProgress := OnProgress;
+      Shader.SetSize(b.Width, b.Height);
+      Shader.Mouse.X     := 0.4;
+      Shader.Mouse.Y     := 0.4;
+      Shader.iMouse.X    := Round(b.Width / 1.8);
+      Shader.iMouse.Y    := Round(b.Height / 1.8);
+      Shader.Time        := 2000000 + Frame / 5;
+      Shader.iGlobalTime := Shader.Time;
+      Shader.Render;
+      Shader.Image.Bitmap.DrawTo(b,0,0);
+
+//      Shader.RenderTo(b);
 
       // TThread.Synchronize(TThread.CurrentThread,
       // procedure begin
@@ -261,33 +275,11 @@ begin
 
 end;
 
-procedure TfrmMain.FillResolutionInput;
-var
-  i: Integer;
-begin
-  for i := 6 to 24 do
-  begin
-    cmbResolution.Items.Add(Round(Power(2, i / 2)).ToString + ' x ' + Round(Power(2, i / 2)).ToString);
-  end;
-  cmbResolution.ItemIndex := 4;
-end;
-
-procedure TfrmMain.FillAAInput;
-var
-  i: Integer;
-begin
-  cmbAA.Items.Add('none');
-  for i := 1 to 3 do
-  begin
-    cmbAA.Items.Add(Round(Power(2, i)).ToString + ' x');
-  end;
-  cmbAA.ItemIndex := 0;
-end;
 
 procedure TfrmMain.RenderFiles(Sender: TObject);
 type
-  TSp         = TPair<string, TShader>;
-  TShaderList = TList<TSp>;
+  TShaderPair = TPair<string, TShader>;
+  TShaderList = TList<TShaderPair>;
 const
   threads = 1;
 var
@@ -295,21 +287,34 @@ var
   // j:integer;
   // ShaderKey:TSp;
   // l:TShaderList;
-  s: TSp;
+  ShaderPair: TShaderPair;
+  LRes: vec2;
+  AA: Integer;
 begin
   Timer1.Enabled := False;
+  ListView1.Enabled := False;
   {
     s := Shaders.ExtractPair('Catacombs');
     Render(s.Key, s.Value);
   }
   frmProgress.Show;
   frmProgress.barOverall.Max := Shaders.Count;
-  for s in Shaders do
+
+  LRes.x := StrToInt(string(frmProgress.cmbResolution.Text).Split(['x'])[0].Trim);
+  LRes.y := StrToInt(string(frmProgress.cmbResolution.Text).Split(['x'])[0].Trim);
+
+  if frmProgress.cmbAA.Text = 'none' then
+    AA := 1
+  else
+    AA     := StrToInt(string(frmProgress.cmbAA.Text).Split([' '])[0].Trim);
+
+
+  for ShaderPair in Shaders do
   begin
-    frmProgress.Label1.Caption := s.Key;
+    frmProgress.Label1.Caption := ShaderPair.Key;
     frmProgress.Repaint;
-    Render(s.Key, s.Value);
-    s.Value.OnProgress              := nil;
+    Render(ShaderPair.Key, ShaderPair.Value, lRes, AA);
+    ShaderPair.Value.OnProgress  := nil;
     frmProgress.barOverall.Position := frmProgress.barOverall.Position + 1;
     frmProgress.barOverall.Tag      := frmProgress.barOverall.Position;
     frmProgress.Repaint;
@@ -353,6 +358,28 @@ begin
 
   }
   Timer1.Enabled := True;
+  ListView1.Enabled := True;
+end;
+
+procedure TfrmMain.ListView1AdvancedCustomDrawSubItem(Sender: TCustomListView;
+  Item: TListItem; SubItem: Integer; State: TCustomDrawState;
+  Stage: TCustomDrawStage; var DefaultDraw: Boolean);
+var LRect:System.Types.TRect; idx:Integer;
+begin
+    if SubItem=1 then  begin
+
+    LRect := Item.DisplayRect( TDisplayCode.drBounds );
+    for Idx := 0 to SubItem -1 do
+       LRect.Left := LRect.Left + Sender.Column[Idx].Width;
+
+    LRect.Inflate(-8, -2);
+    Sender.Canvas.Font.Size := 12;
+    Sender.Canvas.Font.Style := [fsBold];
+    Sender.Canvas.TextOut( LRect.Left, LRect.Top + 4, Item.Caption);
+    Sender.Canvas.TextOut( LRect.Left, LRect.Top + 20, 'Item:'+IntToStr(Item.Index) );
+    DefaultDraw := False;
+  end;
+
 end;
 
 procedure TfrmMain.ListView1Click(Sender: TObject);
@@ -365,16 +392,33 @@ begin
   UpdateShader;
 end;
 
+procedure TfrmMain.ListView1Data(Sender: TObject; Item: TListItem);
+var index:integer;
+begin
+  index := item.Index;
+  if Index<0 then Exit;
+  if Index>VisibleShaders.Count-1 then Exit;
+
+  Item.Data := VisibleShaders[Index];
+  Item.Caption := VisibleShaders[Index].Name;
+  Item.SubItems.Add(Format('%0.0f',[VisibleShaders[Index].PixelsPerSecond]));
+  Item.ImageIndex := VisibleShaders[Index].ThumbnailIndex;
+end;
+
+procedure TfrmMain.ListView1DblClick(Sender: TObject);
+begin
+  Freeze;
+end;
+
 procedure TfrmMain.ListView1SelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 begin
-  if Item = nil then
-    exit;
-  if not Selected then
-    exit;
+  if Item = nil then exit;
+  if not Selected then exit;
 
   Shaders.TryGetValue(Item.Caption, Shader);
   q := 24;
   UpdateShader;
+  Timer1.Enabled := True;
 
 end;
 
@@ -392,6 +436,32 @@ begin
   frmProgress.Repaint;
   Application.ProcessMessages;
   LastStatusUpdate := now;
+end;
+
+procedure TfrmMain.OnProgressShowOnImage(p, t: Integer);
+begin
+
+  if now - LastStatusUpdate < OneMillisecond * 100 then
+    if p < t-1 then
+      exit;
+
+  StatusBar1.Panels[2].Text := format('Line %d of %d', [p, t]);
+  ProgressBar1.Max := t;
+//  ProgressBar1.Position := (p mod (t div 4))*4;
+  ProgressBar1.Position := p;
+  ProgressBar1.Repaint;
+
+  pb.Repaint;
+
+//  DrawingBuffer.DrawTo(pb.Canvas.Handle, pb.Canvas.ClipRect, DrawingBuffer.ClipRect);
+
+  LastStatusUpdate := now;
+  Application.ProcessMessages
+end;
+
+procedure TfrmMain.pbDblClick(Sender: TObject);
+begin
+  Freeze
 end;
 
 procedure TfrmMain.pbMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -422,8 +492,8 @@ procedure TfrmMain.pbMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShif
 begin
   if ssLeft in Shift then
   begin
-    Shader.iMouse.z := -abs(Shader.iMouse.z);
-    Shader.iMouse.w := -abs(Shader.iMouse.w);
+    Shader.iMouse.z := -System.Abs(Shader.iMouse.z);
+    Shader.iMouse.w := -System.Abs(Shader.iMouse.w);
   end;
 end;
 
@@ -450,13 +520,36 @@ procedure TfrmMain.pbPaintBuffer(Sender: TObject);
 var
   fps    : Double;
   fpsText: String;
+  r,r2:TRect;
 begin
-  DrawingBuffer.DrawTo(pb.Buffer, pb.Buffer.ClipRect);
-  pb.Buffer.Canvas.Brush.Style := bsClear;
-  pb.Buffer.Canvas.Font.Size   := 16;
-  pb.Buffer.Canvas.Font.Color  := clRed;
+
+//  pb.Buffer.Canvas.Brush.Style := bsClear;
+//  pb.Buffer.Canvas.Font.Size   := 16;
+//  pb.Buffer.Canvas.Font.Color  := clRed;
+
+
   if Shader = nil then
     exit;
+
+  DrawingBuffer.DrawTo(pb.Buffer, pb.ClientRect);
+
+  if not Timer1.Enabled  then
+  begin
+    // src
+    r := Shader.Image.Bitmap.ClipRect;
+    r.Bottom := round(Shader.Image.Bitmap.Height*(Progressbar1.Position/ProgressBar1.Max));
+
+    // dst
+    r2 := pb.ClientRect;
+    r2.Bottom := round(pb.Height*(Progressbar1.Position/ProgressBar1.Max));
+
+    pb.Buffer.Draw(r2,r,Shader.Image.Bitmap);
+
+//    Shader.Image.Bitmap.DrawTo(pb.Buffer,r2,r);
+  end;
+
+  pb.Buffer.HorzLineS( 0, round(pb.Height*(Progressbar1.Position/ProgressBar1.Max)) , pb.Width-1, setAlpha(clWhite32, 127));
+
   fps := Shader.fps;
   if fps > 10 then
     fpsText := IntToStr(Round(fps)) + ' FPS'
@@ -499,12 +592,12 @@ begin
 
   MaxResolution := min(min(MAX_MAX_RESOLUTION, pb.Width), pb.Height);
 
-  if Shader.fps < scrQuality.Position - 2 then
+  if Shader.fps < scrQuality.Position - 5 then
   begin
     q := (q + min(MaxResolution, Max(MIN_RESOLUTION, Round(q / SHRINK_SPEED)))) div 2;
     UpdateShader;
   end
-  else if Shader.fps > scrQuality.Position + 2 then
+  else if Shader.fps > scrQuality.Position + 5 then
   begin
     q := (q + min(MaxResolution, Max(MIN_RESOLUTION, Round(q * GROW_SPEED)))) div 2;
     UpdateShader;
@@ -512,16 +605,39 @@ begin
   Shader.ResetFPS;
 
   Shader.SetTimeToSystemClock;
-  Shader.RenderTo(DrawingBuffer);
+  Shader.Render;
+  Shader.Image.Bitmap.DrawTo(DrawingBuffer);
+
+  ListView1.Selected.Update;
+
   pb.Repaint;
+end;
+
+procedure TfrmMain.Edit1Change(Sender: TObject);
+begin
+  FilterShaderList;
+end;
+
+type TShaderPair=TPair<string, TShader>;
+
+procedure TfrmMain.Button1Click(Sender: TObject);
+begin
+  RenderFiles(self);
 end;
 
 procedure TfrmMain.CreateAllThumbnails;
 var
-  ShaderPair: TPair<string, TShader>;
+  ShaderPair: TShaderPair;
+  n:integer;
 begin
   ListView1.Items.Clear;
+  ProgressBar1.Max := Shaders.Count;
+  ProgressBar1.Position := 0;
+
   ThumbnailShaders := TShaderList.Create;
+  for n := 0 to Shaders.Count-1 do
+    ThumbnailsLarge.Add(nil,nil);
+
   for ShaderPair in Shaders do
     ThumbnailShaders.Add(ShaderPair.Key, ShaderPair.Value.Create);
 
@@ -534,7 +650,7 @@ begin
     begin
       // create a copy of the main shaderlist, so that we can calculate
       // thumbnails in a separate thread
-      sleep(200);
+   //   sleep(200);
 
       b := TBitmap32.Create;
       try
@@ -547,7 +663,7 @@ begin
             procedure
             begin
               li := ListView1.Items.Add;
-              li.Data := s.Value;
+//              li.Data := s.Value;
             end);
 
           with li do
@@ -561,7 +677,9 @@ begin
                 s.Value.Time := s.Value.iGlobalTime;
               end);
 
-            s.Value.RenderTo(b);
+            s.Value.Render;
+            s.Value.Image.Bitmap.DrawTo(b);
+
 
             TThread.Synchronize(TThread.CurrentThread,
               procedure
@@ -571,18 +689,93 @@ begin
                 bmp := TBitmap.Create;
                 bmp.SetSize(ThumbnailsLarge.Width, ThumbnailsLarge.Height);
                 b.DrawTo(bmp.Canvas.Handle, bmp.Canvas.ClipRect, b.ClipRect);
-                ThumbnailsLarge.Add(bmp, nil);
-                ImageIndex := ListView1.Items.Count - 1;
-              end);
+                ThumbnailsLarge.Replace(s.Value.ThumbnailIndex, bmp, nil );
+                s.Value.Time := 0;
+                s.Value.iGlobalTime := 0;
+                // ThumbnailsLarge.Add(bmp, nil);
+                //ImageIndex := ListView1.Items.Count - 1;
+                FilterShaderList;
+                ProgressBar1.Position := ProgressBar1.Position + 1;
+                if Progressbar1.Position >= ProgressBar1.Max then
+                  Progressbar1.Hide;
 
+              end);
           end;
+          TThread.Synchronize(TThread.CurrentThread,
+            procedure begin
+              FilterShaderList;
+            end);
         end;
       finally
         b.Free;
       end;
-      Timer2.Enabled := True;
     end).Start;
-
 end;
+
+procedure TfrmMain.FilterShaderList;
+type
+  TP = System.Generics.Collections.TPair<string, TShader>;
+var
+  index: Integer;
+  ShadersAr:TArray<TP>;
+  p: TP;
+begin
+  VisibleShaders.Clear;
+  Index := 0;
+  ShadersAr := Shaders.ToArray;
+
+  {
+  TArray.Sort<TP>(ShadersAr,
+    TComparer<TP>.Construct(
+    function (const L,R:TP):Integer
+    begin
+      Result := CompareValue(L.Value.PixelsPerSecond,R.Value.PixelsPerSecond);
+    end
+   ));
+}
+
+  for p in ShadersAr do
+  begin
+    if (trim(Edit1.Text) = '') or (p.Key.ToLower.Contains(string(Edit1.Text).ToLower)) then
+    begin
+      p.Value.ThumbnailIndex := index;
+      VisibleShaders.Add(p.Value);
+    end;
+    inc(Index);
+  end;
+  ListView1.Items.Count := VisibleShaders.Count;
+  ListView1.Refresh;
+end;
+
+procedure TfrmMain.Freeze;
+var bmp:TBitmap32;
+begin
+  if Shader=nil then
+    exit;
+
+  if Timer1.Enabled = False then
+  begin
+    q := 32;
+    Shader.OnProgress := nil;
+    UpdateShader;
+    Timer1.Enabled := True
+  end
+  else
+  begin
+    Timer1.Enabled := False;
+    q := pb.Width {* 2};
+    bmp := TBitmap32.Create;
+    bmp.Assign(DrawingBuffer);
+    Shader.OnProgress := OnProgressShowOnImage;
+    UpdateShader;
+    bmp.DrawTo( DrawingBuffer, DrawingBuffer.ClipRect, bmp.ClipRect );
+//    Shader.RenderToBlocks(DrawingBuffer);
+    Shader.Render;
+    Shader.Image.Bitmap.DrawTo(DrawingBuffer);
+    pb.Repaint;
+    bmp.Free;
+  end;
+end;
+
 
 end.

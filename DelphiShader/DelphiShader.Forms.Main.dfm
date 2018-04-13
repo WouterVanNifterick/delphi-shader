@@ -2,10 +2,9 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsSingle
   Caption = 'Delphi Shader'
-  ClientHeight = 541
-  ClientWidth = 687
+  ClientHeight = 307
+  ClientWidth = 677
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,7 +21,7 @@ object frmMain: TfrmMain
     Left = 161
     Top = 0
     Width = 4
-    Height = 522
+    Height = 288
     ResizeStyle = rsUpdate
     ExplicitLeft = 185
     ExplicitTop = 33
@@ -31,22 +30,25 @@ object frmMain: TfrmMain
   object pb: TPaintBox32
     Left = 165
     Top = 0
-    Width = 522
-    Height = 522
+    Width = 512
+    Height = 288
     Align = alClient
     TabOrder = 0
+    OnDblClick = pbDblClick
     OnMouseDown = pbMouseDown
     OnMouseMove = pbMouseMove
     OnMouseUp = pbMouseUp
     OnPaintBuffer = pbPaintBuffer
+    ExplicitHeight = 512
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
     Width = 161
-    Height = 522
+    Height = 288
     Align = alLeft
     TabOrder = 1
+    ExplicitHeight = 512
     object Panel1: TPanel
       Left = 1
       Top = 1
@@ -60,13 +62,12 @@ object frmMain: TfrmMain
         AlignWithMargins = True
         Left = 7
         Top = 7
-        Width = 145
+        Width = 50
         Height = 13
         Align = alTop
         Caption = 'Framerate'
         Layout = tlCenter
         OnClick = RenderFiles
-        ExplicitWidth = 50
       end
       object scrQuality: TScrollBar
         Left = 4
@@ -81,96 +82,83 @@ object frmMain: TfrmMain
         OnChange = scrQualityChange
       end
     end
+    object ListView1: TListView
+      Left = 1
+      Top = 76
+      Width = 159
+      Height = 169
+      Align = alClient
+      BorderStyle = bsNone
+      Columns = <
+        item
+          AutoSize = True
+          Caption = 'Name'
+        end
+        item
+          Caption = 'PPS'
+          Width = 70
+        end>
+      DoubleBuffered = True
+      FlatScrollBars = True
+      GridLines = True
+      HideSelection = False
+      IconOptions.Arrangement = iaLeft
+      IconOptions.AutoArrange = True
+      LargeImages = ThumbnailsLarge
+      OwnerData = True
+      ReadOnly = True
+      RowSelect = True
+      ParentDoubleBuffered = False
+      ShowColumnHeaders = False
+      SmallImages = ThumbnailsLarge
+      TabOrder = 1
+      ViewStyle = vsReport
+      OnClick = ListView1Click
+      OnData = ListView1Data
+      OnDblClick = ListView1DblClick
+      OnSelectItem = ListView1SelectItem
+      ExplicitHeight = 393
+    end
+    object Edit1: TButtonedEdit
+      AlignWithMargins = True
+      Left = 4
+      Top = 52
+      Width = 153
+      Height = 21
+      Align = alTop
+      TabOrder = 2
+      TextHint = 'All'
+      OnChange = Edit1Change
+    end
+    object ProgressBar1: TProgressBar
+      Left = 1
+      Top = 270
+      Width = 159
+      Height = 17
+      Hint = 'Progress of thumbnail rendering (background)'
+      Align = alBottom
+      ParentShowHint = False
+      Smooth = True
+      ShowHint = True
+      TabOrder = 3
+      ExplicitTop = 494
+    end
     object Button1: TButton
       Left = 1
-      Top = 496
+      Top = 245
       Width = 159
       Height = 25
       Align = alBottom
-      Caption = 'Save Screenshots'
-      TabOrder = 1
-      OnClick = RenderFiles
-    end
-    object ListView1: TListView
-      Left = 1
-      Top = 49
-      Width = 159
-      Height = 406
-      Align = alClient
-      BorderStyle = bsNone
-      Columns = <>
-      FlatScrollBars = True
-      IconOptions.AutoArrange = True
-      LargeImages = ThumbnailsLarge
-      SmallImages = ThumbnailsSmall
-      TabOrder = 2
-      OnClick = ListView1Click
-      OnSelectItem = ListView1SelectItem
-    end
-    object Panel3: TPanel
-      Left = 1
-      Top = 455
-      Width = 159
-      Height = 41
-      Align = alBottom
-      BevelOuter = bvNone
-      TabOrder = 3
-      object Panel4: TPanel
-        Left = 0
-        Top = 0
-        Width = 96
-        Height = 41
-        Align = alClient
-        BevelOuter = bvNone
-        TabOrder = 0
-        object Label3: TLabel
-          Left = 0
-          Top = 6
-          Width = 50
-          Height = 13
-          Caption = 'Resolution'
-        end
-        object cmbResolution: TComboBox
-          Left = 0
-          Top = 20
-          Width = 96
-          Height = 21
-          Align = alBottom
-          TabOrder = 0
-          Text = 'cmbResolution'
-        end
-      end
-      object Panel5: TPanel
-        Left = 96
-        Top = 0
-        Width = 63
-        Height = 41
-        Align = alRight
-        BevelOuter = bvNone
-        TabOrder = 1
-        object Label2: TLabel
-          Left = 0
-          Top = 6
-          Width = 55
-          Height = 13
-          Caption = 'AntiAliasing'
-        end
-        object cmbAA: TComboBox
-          Left = 0
-          Top = 20
-          Width = 63
-          Height = 21
-          Align = alBottom
-          TabOrder = 0
-          Text = 'cmbResolution'
-        end
-      end
+      Caption = 'Save images'
+      TabOrder = 4
+      OnClick = Button1Click
+      ExplicitTop = 469
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 522
-    Width = 687
+    Top = 288
+    Width = 677
     Height = 19
     Panels = <
       item
@@ -186,12 +174,14 @@ object frmMain: TfrmMain
       end>
     SizeGrip = False
     OnDrawPanel = StatusBar1DrawPanel
+    ExplicitTop = 512
   end
   object Timer1: TTimer
+    Enabled = False
     Interval = 1
     OnTimer = Timer1Timer
-    Left = 104
-    Top = 104
+    Left = 80
+    Top = 88
   end
   object ApplicationEvents1: TApplicationEvents
     OnException = ApplicationEvents1Exception
@@ -208,11 +198,5 @@ object frmMain: TfrmMain
   object ThumbnailsSmall: TImageList
     Left = 56
     Top = 336
-  end
-  object Timer2: TTimer
-    Enabled = False
-    Interval = 10
-    Left = 96
-    Top = 224
   end
 end
