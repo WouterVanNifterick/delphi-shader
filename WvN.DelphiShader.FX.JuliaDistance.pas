@@ -109,7 +109,6 @@ begin
 
   // scol  := calc( gl_FragCoord.xy/resolution.xy, iGlobalTime );
   scol     := 0.0;
-  h        := 0.0;
 
   for i := 0 to NumSamples-1 do
   begin

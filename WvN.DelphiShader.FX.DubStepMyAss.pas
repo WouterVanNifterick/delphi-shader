@@ -73,7 +73,7 @@ var
   bar_z:float;
   tube_p:float;
   tube_w:float;
-  tube_x:float;
+//  tube_x:float;
   tube_y:float;
   tube_z:float;
 
@@ -85,7 +85,7 @@ begin
 	bar_z := length(max(abs(&mod(p.xy,bar_p)-bar_p*0.5)-bar_w,vec2(0)));
 	tube_p := 0.125;
 	tube_w := tube_p*0.375;
-	tube_x := length(&mod(p.yz,tube_p)-tube_p*0.5)-tube_w;
+//	tube_x := length(&mod(p.yz,tube_p)-tube_p*0.5)-tube_w;
 	tube_y := length(&mod(p.xz,tube_p)-tube_p*0.5)-tube_w;
 	tube_z := length(&mod(p.xy,tube_p)-tube_p*0.5)-tube_w;
 	Exit( -min(min(max(max(-bar_x,-bar_y),-bar_z),tube_y),tube_z) );

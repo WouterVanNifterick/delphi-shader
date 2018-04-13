@@ -112,7 +112,6 @@ begin
   rayDir  := normalize(camSide * pos.x + camUp * pos.y + camDir * focus);
   ray     := camPos;
   m       := 0;
-  d       := 0;
   total_d := 0;
   for i   := 0 to MAX_MARCH - 1 do
   begin
