@@ -3,7 +3,7 @@ Hundreds of graphical effects, and a library that provides GLSL functionality in
 
 This project produces an executable with more than a hundred real-time graphical effects. Some recorded examples are below.
 
-All that is a 100% pascal implementation, without the use of exernal libraries or hardware acceleration.
+All that is a 100% pascal implementation, without the use of external libraries or hardware acceleration.
 
 The project consists of 4 parts:
 
